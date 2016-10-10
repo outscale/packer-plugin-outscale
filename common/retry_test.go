@@ -1,4 +1,4 @@
-package googlecompute
+package common
 
 import (
 	"fmt"

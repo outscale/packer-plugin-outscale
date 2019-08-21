@@ -10,19 +10,18 @@ import (
 )
 
 func init() {
-	// Clear out the AWS access key env vars so they don't
+	// Clear out the OUTSCALE access key env vars so they don't
 	// affect our tests.
-	os.Setenv("AWS_ACCESS_KEY_ID", "")
-	os.Setenv("AWS_ACCESS_KEY", "")
-	os.Setenv("AWS_SECRET_ACCESS_KEY", "")
-	os.Setenv("AWS_SECRET_KEY", "")
+	os.Setenv("OUTSCALE_ACCESS_KEY_ID", "")
+	os.Setenv("OUTSCALE_ACCESS_KEY", "")
+	os.Setenv("OUTSCALE_SECRET_ACCESS_KEY", "")
+	os.Setenv("OUTSCALE_SECRET_KEY", "")
 }
 
 func testConfig() *RunConfig {
 	return &RunConfig{
-		SourceAmi:    "abcd",
-		InstanceType: "m1.small",
-
+		SourceOmi: "abcd",
+		VmType:    "m1.small",
 		Comm: communicator.Config{
 			SSH: communicator.SSH{
 				SSHUsername: "foo",
@@ -33,8 +32,8 @@ func testConfig() *RunConfig {
 
 func testConfigFilter() *RunConfig {
 	config := testConfig()
-	config.SourceAmi = ""
-	config.SourceAmiFilter = AmiFilterOptions{}
+	config.SourceOmi = ""
+	config.SourceOmiFilter = OmiFilterOptions{}
 	return config
 }
 
@@ -46,46 +45,46 @@ func TestRunConfigPrepare(t *testing.T) {
 	}
 }
 
-func TestRunConfigPrepare_InstanceType(t *testing.T) {
+func TestRunConfigPrepare_VmType(t *testing.T) {
 	c := testConfig()
-	c.InstanceType = ""
+	c.VmType = ""
 	if err := c.Prepare(nil); len(err) != 1 {
-		t.Fatalf("Should error if an instance_type is not specified")
+		t.Fatalf("Should error if an vm_type is not specified")
 	}
 }
 
-func TestRunConfigPrepare_SourceAmi(t *testing.T) {
+func TestRunConfigPrepare_SourceOmi(t *testing.T) {
 	c := testConfig()
-	c.SourceAmi = ""
+	c.SourceOmi = ""
 	if err := c.Prepare(nil); len(err) != 2 {
-		t.Fatalf("Should error if a source_ami (or source_ami_filter) is not specified")
+		t.Fatalf("Should error if a source_omi (or source_omi_filter) is not specified")
 	}
 }
 
-func TestRunConfigPrepare_SourceAmiFilterBlank(t *testing.T) {
+func TestRunConfigPrepare_SourceOmiFilterBlank(t *testing.T) {
 	c := testConfigFilter()
 	if err := c.Prepare(nil); len(err) != 2 {
 		t.Fatalf("Should error if source_ami_filter is empty or not specified (and source_ami is not specified)")
 	}
 }
 
-func TestRunConfigPrepare_SourceAmiFilterOwnersBlank(t *testing.T) {
+func TestRunConfigPrepare_SourceOmiFilterOwnersBlank(t *testing.T) {
 	c := testConfigFilter()
 	filter_key := "name"
 	filter_value := "foo"
-	c.SourceAmiFilter = AmiFilterOptions{Filters: map[*string]*string{&filter_key: &filter_value}}
+	c.SourceOmiFilter = OmiFilterOptions{Filters: map[string]string{filter_key: filter_value}}
 	if err := c.Prepare(nil); len(err) != 1 {
 		t.Fatalf("Should error if Owners is not specified)")
 	}
 }
 
-func TestRunConfigPrepare_SourceAmiFilterGood(t *testing.T) {
+func TestRunConfigPrepare_SourceOmiFilterGood(t *testing.T) {
 	c := testConfigFilter()
 	owner := "123"
 	filter_key := "name"
 	filter_value := "foo"
-	goodFilter := AmiFilterOptions{Owners: []*string{&owner}, Filters: map[*string]*string{&filter_key: &filter_value}}
-	c.SourceAmiFilter = goodFilter
+	goodFilter := OmiFilterOptions{Owners: []string{owner}, Filters: map[string]string{filter_key: filter_value}}
+	c.SourceOmiFilter = goodFilter
 	if err := c.Prepare(nil); len(err) != 0 {
 		t.Fatalf("err: %s", err)
 	}
@@ -93,8 +92,8 @@ func TestRunConfigPrepare_SourceAmiFilterGood(t *testing.T) {
 
 func TestRunConfigPrepare_EnableT2UnlimitedGood(t *testing.T) {
 	c := testConfig()
-	// Must have a T2 instance type if T2 Unlimited is enabled
-	c.InstanceType = "t2.micro"
+	// Must have a T2 vm type if T2 Unlimited is enabled
+	c.VmType = "t2.micro"
 	c.EnableT2Unlimited = true
 	err := c.Prepare(nil)
 	if len(err) > 0 {
@@ -102,23 +101,24 @@ func TestRunConfigPrepare_EnableT2UnlimitedGood(t *testing.T) {
 	}
 }
 
-func TestRunConfigPrepare_EnableT2UnlimitedBadInstanceType(t *testing.T) {
+func TestRunConfigPrepare_EnableT2UnlimitedBadVmType(t *testing.T) {
 	c := testConfig()
-	// T2 Unlimited cannot be used with instance types other than T2
-	c.InstanceType = "m5.large"
+	// T2 Unlimited cannot be used with vm types other than T2
+	c.VmType = "m5.large"
 	c.EnableT2Unlimited = true
 	err := c.Prepare(nil)
 	if len(err) != 1 {
-		t.Fatalf("Should error if T2 Unlimited is enabled with non-T2 instance_type")
+		t.Fatalf("Should error if T2 Unlimited is enabled with non-T2 vm_type")
 	}
 }
 
 func TestRunConfigPrepare_EnableT2UnlimitedBadWithSpotInstanceRequest(t *testing.T) {
 	c := testConfig()
 	// T2 Unlimited cannot be used with Spot Instances
-	c.InstanceType = "t2.micro"
+	c.VmType = "t2.micro"
 	c.EnableT2Unlimited = true
 	c.SpotPrice = "auto"
+	c.SpotPriceAutoProduct = "Linux/UNIX"
 	err := c.Prepare(nil)
 	if len(err) != 1 {
 		t.Fatalf("Should error if T2 Unlimited has been used in conjuntion with a Spot Price request")
@@ -128,14 +128,19 @@ func TestRunConfigPrepare_EnableT2UnlimitedBadWithSpotInstanceRequest(t *testing
 func TestRunConfigPrepare_SpotAuto(t *testing.T) {
 	c := testConfig()
 	c.SpotPrice = "auto"
+	if err := c.Prepare(nil); len(err) != 1 {
+		t.Fatalf("Should error if spot_price_auto_product is not set and spot_price is set to auto")
+	}
+
+	// Good - SpotPrice and SpotPriceAutoProduct are correctly set
+	c.SpotPriceAutoProduct = "foo"
 	if err := c.Prepare(nil); len(err) != 0 {
 		t.Fatalf("err: %s", err)
 	}
 
-	// Shouldn't error (YET) even though SpotPriceAutoProduct is deprecated
-	c.SpotPriceAutoProduct = "Linux/Unix"
-	if err := c.Prepare(nil); len(err) != 0 {
-		t.Fatalf("err: %s", err)
+	c.SpotPrice = ""
+	if err := c.Prepare(nil); len(err) != 1 {
+		t.Fatalf("Should error if spot_price is not set to auto and spot_price_auto_product is set")
 	}
 }
 

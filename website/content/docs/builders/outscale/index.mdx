@@ -85,7 +85,6 @@ This adds an additional layer of security, especially desirable on SecNumCloud c
 
 You can set this certificates either by environment variables or by the static credentials inside the packer configuration file.
 
-
 #### Environment variables
 
 ```bash
@@ -100,10 +99,9 @@ export OUTSCALE_X509KEY="the/path/to/your/x509key"
   "x509_cert_path": "the/path/to/your/x509cert",
   "x509_key_path": "the/path/to/your/x509key",
   "region": "cloudgouv-eu-west-1",
-  "type": "osc-bsu",
+  "type": "osc-bsu"
 }
 ```
-
 
 ### Checking that system time is current
 

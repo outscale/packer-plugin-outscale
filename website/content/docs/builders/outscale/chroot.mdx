@@ -8,7 +8,6 @@ description: >
   instance storage and BSU-backed instances, storage for the root device section
 
   in the Outscale documentation.
-layout: docs
 page_title: Outscale chroot - Builders
 sidebar_title: chroot
 ---
@@ -331,8 +330,6 @@ services:
     "chmod a+x /usr/sbin/policy-rc.d"
   ]
 },
-// ...
-
 {
   "type": "shell",
   "inline": ["rm -f /usr/sbin/policy-rc.d"]

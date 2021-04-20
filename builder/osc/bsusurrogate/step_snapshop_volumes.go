@@ -10,7 +10,7 @@ import (
 	multierror "github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	osccommon "github.com/hashicorp/packer/builder/osc/common"
+	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 	"github.com/outscale/osc-sdk-go/osc"
 )
 

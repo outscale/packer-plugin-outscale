@@ -1,27 +1,33 @@
 package bsusurrogate
 
 import (
+	"fmt"
+	"os/exec"
 	"testing"
 
-	builderT "github.com/hashicorp/packer/acctest"
+	"github.com/hashicorp/packer-plugin-sdk/acctest"
 )
 
-func TestBuilderAcc_basic(t *testing.T) {
-	builderT.Test(t, builderT.TestCase{
-		PreCheck:             func() { testAccPreCheck(t) },
-		Builder:              &Builder{},
-		Template:             testBuilderAccBasic,
-		SkipArtifactTeardown: true,
-	})
-}
-
-func testAccPreCheck(t *testing.T) {
+func TestAccBuilder_basic(t *testing.T) {
+	testCase := &acctest.PluginTestCase{
+		Name:     "bsusurrogate_basic_test",
+		Template: testBuilderAccBasic,
+		Check: func(buildCommand *exec.Cmd, logfile string) error {
+			if buildCommand.ProcessState != nil {
+				if buildCommand.ProcessState.ExitCode() != 0 {
+					return fmt.Errorf("Bad exit code. Logfile: %s", logfile)
+				}
+			}
+			return nil
+		},
+	}
+	acctest.TestPlugin(t, testCase)
 }
 
 const testBuilderAccBasic = `
 {
 	"builders": [{
-		"type": "test",
+		"type": "osc-bsusurrogate",
 		"region": "eu-west-2",
 		"vm_type": "t2.micro",
 		"source_omi": "ami-abe953fa",

@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	"github.com/hashicorp/packer/builder/osc/common/retry"
+	"github.com/hashicorp/packer-plugin-outscale/builder/osc/common/retry"
 	"github.com/outscale/osc-sdk-go/osc"
 )
 

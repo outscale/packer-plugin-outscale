@@ -2,7 +2,7 @@ package bsuvolume
 
 import (
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	osccommon "github.com/hashicorp/packer/builder/osc/common"
+	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 )
 
 type BlockDevice struct {

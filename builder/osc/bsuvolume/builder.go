@@ -17,7 +17,7 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	osccommon "github.com/hashicorp/packer/builder/osc/common"
+	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 )
 
 const BuilderId = "oapi.outscale.bsuvolume"

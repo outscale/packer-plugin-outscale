@@ -12,6 +12,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
+	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 	"github.com/hashicorp/packer-plugin-sdk/common"
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
@@ -19,7 +20,6 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 )
 
 // The unique ID for this builder

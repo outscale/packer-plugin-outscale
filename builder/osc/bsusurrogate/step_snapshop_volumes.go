@@ -8,9 +8,9 @@ import (
 
 	"github.com/antihax/optional"
 	multierror "github.com/hashicorp/go-multierror"
+	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 	"github.com/outscale/osc-sdk-go/osc"
 )
 

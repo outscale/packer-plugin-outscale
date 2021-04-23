@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"sort"
+	"strconv"
 	"time"
 
 	"github.com/antihax/optional"
@@ -41,6 +42,11 @@ func mostRecentOscOmi(images []osc.Image) osc.Image {
 	return sortedImages[len(sortedImages)-1]
 }
 
+func isNumeric(s string) bool {
+	_, err := strconv.ParseInt(s, 10, 0)
+	return err == nil
+}
+
 func (s *StepSourceOMIInfo) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
 	oscconn := state.Get("osc").(*osc.APIClient)
 	ui := state.Get("ui").(packersdk.Ui)
@@ -59,7 +65,18 @@ func (s *StepSourceOMIInfo) Run(_ context.Context, state multistep.StateBag) mul
 	}
 	//TODO:Check if AccountIds correspond to Owners.
 	if len(s.OmiFilters.Owners) > 0 {
-		params.Filters.AccountIds = s.OmiFilters.Owners
+		var oid []string
+		var oali []string
+
+		for _, o := range s.OmiFilters.Owners {
+			if isNumeric(o) {
+				oid = append(oid, o)
+			} else {
+				oali = append(oali, o)
+			}
+		}
+		params.Filters.AccountIds = oid
+		params.Filters.AccountAliases = oali
 	}
 
 	log.Printf("Using OMI Filters %#v", params)

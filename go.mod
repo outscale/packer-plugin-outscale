@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/hcl/v2 v2.10.0
 	github.com/hashicorp/packer-plugin-sdk v0.2.3
-	github.com/outscale/osc-sdk-go/osc v0.0.0-20210317154930-f27e09c295b2
+	github.com/outscale/osc-sdk-go/osc v0.0.0-20210316122053-4dfd64ce707a
 	github.com/zclconf/go-cty v1.8.3
 	golang.org/x/sys v0.0.0-20210420072515-93ed5bcd2bfe
 )

@@ -1,3 +1,7 @@
+## 1.0.1 (July 14, 2021)
+
+* Fix github.com/outscale/osc-sdk-go/osc revision [GH-28]
+
 ## 1.0.0 (June 14, 2021)
 
 * Allow use of owner-alias field for owners field in Outscale builders [GH-12]

@@ -323,8 +323,8 @@ github.com/mitchellh/reflectwalk v1.0.0/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx
 github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d h1:VhgPp6v9qf9Agr/56bj7Y/xa04UccTW04VP0Qed4vnQ=
 github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d/go.mod h1:YUTz3bUH2ZwIWBy3CJBeOBEugqcmXREj14T+iG/4k4U=
 github.com/oklog/run v1.0.0/go.mod h1:dlhp/R75TPv97u0XWUtDeV/lRKWPKSdTuV0TZvrmrQA=
-github.com/outscale/osc-sdk-go/osc v0.0.0-20210317154930-f27e09c295b2 h1:gmvYTtBR5+erBu7PrPywmQhTSBN0b+PULYCB4rGjJUE=
-github.com/outscale/osc-sdk-go/osc v0.0.0-20210317154930-f27e09c295b2/go.mod h1:5AqqNH1X8zCHescKVlpSHRzrat1KCKDXqZoQPe8fY3A=
+github.com/outscale/osc-sdk-go/osc v0.0.0-20210316122053-4dfd64ce707a h1:EBQ9YL3gDjdHpsyXoruGszUJO40j/hRVcHI3VMXt/j4=
+github.com/outscale/osc-sdk-go/osc v0.0.0-20210316122053-4dfd64ce707a/go.mod h1:5AqqNH1X8zCHescKVlpSHRzrat1KCKDXqZoQPe8fY3A=
 github.com/packer-community/winrmcp v0.0.0-20180921204643-0fd363d6159a h1:A3QMuteviunoaY/8ex+RKFqwhcZJ/Cf3fCW3IwL2wx4=
 github.com/packer-community/winrmcp v0.0.0-20180921204643-0fd363d6159a/go.mod h1:f6Izs6JvFTdnRbziASagjZ2vmf55NSIkC/weStxCHqk=
 github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=

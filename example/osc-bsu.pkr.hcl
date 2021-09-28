@@ -47,7 +47,6 @@ source "osc-bsusurrogate" "centos8" {
         volume_size = "${var.volsize}"
         volume_type = "standard"
     }
-    omi_virtualization_type = "hvm"
     source_omi = "${var.omi}"
     ssh_interface = "public_ip"
     ssh_username = "${var.username}"

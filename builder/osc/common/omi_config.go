@@ -11,7 +11,6 @@ import (
 type OMIConfig struct {
 	OMIName                 string   `mapstructure:"omi_name"`
 	OMIDescription          string   `mapstructure:"omi_description"`
-	OMIVirtType             string   `mapstructure:"omi_virtualization_type"`
 	OMIAccountIDs           []string `mapstructure:"omi_account_ids"`
 	OMIGroups               []string `mapstructure:"omi_groups"`
 	OMIProductCodes         []string `mapstructure:"omi_product_codes"`

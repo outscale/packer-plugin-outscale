@@ -154,10 +154,6 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 			errs = packersdk.MultiErrorAppend(
 				errs, errors.New("pre_mount_commands is required with from_scratch."))
 		}
-		if b.config.OMIVirtType == "" {
-			errs = packersdk.MultiErrorAppend(
-				errs, errors.New("omi_virtualization_type is required with from_scratch."))
-		}
 		if b.config.RootDeviceName == "" {
 			errs = packersdk.MultiErrorAppend(
 				errs, errors.New("root_device_name is required with from_scratch."))
@@ -219,9 +215,8 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	if !b.config.FromScratch {
 		steps = append(steps,
 			&osccommon.StepSourceOMIInfo{
-				SourceOmi:   b.config.SourceOMI,
-				OmiFilters:  b.config.SourceOMIFilter,
-				OMIVirtType: b.config.OMIVirtType,
+				SourceOmi:  b.config.SourceOMI,
+				OmiFilters: b.config.SourceOMIFilter,
 			},
 			&StepCheckRootDevice{},
 		)

@@ -101,9 +101,8 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			ForceDeregister: b.config.OMIForceDeregister,
 		},
 		&osccommon.StepSourceOMIInfo{
-			SourceOmi:   b.config.SourceOmi,
-			OmiFilters:  b.config.SourceOmiFilter,
-			OMIVirtType: b.config.OMIVirtType, //TODO: Remove if it is not used
+			SourceOmi:  b.config.SourceOmi,
+			OmiFilters: b.config.SourceOmiFilter,
 		},
 		&osccommon.StepNetworkInfo{
 			NetId:               b.config.NetId,

@@ -30,7 +30,7 @@ const testBuilderAccBasic = `
 		"type": "osc-bsusurrogate",
 		"region": "eu-west-2",
 		"vm_type": "t2.micro",
-		"source_omi": "ami-abe953fa",
+		"source_omi": "ami-6c274bbe",
 		"ssh_username": "outscale",
 		"omi_name": "packer-test {{timestamp}}",
 		"subregion_name": "eu-west-2a",

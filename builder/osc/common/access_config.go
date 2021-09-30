@@ -30,19 +30,35 @@ type AccessConfig struct {
 // NewOSCClient retrieves the Outscale OSC-SDK client
 func (c *AccessConfig) NewOSCClient() *osc.APIClient {
 	if c.AccessKey == "" {
-		c.AccessKey = os.Getenv("OUTSCALE_ACCESSKEYID")
+		if os.Getenv("OSC_ACCESS_KEY") != "" {
+			c.AccessKey = os.Getenv("OSC_ACCESS_KEY")
+		} else {
+			c.AccessKey = os.Getenv("OUTSCALE_ACCESSKEYID")
+		}
 	}
 
 	if c.SecretKey == "" {
-		c.SecretKey = os.Getenv("OUTSCALE_SECRETKEYID")
+		if os.Getenv("OSC_SECRET_KEY") != "" {
+			c.SecretKey = os.Getenv("OSC_SECRET_KEY")
+		} else {
+			c.SecretKey = os.Getenv("OUTSCALE_SECRETKEYID")
+		}
 	}
 
 	if c.RawRegion == "" {
-		c.RawRegion = os.Getenv("OUTSCALE_REGION")
+		if os.Getenv("OSC_REGION") != "" {
+			c.RawRegion = os.Getenv("OSC_REGION")
+		} else {
+			c.RawRegion = os.Getenv("OUTSCALE_REGION")
+		}
 	}
 
 	if c.CustomEndpointOAPI == "" {
-		c.CustomEndpointOAPI = os.Getenv("OUTSCALE_OAPI_URL")
+		if os.Getenv("OSC_ENDPOINT_API") != "" {
+			c.CustomEndpointOAPI = os.Getenv("OSC_ENDPOINT_API")
+		} else {
+			c.CustomEndpointOAPI = os.Getenv("OUTSCALE_OAPI_URL")
+		}
 	}
 
 	if c.CustomEndpointOAPI == "" {
@@ -55,11 +71,23 @@ func (c *AccessConfig) NewOSCClient() *osc.APIClient {
 	}
 
 	if c.X509certPath == "" {
-		c.X509certPath = os.Getenv("OUTSCALE_X509CERT")
+		if os.Getenv("OSC_X509_CLIENT_CERT") != "" {
+			c.X509certPath = os.Getenv("OSC_X509_CLIENT_CERT")
+		} else {
+			c.X509certPath = os.Getenv("OUTSCALE_X509CERT")
+		}
 	}
 
 	if c.X509keyPath == "" {
-		c.X509keyPath = os.Getenv("OUTSCALE_X509KEY")
+		if os.Getenv("OSC_X509_CLIENT_KEY") != "" {
+			c.X509keyPath = os.Getenv("OSC_X509_CLIENT_KEY")
+		} else {
+			c.X509keyPath = os.Getenv("OUTSCALE_X509KEY")
+		}
+	}
+
+	if c.ProfileName == "" {
+		c.ProfileName = "~/.osc/config.json"
 	}
 
 	return c.NewOSCClientByRegion(c.RawRegion)

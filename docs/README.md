@@ -47,7 +47,7 @@ Then, run [`packer init`](https://www.packer.io/docs/commands/init).
 packer {
   required_plugins {
     outscale = {
-      version = ">= 0.0.1"
+      version = ">= 1.0.0"
       source  = "github.com/hashicorp/outscale"
     }
   }

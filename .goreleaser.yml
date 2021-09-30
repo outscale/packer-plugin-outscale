@@ -19,13 +19,13 @@ builds:
       post:
         # This will check plugin compatibility against latest version of Packer
         - cmd: |
-            go install github.com/hashicorp/packer/cmd/packer-plugins-check@latest &&
+            go install github.com/hashicorp/packer/cmd/packer-plugins-check@v1.7.2 &&
             packer-plugins-check -load={{ .Name }}
           dir: "{{ dir .Path}}"
     flags:
       - -trimpath #removes all file system paths from the compiled executable
     ldflags:
-      - '-s -w -X main.Version={{.Version}} -X main.VersionPrerelease= '
+      - '-s -w -X {{ .ModulePath }}/version.Version={{.Version}} -X {{ .ModulePath }}/version.VersionPrerelease= '
     goos:
       - linux
     goarch:
@@ -36,7 +36,7 @@ builds:
     flags:
       - -trimpath #removes all file system paths from the compiled executable
     ldflags:
-      - '-s -w -X main.version={{.Version}} -X main.VersionPrerelease= '
+      - '-s -w -X {{ .ModulePath }}/version.Version={{.Version}} -X {{ .ModulePath }}/version.VersionPrerelease= '
     goos:
       - freebsd
       - windows

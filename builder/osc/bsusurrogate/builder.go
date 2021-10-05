@@ -81,6 +81,9 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	for _, launchDevice := range b.config.BlockDevices.LaunchMappings {
 		if launchDevice.DeviceName == b.config.RootDevice.SourceDeviceName {
 			foundRootVolume = true
+			if launchDevice.DeleteOnVmDeletion && b.config.VmInitiatedShutdownBehavior == "terminate" {
+				errs = packersdk.MultiErrorAppend(errs, errors.New("Cannot delete the launch device with the VM if the shutdown behavior is set to terminate."))
+			}
 		}
 	}
 

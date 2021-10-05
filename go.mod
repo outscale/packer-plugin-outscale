@@ -4,13 +4,13 @@ go 1.17
 
 require (
 	github.com/antihax/optional v1.0.0
-	github.com/aws/aws-sdk-go v1.38.57
+	github.com/aws/aws-sdk-go v1.40.54
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/hcl/v2 v2.10.1
 	github.com/hashicorp/packer-plugin-sdk v0.2.3
-	github.com/outscale/osc-sdk-go/osc v0.0.0-20210316122053-4dfd64ce707a
+	github.com/outscale/osc-sdk-go v1.11.2
 	github.com/zclconf/go-cty v1.9.1
-	golang.org/x/sys v0.0.0-20210420072515-93ed5bcd2bfe
+	golang.org/x/sys v0.0.0-20210423082822-04245dca01da
 )
 
 require (
@@ -76,10 +76,10 @@ require (
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/mod v0.3.0 // indirect
-	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
+	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43 // indirect
 	golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 // indirect
-	golang.org/x/text v0.3.5 // indirect
+	golang.org/x/text v0.3.6 // indirect
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
 	golang.org/x/tools v0.0.0-20201111133315-69daaf961d65 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect

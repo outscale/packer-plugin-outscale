@@ -16,7 +16,10 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/uuid"
 )
 
-var reShutdownBehavior = regexp.MustCompile("^(stop|terminate)$")
+// ShutDown behavior possible
+var StopShutdownBehavior string = "stop"
+var TerminateShutdownBehavior string = "terminate"
+var reShutdownBehavior = regexp.MustCompile("^(" + StopShutdownBehavior + "|" + TerminateShutdownBehavior + ")$")
 
 // docs at
 // https://wiki.outscale.net/display/EN/Getting+Information+About+Your+OMIs
@@ -201,7 +204,7 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 	}
 
 	if c.VmInitiatedShutdownBehavior == "" {
-		c.VmInitiatedShutdownBehavior = "stop"
+		c.VmInitiatedShutdownBehavior = StopShutdownBehavior
 	} else if !reShutdownBehavior.MatchString(c.VmInitiatedShutdownBehavior) {
 		errs = append(errs, fmt.Errorf("shutdown_behavior only accepts 'stop' or 'terminate' values."))
 	}

@@ -6,7 +6,6 @@ package bsusurrogate
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
@@ -78,10 +77,6 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	errs = packersdk.MultiErrorAppend(errs, b.config.BlockDevices.Prepare(&b.config.ctx)...)
 	errs = packersdk.MultiErrorAppend(errs, b.config.RootDevice.Prepare(&b.config.ctx)...)
 
-	if b.config.OMIVirtType == "" {
-		errs = packersdk.MultiErrorAppend(errs, errors.New("omi_virtualization_type is required."))
-	}
-
 	foundRootVolume := false
 	for _, launchDevice := range b.config.BlockDevices.LaunchMappings {
 		if launchDevice.DeviceName == b.config.RootDevice.SourceDeviceName {
@@ -124,9 +119,8 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			ForceDeregister: b.config.OMIForceDeregister,
 		},
 		&osccommon.StepSourceOMIInfo{
-			SourceOmi:   b.config.SourceOmi,
-			OmiFilters:  b.config.SourceOmiFilter,
-			OMIVirtType: b.config.OMIVirtType, //TODO: Remove if it is not used
+			SourceOmi:  b.config.SourceOmi,
+			OmiFilters: b.config.SourceOmiFilter,
 		},
 		&osccommon.StepNetworkInfo{
 			NetId:               b.config.NetId,

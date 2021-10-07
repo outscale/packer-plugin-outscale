@@ -40,17 +40,6 @@ func (s *StepMountDevice) Run(_ context.Context, state multistep.StateBag) multi
 	}
 	wrappedCommand := state.Get("wrappedCommand").(CommandWrapper)
 
-	var virtualizationType string
-	if config.FromScratch {
-		virtualizationType = config.OMIVirtType
-	} else {
-		//image := state.Get("source_image").(oapi.Image)
-
-		//Is always hvm
-		virtualizationType = "hvm"
-		log.Printf("Source image virtualization type is: %s", virtualizationType)
-	}
-
 	ctx := config.ctx
 
 	ctx.Data = &mountPathData{Device: filepath.Base(device)}
@@ -111,9 +100,6 @@ func (s *StepMountDevice) Run(_ context.Context, state multistep.StateBag) multi
 	log.Printf("[DEBUG] s.MountPartition  = %s", s.MountPartition)
 	log.Printf("[DEBUG ] DeviceMount: %s", deviceMount)
 
-	if virtualizationType == "hvm" && s.MountPartition != "0" {
-		deviceMount = fmt.Sprintf("%s%s", deviceMount, s.MountPartition)
-	}
 	state.Put("deviceMount", deviceMount)
 
 	ui.Say("Mounting the root device...")

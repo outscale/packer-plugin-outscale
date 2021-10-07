@@ -8,14 +8,13 @@ import (
 
 func testConfig() map[string]interface{} {
 	return map[string]interface{}{
-		"access_key":              "foo",
-		"secret_key":              "bar",
-		"source_omi":              "foo",
-		"vm_type":                 "foo",
-		"region":                  "us-east-1",
-		"ssh_username":            "root",
-		"omi_name":                "foo",
-		"omi_virtualization_type": "kvm",
+		"access_key":   "foo",
+		"secret_key":   "bar",
+		"source_omi":   "foo",
+		"vm_type":      "foo",
+		"region":       "us-east-1",
+		"ssh_username": "root",
+		"omi_name":     "foo",
 		"omi_root_device": map[string]interface{}{
 			"device_name":        "/dev/sda1",
 			"source_device_name": "/dev/xvdf",
@@ -52,7 +51,7 @@ func TestBuilder_ShutdownBehavior_BsuDeletion(t *testing.T) {
 	// Test KO (terminate and delete bsu with vm deletion)
 	config["shutdown_behavior"] = "terminate"
 	config["launch_block_device_mappings"].(map[string]interface{})["delete_on_vm_deletion"] = true
-	_, warnings, err = b.Prepare(config)
+	_, _, err = b.Prepare(config)
 	if err == nil {
 		t.Fatalf("should  have failed")
 	}

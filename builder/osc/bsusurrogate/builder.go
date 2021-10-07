@@ -6,6 +6,7 @@ package bsusurrogate
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hcldec"

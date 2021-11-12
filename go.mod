@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.40.54
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/hcl/v2 v2.10.1
-	github.com/hashicorp/packer-plugin-sdk v0.2.7
+	github.com/hashicorp/packer-plugin-sdk v0.2.8
 	github.com/outscale/osc-sdk-go v1.11.2
 	github.com/zclconf/go-cty v1.9.1
 	golang.org/x/sys v0.0.0-20210831042530-f4d43177bf5e

@@ -6,11 +6,11 @@ import (
 
 	"github.com/antihax/optional"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/hashicorp/packer-plugin-outscale/builder/osc/common/retry"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/outscale/osc-sdk-go/osc"
+	"github.com/outscale/packer-plugin-outscale/builder/osc/common/retry"
 )
 
 type StepCreateTags struct {

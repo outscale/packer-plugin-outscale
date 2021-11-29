@@ -66,7 +66,7 @@ runtime in order to build packer with the Outscale plugin.
 
 1. This project always releases from the latest version of golang.
 [Install go](https://golang.org/doc/install#install) To properly build from
-source, you need to have golang >= v1.16
+source, you need to have golang >= v1.17
 
 ## Setting up Outscale plugin for dev
 
@@ -76,16 +76,16 @@ POSIX-like environments (macOS, Linux, Cygwin, etc.) so you may need to
 adjust them for Windows or other shells.
 
 1. Download the Outscale plugin source (and its dependencies) by running
-   `go get github.com/hashicorp/packer-plugin-outscale`. This will download the source to
-   `$GOPATH/src/github.com/hashicorp/packer-plugin-outscale`.
+   `go get github.com/outscale/packer-plugin-outscale`. This will download the source to
+   `$GOPATH/src/github.com/outscale/packer-plugin-outscale`.
 
-2. When working on the Outscale plugin, first `cd $GOPATH/src/github.com/hashicorp/packer-plugin-outscale`
+2. When working on the Outscale plugin, first `cd $GOPATH/src/github.com/outscale/packer-plugin-outscale`
    so you can run `make dev` and easily access other files. `make dev` will build the packer-plugin-outscale binary and install it under `$HOME/.packer.d/plugins/`.
 
 3. Make your changes to the Outscale plugin source. You can run `make dev` to build and install locally, and `make test` to run unit tests.
    Any compilation errors will be shown when the binaries are rebuilding. If you don't have `make` you can simply run `go build -o packer-plugin-outscale` from the project root, and `mv packer-plugin-outscale ~/.packer.d/plugins/packer-plugin-outscale` to install the plugin.
 
-4. After building the Outscale plugin successfully, use the latest version of Packer to build a machine and verify your changes. In the [example folder](https://github.com/hashicorp/packer-plugin-outscale/blob/main/example) we provide a basic template. Comment out the `packer {}` block to force Packer use the development binary installed in the previous step.
+4. After building the Outscale plugin successfully, use the latest version of Packer to build a machine and verify your changes. In the [example folder](https://github.com/outscale/packer-plugin-outscale/blob/main/example) we provide a basic template. Comment out the `packer {}` block to force Packer use the development binary installed in the previous step.
 
 5. If everything works well and the tests pass, run `go fmt ./...` on your code before
    submitting a pull-request.
@@ -94,7 +94,7 @@ adjust them for Windows or other shells.
 ### Opening a Pull Request
 
 Thank you for contributing! When you are ready to open a pull-request, you will
-need to [fork the Outscale plugin](https://github.com/hashicorp/packer-plugin-outscale#fork-destination-box), push your
+need to [fork the Outscale plugin](https://github.com/outscale/packer-plugin-outscale#fork-destination-box), push your
 changes to your fork, and then open a pull-request.
 
 For example, my github username is `myuser`, so I would do the following:
@@ -185,7 +185,7 @@ project. After following the steps in "Setting up Go to work on the Outscale plu
 
 1. Navigate to the code:
 
-   `cd $GOPATH/src/github.com/hashicorp/packer-plugin-outscale`
+   `cd $GOPATH/src/github.com/outscale/packer-plugin-outscale`
 
 2. Add the remote by running:
 

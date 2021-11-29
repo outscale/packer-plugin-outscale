@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"github.com/antihax/optional"
-	"github.com/hashicorp/packer-plugin-outscale/builder/osc/common/retry"
 	"github.com/outscale/osc-sdk-go/osc"
+	"github.com/outscale/packer-plugin-outscale/builder/osc/common/retry"
 )
 
 type stateRefreshFunc func() (string, error)

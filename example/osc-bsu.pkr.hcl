@@ -2,7 +2,7 @@ packer {
   required_plugins {
     outscale = {
       version = ">=v0.1.0"
-      source  = "github.com/hashicorp/outscale"
+      source  = "github.com/outscale/outscale"
     }
   }
 }

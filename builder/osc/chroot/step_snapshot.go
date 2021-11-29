@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/antihax/optional"
-	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/outscale/osc-sdk-go/osc"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
 // StepSnapshot creates a snapshot of the created volume.

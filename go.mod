@@ -1,4 +1,4 @@
-module github.com/hashicorp/packer-plugin-outscale
+module github.com/outscale/packer-plugin-outscale
 
 go 1.17
 

@@ -4,7 +4,7 @@ package bsu
 
 import (
 	"github.com/hashicorp/hcl/v2/hcldec"
-	"github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
+	"github.com/outscale/packer-plugin-outscale/builder/osc/common"
 	"github.com/zclconf/go-cty/cty"
 )
 

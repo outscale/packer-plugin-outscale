@@ -6,11 +6,11 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/plugin"
 
-	"github.com/hashicorp/packer-plugin-outscale/builder/osc/bsu"
-	"github.com/hashicorp/packer-plugin-outscale/builder/osc/bsusurrogate"
-	"github.com/hashicorp/packer-plugin-outscale/builder/osc/bsuvolume"
-	"github.com/hashicorp/packer-plugin-outscale/builder/osc/chroot"
-	"github.com/hashicorp/packer-plugin-outscale/version"
+	"github.com/outscale/packer-plugin-outscale/builder/osc/bsu"
+	"github.com/outscale/packer-plugin-outscale/builder/osc/bsusurrogate"
+	"github.com/outscale/packer-plugin-outscale/builder/osc/bsuvolume"
+	"github.com/outscale/packer-plugin-outscale/builder/osc/chroot"
+	"github.com/outscale/packer-plugin-outscale/version"
 )
 
 func main() {

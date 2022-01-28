@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/outscale/osc-sdk-go/osc"
+	"github.com/outscale/packer-plugin-outscale/version"
 )
 
 // AccessConfig is for common configuration related to Outscale API access
@@ -124,7 +125,7 @@ func (c *AccessConfig) NewOSCClientByRegion(region string) *osc.APIClient {
 	return osc.NewAPIClient(&osc.Configuration{
 		BasePath:      fmt.Sprintf("https://api.%s.%s", region, c.CustomEndpointOAPI),
 		DefaultHeader: make(map[string]string),
-		UserAgent:     "packer-osc",
+		UserAgent:     fmt.Sprintf("packer-osc/%s", version.PluginVersion.String()),
 		HTTPClient:    skipClient,
 		Debug:         true,
 	})

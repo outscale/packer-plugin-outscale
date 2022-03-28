@@ -18,6 +18,7 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/outscale/osc-sdk-go/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
@@ -188,7 +189,11 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		return nil, errors.New("The outscale-chroot builder only works on Linux environments.")
 	}
 
-	oscConn := b.config.NewOSCClient()
+	var oscConn *osc.APIClient
+	var err error
+	if oscConn, err = b.config.NewOSCClient(); err != nil {
+		return nil, err
+	}
 	wrappedCommand := func(command string) (string, error) {
 		ctx := b.config.ctx
 		ctx.Data = &wrappedCommandTemplate{Command: command}

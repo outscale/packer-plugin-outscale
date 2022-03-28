@@ -2,6 +2,7 @@ package common
 
 import (
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -27,37 +28,44 @@ type AccessConfig struct {
 	X509keyPath           string `mapstructure:"x509_key_path"`
 }
 
+func getValueFromEnvVariables(envVariables []string) (string, bool) {
+
+	for _, envVariable := range envVariables {
+		if value, ok := os.LookupEnv(envVariable); ok && value != "" {
+			return value, true
+		}
+	}
+
+	return "", false
+}
+
 // NewOSCClient retrieves the Outscale OSC-SDK client
-func (c *AccessConfig) NewOSCClient() *osc.APIClient {
+func (c *AccessConfig) NewOSCClient() (*osc.APIClient, error) {
 	if c.AccessKey == "" {
-		if os.Getenv("OSC_ACCESS_KEY") != "" {
-			c.AccessKey = os.Getenv("OSC_ACCESS_KEY")
-		} else {
-			c.AccessKey = os.Getenv("OUTSCALE_ACCESSKEYID")
+		var ok bool
+		if c.AccessKey, ok = getValueFromEnvVariables([]string{"OSC_ACCESS_KEY", "OUTSCALE_ACCESSKEYID"}); !ok {
+			return nil, errors.New("No access key has been setted (configuration file, environment variable : OSC_ACCESS_KEY or OUTSCALE_ACCESSKEYID)")
 		}
 	}
 
 	if c.SecretKey == "" {
-		if os.Getenv("OSC_SECRET_KEY") != "" {
-			c.SecretKey = os.Getenv("OSC_SECRET_KEY")
-		} else {
-			c.SecretKey = os.Getenv("OUTSCALE_SECRETKEYID")
+		var ok bool
+		if c.SecretKey, ok = getValueFromEnvVariables([]string{"OSC_SECRET_KEY", "OUTSCALE_SECRETKEYID"}); !ok {
+			return nil, errors.New("No secret key has been setted (configuration file, environment variable : OSC_SECRET_KEY or OUTSCALE_SECRETKEYID)")
 		}
 	}
 
 	if c.RawRegion == "" {
-		if os.Getenv("OSC_REGION") != "" {
-			c.RawRegion = os.Getenv("OSC_REGION")
-		} else {
-			c.RawRegion = os.Getenv("OUTSCALE_REGION")
+		var ok bool
+		if c.RawRegion, ok = getValueFromEnvVariables([]string{"OSC_REGION", "OUTSCALE_REGION"}); !ok {
+			return nil, errors.New("No region has been setted (configuration file, environment variable : OSC_REGION or OUTSCALE_REGION)")
 		}
 	}
 
 	if c.CustomEndpointOAPI == "" {
-		if os.Getenv("OSC_ENDPOINT_API") != "" {
-			c.CustomEndpointOAPI = os.Getenv("OSC_ENDPOINT_API")
-		} else {
-			c.CustomEndpointOAPI = os.Getenv("OUTSCALE_OAPI_URL")
+		var ok bool
+		if c.CustomEndpointOAPI, ok = getValueFromEnvVariables([]string{"OSC_ENDPOINT_API", "OUTSCALE_OAPI_URL"}); !ok {
+			log.Printf("No Custom Endpoint has been setted")
 		}
 	}
 
@@ -71,18 +79,16 @@ func (c *AccessConfig) NewOSCClient() *osc.APIClient {
 	}
 
 	if c.X509certPath == "" {
-		if os.Getenv("OSC_X509_CLIENT_CERT") != "" {
-			c.X509certPath = os.Getenv("OSC_X509_CLIENT_CERT")
-		} else {
-			c.X509certPath = os.Getenv("OUTSCALE_X509CERT")
+		var ok bool
+		if c.X509certPath, ok = getValueFromEnvVariables([]string{"OSC_X509_CLIENT_CERT", "OUTSCALE_X509CERT"}); !ok {
+			log.Printf("No Certificat Path has been setted")
 		}
 	}
 
 	if c.X509keyPath == "" {
-		if os.Getenv("OSC_X509_CLIENT_KEY") != "" {
-			c.X509keyPath = os.Getenv("OSC_X509_CLIENT_KEY")
-		} else {
-			c.X509keyPath = os.Getenv("OUTSCALE_X509KEY")
+		var ok bool
+		if c.X509certPath, ok = getValueFromEnvVariables([]string{"OSC_X509_CLIENT_KEY", "OUTSCALE_X509KEY"}); !ok {
+			log.Printf("No Key Path has been setted")
 		}
 	}
 
@@ -90,7 +96,7 @@ func (c *AccessConfig) NewOSCClient() *osc.APIClient {
 		c.ProfileName = "~/.osc/config.json"
 	}
 
-	return c.NewOSCClientByRegion(c.RawRegion)
+	return c.NewOSCClientByRegion(c.RawRegion), nil
 }
 
 // GetRegion retrieves the Outscale OSC-SDK Region set

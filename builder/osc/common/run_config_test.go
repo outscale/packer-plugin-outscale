@@ -10,19 +10,6 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 )
 
-func init() {
-	// Clear out the OUTSCALE access key env vars so they don't
-	// affect our tests.
-	os.Setenv("OUTSCALE_ACCESS_KEY_ID", "")
-	os.Setenv("OSC_ACCESS_KEY_ID", "")
-	os.Setenv("OUTSCALE_ACCESS_KEY", "")
-	os.Setenv("OSC_ACCESS_KEY", "")
-	os.Setenv("OUTSCALE_SECRET_ACCESS_KEY", "")
-	os.Setenv("OSC_SECRET_ACCESS_KEY", "")
-	os.Setenv("OUTSCALE_SECRET_KEY", "")
-	os.Setenv("OSC_SECRET_KEY", "")
-}
-
 func testConfig() *RunConfig {
 	return &RunConfig{
 		SourceOmi: "abcd",

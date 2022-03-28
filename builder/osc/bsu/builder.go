@@ -19,6 +19,7 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/outscale/osc-sdk-go/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
@@ -85,7 +86,11 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 }
 
 func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook) (packersdk.Artifact, error) {
-	oscConn := b.config.NewOSCClient()
+	var oscConn *osc.APIClient
+	var err error
+	if oscConn, err = b.config.NewOSCClient(); err != nil {
+		return nil, err
+	}
 
 	// Setup the state bag and initial state for the steps
 	state := new(multistep.BasicStateBag)

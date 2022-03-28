@@ -29,7 +29,11 @@ func listOSCRegions(oscconn *osc.RegionApiService) ([]string, error) {
 // ValidateRegion returns true if the supplied region is a valid Outscale
 // region and false if it's not.
 func (c *AccessConfig) ValidateOSCRegion(regions ...string) error {
-	oscconn := c.NewOSCClient()
+	var oscconn *osc.APIClient
+	var err error
+	if oscconn, err = c.NewOSCClient(); err != nil {
+		return err
+	}
 
 	validRegions, err := listOSCRegions(oscconn.RegionApi)
 	if err != nil {

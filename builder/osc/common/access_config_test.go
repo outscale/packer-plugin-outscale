@@ -9,27 +9,41 @@ func testAccessConfig() *AccessConfig {
 }
 
 func TestAccessConfigPrepare_Region(t *testing.T) {
+
 	c := testAccessConfig()
+	c.RawRegion = "eu-west-2"
 
-	c.RawRegion = "us-east-12"
 	err := c.ValidateOSCRegion(c.RawRegion)
-	if err == nil {
-		t.Fatalf("should have region validation err: %s", c.RawRegion)
+	if err != nil {
+		t.Fatalf("should not have region validation for %s err: %s", c.RawRegion, err)
 	}
 
-	c.RawRegion = "us-east-1"
-	err = c.ValidateOSCRegion(c.RawRegion)
+	region := "us-east-12"
+	err = c.ValidateOSCRegion(region)
 	if err == nil {
-		t.Fatalf("should have region validation err: %s", c.RawRegion)
+		t.Fatalf("should have region validation err: %s", region)
 	}
 
-	c.RawRegion = "custom"
-	err = c.ValidateOSCRegion(c.RawRegion)
+	region = "us-east-1"
+	err = c.ValidateOSCRegion(region)
 	if err == nil {
-		t.Fatalf("should have region validation err: %s", c.RawRegion)
+		t.Fatalf("should have region validation err: %s", region)
 	}
 
-	c.RawRegion = "custom"
+	region = "custom"
+	err = c.ValidateOSCRegion(region)
+	if err == nil {
+		t.Fatalf("should have region validation err: %s", region)
+	}
+
+	region = ""
+	err = c.ValidateOSCRegion(region)
+	if err == nil {
+		t.Fatalf("should have region validation err: %s", region)
+	}
+	t.Logf("Error %v", err)
+
+	region = "custom"
 	c.SkipValidation = true
 	// testing whole prepare func here; this is checking that validation is
 	// skipped, so we don't need a mock connection
@@ -38,7 +52,7 @@ func TestAccessConfigPrepare_Region(t *testing.T) {
 	}
 
 	c.SkipValidation = false
-	c.RawRegion = ""
+	region = ""
 	if err := c.Prepare(nil); err != nil {
 		t.Fatalf("shouldn't have err: %s", err)
 	}

@@ -93,10 +93,6 @@ func (c *AccessConfig) NewOSCClient() (*osc.APIClient, error) {
 		}
 	}
 
-	if c.ProfileName == "" {
-		c.ProfileName = "~/.osc/config.json"
-	}
-
 	return c.NewOSCClientByRegion(c.RawRegion), nil
 }
 

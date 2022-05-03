@@ -6,10 +6,10 @@ import (
 
 	"github.com/antihax/optional"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/hashicorp/packer-plugin-outscale/builder/osc/common/retry"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/outscale/osc-sdk-go/osc"
+	"github.com/outscale/packer-plugin-outscale/builder/osc/common/retry"
 )
 
 type StepStopBSUBackedVm struct {
@@ -81,7 +81,18 @@ func (s *StepStopBSUBackedVm) Run(ctx context.Context, state multistep.StateBag)
 
 	// Wait for the vm to actually stop
 	ui.Say("Waiting for the vm to stop...")
-	err = waitUntilOscVmStopped(oscconn, vm.VmId)
+	switch vm.VmInitiatedShutdownBehavior {
+	case StopShutdownBehavior:
+		err = waitUntilOscVmStopped(oscconn, vm.VmId)
+	case TerminateShutdownBehavior:
+		err = waitUntilOscVmDeleted(oscconn, vm.VmId)
+	default:
+		err := fmt.Errorf("Wrong value for the shutdown behavior")
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+
+	}
 
 	if err != nil {
 		err := fmt.Errorf("Error waiting for vm to stop: %s", err)

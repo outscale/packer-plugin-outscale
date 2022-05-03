@@ -12,13 +12,14 @@ import (
 	"runtime"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
-	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 	"github.com/hashicorp/packer-plugin-sdk/common"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/multistep/commonsteps"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/outscale/osc-sdk-go/osc"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
 // The unique ID for this builder
@@ -154,10 +155,6 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 			errs = packersdk.MultiErrorAppend(
 				errs, errors.New("pre_mount_commands is required with from_scratch."))
 		}
-		if b.config.OMIVirtType == "" {
-			errs = packersdk.MultiErrorAppend(
-				errs, errors.New("omi_virtualization_type is required with from_scratch."))
-		}
 		if b.config.RootDeviceName == "" {
 			errs = packersdk.MultiErrorAppend(
 				errs, errors.New("root_device_name is required with from_scratch."))
@@ -192,7 +189,11 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		return nil, errors.New("The outscale-chroot builder only works on Linux environments.")
 	}
 
-	oscConn := b.config.NewOSCClient()
+	var oscConn *osc.APIClient
+	var err error
+	if oscConn, err = b.config.NewOSCClient(); err != nil {
+		return nil, err
+	}
 	wrappedCommand := func(command string) (string, error) {
 		ctx := b.config.ctx
 		ctx.Data = &wrappedCommandTemplate{Command: command}
@@ -219,9 +220,8 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	if !b.config.FromScratch {
 		steps = append(steps,
 			&osccommon.StepSourceOMIInfo{
-				SourceOmi:   b.config.SourceOMI,
-				OmiFilters:  b.config.SourceOMIFilter,
-				OMIVirtType: b.config.OMIVirtType,
+				SourceOmi:  b.config.SourceOMI,
+				OmiFilters: b.config.SourceOMIFilter,
 			},
 			&StepCheckRootDevice{},
 		)

@@ -16,10 +16,13 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/uuid"
 )
 
-var reShutdownBehavior = regexp.MustCompile("^(stop|terminate)$")
+// ShutDown behavior possible
+var StopShutdownBehavior string = "stop"
+var TerminateShutdownBehavior string = "terminate"
+var reShutdownBehavior = regexp.MustCompile("^(" + StopShutdownBehavior + "|" + TerminateShutdownBehavior + ")$")
 
 // docs at
-// https://wiki.outscale.net/display/EN/Getting+Information+About+Your+OMIs
+// https://docs.outscale.com/en/userguide/Getting-Information-About-Your-OMIs.html
 type OmiFilterOptions struct {
 	config.NameValueFilter `mapstructure:",squash"`
 	Owners                 []string
@@ -35,7 +38,7 @@ func (d *OmiFilterOptions) NoOwner() bool {
 }
 
 // docs at
-// https://wiki.outscale.net/display/EN/Getting+Information+About+Your+Subnets
+// https://docs.outscale.com/en/userguide/Getting-Information-About-Your-Subnets.html
 type SubnetFilterOptions struct {
 	config.NameValueFilter `mapstructure:",squash"`
 	MostFree               bool `mapstructure:"most_free"`
@@ -48,7 +51,7 @@ type NetFilterOptions struct {
 }
 
 // docs at
-// https://wiki.outscale.net/display/EN/Getting+Information+About+Your+Security+Groups
+// https://docs.outscale.com/en/userguide/Getting-Information-About-Your-Security-Groups.html
 type SecurityGroupFilterOptions struct {
 	config.NameValueFilter `mapstructure:",squash"`
 }
@@ -201,7 +204,7 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 	}
 
 	if c.VmInitiatedShutdownBehavior == "" {
-		c.VmInitiatedShutdownBehavior = "stop"
+		c.VmInitiatedShutdownBehavior = StopShutdownBehavior
 	} else if !reShutdownBehavior.MatchString(c.VmInitiatedShutdownBehavior) {
 		errs = append(errs, fmt.Errorf("shutdown_behavior only accepts 'stop' or 'terminate' values."))
 	}

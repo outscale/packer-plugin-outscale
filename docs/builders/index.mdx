@@ -55,8 +55,8 @@ These look like:
 
 ```json
 {
-  "access_key": "AKIAIOSFODNN7EXAMPLE",
-  "secret_key": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+  "access_key": "XXX_ACCESS_KEY_XXX",
+  "secret_key": "XXX_SECRET_KEY_XXX",
   "region": "us-east-1",
   "type": "osc-bsu",
   "oapi_custom_endpoint": "outscale.com/oapi/latest"
@@ -72,8 +72,8 @@ Key and Outscale Secret Key, respectively. The `OUTSCALE_REGION` and
 
 Usage:
 
-    $ export OUTSCALE_ACCESSKEYID="anaccesskey"
-    $ export OUTSCALE_SECRETKEYID="asecretkey"
+    $ export OUTSCALE_ACCESSKEYID="XXX_ACCESS_KEY_XXX"
+    $ export OUTSCALE_SECRETKEYID="XXX_SECRET_KEY_XXX"
     $ export OUTSCALE_REGION="eu-west-2"
     $ packer build template.pkr.hcl
 
@@ -105,7 +105,7 @@ export OUTSCALE_X509KEY="the/path/to/your/x509key"
 ### Checking that system time is current
 
 Outscale uses the current time as part of the [request signing
-process](https://wiki.outscale.net/display/EN/About+Signatures+of+API+Requests). If
+process](https://docs.outscale.com/en/userguide/About-Signatures-of-API-Requests.html). If
 your system clock is too skewed from the current time, your requests might
 fail. If that's the case, you might see an error like this:
 

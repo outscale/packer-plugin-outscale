@@ -16,10 +16,10 @@ Type: `osc-bsu`
 Artifact BuilderId: `oapi.outscale.bsu`
 
 The `osc-bsu` Packer builder is able to create Outscale OMIs backed by BSU
-volumes for use in [Flexible Compute Unit](https://wiki.outscale.net/pages/viewpage.action?pageId=43060893). For more information on
+volumes for use in [Flexible Compute Unit](https://docs.outscale.com/en/userguide/Flexible-Compute-Unit-(FCU).html). For more information on
 the difference between BSU-backed VMs and VM-store backed
 VMs, see the ["storage for the root device" section in the Outscale
-documentation](https://wiki.outscale.net/display/EN/Defining+Block+Device+Mappings).
+documentation](https://docs.outscale.com/en/userguide/Defining-Block-Device-Mappings.html).
 
 This builder builds an OMI by launching an Outscale VM from a source OMI,
 provisioning that running machine, and then creating an OMI from that machine.
@@ -61,14 +61,14 @@ builder.
 
 ### Optional:
 
-- `omi_block_device_mappings` (array of block device mappings) - Add one or more [block device mappings](https://wiki.outscale.net/display/EN/Defining+Block+Device+Mappings) to the OMI. These will be attached when booting a new VM from your OMI. To add a block device during the Packer build see `launch_block_device_mappings` below. Your options here may vary depending on the type of VM you use. The block device mappings allow for the following configuration:
+- `omi_block_device_mappings` (array of block device mappings) - Add one or more [block device mappings](https://docs.outscale.com/en/userguide/Defining-Block-Device-Mappings.html) to the OMI. These will be attached when booting a new VM from your OMI. To add a block device during the Packer build see `launch_block_device_mappings` below. Your options here may vary depending on the type of VM you use. The block device mappings allow for the following configuration:
 
   - `delete_on_vm_deletion` (boolean) - Indicates whether the BSU volume is deleted on VM termination. Default `false`. **NOTE**: If this value is not explicitly set to `true` and volumes are not cleaned up by an alternative method, additional volumes will accumulate after every build.
 
   - `device_name` (string) - The device name exposed to the VM (for example, `/dev/sdh` or `xvdh`). Required for every device in the block device mapping.
 
   - `iops` (number) - The number of I/O operations per second (IOPS) that the volume supports. See the documentation on
-    [IOPs](https://wiki.outscale.net/display/EN/About+Volumes#AboutVolumes-VolumeTypesVolumeTypesandIOPS)
+    [IOPs](https://docs.outscale.com/en/userguide/About-Volumes.html#_volume_types_and_iops)
     for more information
 
   - `no_device` (boolean) - Suppresses the specified device included in the
@@ -76,7 +76,7 @@ builder.
 
   - `snapshot_id` (string) - The ID of the snapshot
 
-  - `virtual_name` (string) - The virtual device name. See the documentation on [Block Device Mapping](https://wiki.outscale.net/display/EN/Defining+Block+Device+Mappings) for more information
+  - `virtual_name` (string) - The virtual device name. See the documentation on [Block Device Mapping](https://docs.outscale.com/en/userguide/Defining-Block-Device-Mappings.html) for more information
 
   - `volume_size` (number) - The size of the volume, in GiB. Required if not specifying a `snapshot_id`
 
@@ -273,7 +273,7 @@ environmental variables. See the configuration reference in the section above
 for more information on what environmental variables Packer will look for.
 
 Further information on locating OMIS IDs and their relationship to VM
-types and regions can be found in the Outscale Documentation [reference](https://wiki.outscale.net/display/EN/Official+OMIs+Reference).
+types and regions can be found in the Outscale Documentation [reference](https://docs.outscale.com/en/userguide/Official-OMIs-Reference.html).
 
 ## Accessing the Instance to Debug
 

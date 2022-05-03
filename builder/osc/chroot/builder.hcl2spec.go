@@ -4,7 +4,7 @@ package chroot
 
 import (
 	"github.com/hashicorp/hcl/v2/hcldec"
-	"github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
+	"github.com/outscale/packer-plugin-outscale/builder/osc/common"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -22,7 +22,6 @@ type FlatConfig struct {
 	OMIMappings             []common.FlatBlockDevice     `mapstructure:"omi_block_device_mappings" cty:"omi_block_device_mappings" hcl:"omi_block_device_mappings"`
 	OMIName                 *string                      `mapstructure:"omi_name" cty:"omi_name" hcl:"omi_name"`
 	OMIDescription          *string                      `mapstructure:"omi_description" cty:"omi_description" hcl:"omi_description"`
-	OMIVirtType             *string                      `mapstructure:"omi_virtualization_type" cty:"omi_virtualization_type" hcl:"omi_virtualization_type"`
 	OMIAccountIDs           []string                     `mapstructure:"omi_account_ids" cty:"omi_account_ids" hcl:"omi_account_ids"`
 	OMIGroups               []string                     `mapstructure:"omi_groups" cty:"omi_groups" hcl:"omi_groups"`
 	OMIProductCodes         []string                     `mapstructure:"omi_product_codes" cty:"omi_product_codes" hcl:"omi_product_codes"`
@@ -87,7 +86,6 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"omi_block_device_mappings":  &hcldec.BlockListSpec{TypeName: "omi_block_device_mappings", Nested: hcldec.ObjectSpec((*common.FlatBlockDevice)(nil).HCL2Spec())},
 		"omi_name":                   &hcldec.AttrSpec{Name: "omi_name", Type: cty.String, Required: false},
 		"omi_description":            &hcldec.AttrSpec{Name: "omi_description", Type: cty.String, Required: false},
-		"omi_virtualization_type":    &hcldec.AttrSpec{Name: "omi_virtualization_type", Type: cty.String, Required: false},
 		"omi_account_ids":            &hcldec.AttrSpec{Name: "omi_account_ids", Type: cty.List(cty.String), Required: false},
 		"omi_groups":                 &hcldec.AttrSpec{Name: "omi_groups", Type: cty.List(cty.String), Required: false},
 		"omi_product_codes":          &hcldec.AttrSpec{Name: "omi_product_codes", Type: cty.List(cty.String), Required: false},

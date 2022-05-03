@@ -20,9 +20,8 @@ import (
 // Produces:
 //   source_image *osc.Image - the source OMI info
 type StepSourceOMIInfo struct {
-	SourceOmi   string
-	OMIVirtType string
-	OmiFilters  OmiFilterOptions
+	SourceOmi  string
+	OmiFilters OmiFilterOptions
 }
 
 type imageOscSort []osc.Image

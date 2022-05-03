@@ -12,7 +12,6 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
-	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 	"github.com/hashicorp/packer-plugin-sdk/common"
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
@@ -20,6 +19,8 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/outscale/osc-sdk-go/osc"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
 // The unique ID for this builder
@@ -85,7 +86,11 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 }
 
 func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook) (packersdk.Artifact, error) {
-	oscConn := b.config.NewOSCClient()
+	var oscConn *osc.APIClient
+	var err error
+	if oscConn, err = b.config.NewOSCClient(); err != nil {
+		return nil, err
+	}
 
 	// Setup the state bag and initial state for the steps
 	state := new(multistep.BasicStateBag)
@@ -101,9 +106,8 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			ForceDeregister: b.config.OMIForceDeregister,
 		},
 		&osccommon.StepSourceOMIInfo{
-			SourceOmi:   b.config.SourceOmi,
-			OmiFilters:  b.config.SourceOmiFilter,
-			OMIVirtType: b.config.OMIVirtType, //TODO: Remove if it is not used
+			SourceOmi:  b.config.SourceOmi,
+			OmiFilters: b.config.SourceOmiFilter,
 		},
 		&osccommon.StepNetworkInfo{
 			NetId:               b.config.NetId,

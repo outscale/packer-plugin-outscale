@@ -10,7 +10,6 @@ import (
 	"log"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
-	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 	"github.com/hashicorp/packer-plugin-sdk/common"
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
@@ -18,6 +17,8 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/outscale/osc-sdk-go/osc"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
 const BuilderId = "oapi.outscale.bsuvolume"
@@ -99,7 +100,11 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	// 	},
 	// }
 
-	oscConn := b.config.NewOSCClient()
+	var oscConn *osc.APIClient
+	var err error
+	if oscConn, err = b.config.NewOSCClient(); err != nil {
+		return nil, err
+	}
 
 	// Setup the state bag and initial state for the steps
 	state := new(multistep.BasicStateBag)

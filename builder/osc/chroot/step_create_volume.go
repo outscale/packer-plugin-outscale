@@ -7,11 +7,11 @@ import (
 	"log"
 
 	"github.com/antihax/optional"
-	osccommon "github.com/hashicorp/packer-plugin-outscale/builder/osc/common"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/outscale/osc-sdk-go/osc"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
 // StepCreateVolume creates a new volume from the snapshot of the root

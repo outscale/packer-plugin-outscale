@@ -9,6 +9,7 @@ import (
 
 	"github.com/antihax/optional"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
 	"github.com/outscale/osc-sdk-go/osc"
 )
 
@@ -36,8 +37,8 @@ func (*Artifact) Files() []string {
 
 func (a *Artifact) Id() string {
 	parts := make([]string, 0, len(a.Omis))
-	for region, amiId := range a.Omis {
-		parts = append(parts, fmt.Sprintf("%s:%s", region, amiId))
+	for region, omiId := range a.Omis {
+		parts = append(parts, fmt.Sprintf("%s:%s", region, omiId))
 	}
 
 	sort.Strings(parts)
@@ -45,14 +46,14 @@ func (a *Artifact) Id() string {
 }
 
 func (a *Artifact) String() string {
-	amiStrings := make([]string, 0, len(a.Omis))
+	omiStrings := make([]string, 0, len(a.Omis))
 	for region, id := range a.Omis {
 		single := fmt.Sprintf("%s: %s", region, id)
-		amiStrings = append(amiStrings, single)
+		omiStrings = append(omiStrings, single)
 	}
 
-	sort.Strings(amiStrings)
-	return fmt.Sprintf("OMIs were created:\n%s\n", strings.Join(amiStrings, "\n"))
+	sort.Strings(omiStrings)
+	return fmt.Sprintf("OMIs were created:\n%s\n", strings.Join(omiStrings, "\n"))
 }
 
 func (a *Artifact) State(name string) interface{} {
@@ -63,6 +64,8 @@ func (a *Artifact) State(name string) interface{} {
 	switch name {
 	case "atlas.artifact.metadata":
 		return a.stateAtlasMetadata()
+	case registryimage.ArtifactStateURI:
+		return a.stateHCPPackerRegistryMetadata()
 	default:
 		return nil
 	}
@@ -126,4 +129,50 @@ func (a *Artifact) stateAtlasMetadata() interface{} {
 	}
 
 	return metadata
+}
+
+// stateHCPPackerRegistryMetadata will write the metadata as an hcpRegistryImage for each of the OMIs
+// present in this artifact.
+func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
+
+	f := func(k, v interface{}) (*registryimage.Image, error) {
+
+		region, ok := k.(string)
+		if !ok {
+			return nil, fmt.Errorf("unexpected type of key in OMIs map")
+		}
+		imageId, ok := v.(string)
+		if !ok {
+			return nil, fmt.Errorf("unexpected type for value in OMIs map")
+		}
+		image := registryimage.Image{
+			ImageID:        imageId,
+			ProviderRegion: region,
+			ProviderName:   "osc",
+		}
+
+		return &image, nil
+
+	}
+
+	images, err := registryimage.FromMappedData(a.Omis, f)
+	if err != nil {
+		log.Printf("[TRACE] error encountered when creating HCP Packer registry image for artifact.Omis: %s", err)
+		return nil
+	}
+
+	if a.StateData == nil {
+		return images
+	}
+
+	data, ok := a.StateData["generated_data"].(map[string]interface{})
+	if !ok {
+		return images
+	}
+
+	for _, image := range images {
+		image.SourceImageID = data["SourceOMI"].(string)
+	}
+
+	return images
 }

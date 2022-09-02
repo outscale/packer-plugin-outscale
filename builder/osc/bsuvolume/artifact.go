@@ -9,16 +9,23 @@ import (
 
 	"github.com/antihax/optional"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
 	"github.com/outscale/osc-sdk-go/osc"
 )
 
 // map of region to list of volume IDs
 type BsuVolumes map[string][]string
 
+// map of region to list of snapshot IDs
+type BsuSnapshots map[string][]string
+
 // Artifact is an artifact implementation that contains built AMIs.
 type Artifact struct {
-	// A map of regions to EBS Volume IDs.
+	// A map of regions to BSU Volume IDs.
 	Volumes BsuVolumes
+
+	// A map of regions to BSU Snapshot IDs.
+	Snapshots BsuSnapshots
 
 	// BuilderId is the unique ID for the builder that created this AMI
 	BuilderIdValue string
@@ -58,11 +65,17 @@ func (a *Artifact) Id() string {
 }
 
 func (a *Artifact) String() string {
-	return fmt.Sprintf("EBS Volumes were created:\n\n%s", strings.Join(a.idList(), "\n"))
+	return fmt.Sprintf("BSU Volumes were created:\n\n%s", strings.Join(a.idList(), "\n"))
 }
 
 func (a *Artifact) State(name string) interface{} {
+	// To be able to push metadata to HCP Packer Registry, Packer will read the 'par.artifact.metadata'
+	// state from artifacts to get a build's metadata.
+	if name == registryimage.ArtifactStateURI {
+		return a.stateHCPPackerRegistryMetadata()
+	}
 	return a.StateData[name]
+
 }
 
 func (a *Artifact) Destroy() error {
@@ -92,4 +105,49 @@ func (a *Artifact) Destroy() error {
 	}
 
 	return nil
+}
+
+// stateHCPPackerRegistryMetadata will write the metadata as an hcpRegistryImage for each of the OMIs
+// present in this artifact.
+func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
+
+	images := make([]*registryimage.Image, 0, len(a.Volumes)+len(a.Snapshots))
+	for region, volumeIDs := range a.Volumes {
+		for _, volumeID := range volumeIDs {
+			volumeID := volumeID
+			image := registryimage.Image{
+				ImageID:        volumeID,
+				ProviderRegion: region,
+				ProviderName:   "osc",
+			}
+			images = append(images, &image)
+		}
+	}
+
+	for region, snapshotIDs := range a.Snapshots {
+		for _, snapshotID := range snapshotIDs {
+			snapshotID := snapshotID
+			image := registryimage.Image{
+				ImageID:        snapshotID,
+				ProviderRegion: region,
+				ProviderName:   "osc",
+			}
+			images = append(images, &image)
+		}
+	}
+
+	if a.StateData == nil {
+		return images
+	}
+
+	data, ok := a.StateData["generated_data"].(map[string]interface{})
+	if !ok {
+		return images
+	}
+
+	for _, image := range images {
+		image.SourceImageID = data["SourceOMI"].(string)
+	}
+
+	return images
 }

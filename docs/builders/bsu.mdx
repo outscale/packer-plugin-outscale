@@ -1,6 +1,6 @@
 ---
 description: >
-  The osc-bsu Packer builder is able to create Outscale OMIs backed by BSU
+  The outscale-bsu Packer builder is able to create Outscale OMIs backed by BSU
   volumes for use in Outscale. For more information on the difference between
 
   BSU-backed VMs and VM-store backed VMs, see the storage for
@@ -12,10 +12,10 @@ nav_title: BSU
 
 # OMI Builder (BSU backed)
 
-Type: `osc-bsu`
+Type: `outscale-bsu`
 Artifact BuilderId: `oapi.outscale.bsu`
 
-The `osc-bsu` Packer builder is able to create Outscale OMIs backed by BSU
+The `outscale-bsu` Packer builder is able to create Outscale OMIs backed by BSU
 volumes for use in [Flexible Compute Unit](https://docs.outscale.com/en/userguide/Flexible-Compute-Unit-(FCU).html). For more information on
 the difference between BSU-backed VMs and VM-store backed
 VMs, see the ["storage for the root device" section in the Outscale
@@ -255,7 +255,7 @@ Here is a basic example. You will need to provide access keys, and may need to c
   },
   "builders": [
     {
-      "type": "osc-bsu",
+      "type": "outscale-bsu",
       "access_key": "{{user `access_key`}}",
       "secret_key": "{{user `secret_key`}}",
       "region": "us-east-1",
@@ -291,7 +291,7 @@ configuration of `launch_block_device_mappings` will expand the root volume
 
 ```json
 {
-  "type": "osc-bsu",
+  "type": "outscale-bsu",
   "access_key": "YOUR KEY HERE",
   "secret_key": "YOUR SECRET KEY HERE",
   "region": "us-east-1",
@@ -335,7 +335,7 @@ Here is an example using the optional OMIS tags. This will add the tags `OS_Vers
 
 ```json
 {
-  "type": "osc-bsu",
+  "type": "outscale-bsu",
   "access_key": "YOUR KEY HERE",
   "secret_key": "YOUR SECRET KEY HERE",
   "region": "us-east-1",

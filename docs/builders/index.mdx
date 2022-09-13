@@ -14,30 +14,30 @@ Packer is able to create Outscale OMIs. To achieve this, Packer comes with
 multiple builders depending on the strategy you want to use to build the OMI.
 Packer supports the following builders at the moment:
 
-- [osc-bsu](/docs/builders/osc-bsu) - Create BSU-backed OMIs by
+- [outscale-bsu](/docs/builders/outscale-bsu) - Create BSU-backed OMIs by
   launching a source OMI and re-packaging it into a new OMI after
   provisioning. If in doubt, use this builder, which is the easiest to get
   started with.
 
-- [osc-chroot](/docs/builders/osc-chroot) - Create EBS-backed OMIs
+- [outscale-chroot](/docs/builders/outscale-chroot) - Create EBS-backed OMIs
   from an existing OUTSCALE VM by mounting the root device and using a
   [Chroot](https://en.wikipedia.org/wiki/Chroot) environment to provision
   that device. This is an **advanced builder and should not be used by
   newcomers**. However, it is also the fastest way to build an EBS-backed OMI
   since no new OUTSCALE VM needs to be launched.
 
-- [osc-bsusurrogate](/docs/builders/osc-bsusurrogate) - Create BSU-backed OMIs from scratch. Works similarly to the `chroot` builder but does
+- [outscale-bsusurrogate](/docs/builders/outscale-bsusurrogate) - Create BSU-backed OMIs from scratch. Works similarly to the `chroot` builder but does
   not require running in Outscale VM. This is an **advanced builder and should not be
   used by newcomers**.
 
--> **Don't know which builder to use?** If in doubt, use the [osc-bsu
-builder](/docs/builders/osc-bsu). It is much easier to use and Outscale generally recommends BSU-backed images nowadays.
+-> **Don't know which builder to use?** If in doubt, use the [outscale-bsu
+builder](/docs/builders/outscale-bsu). It is much easier to use and Outscale generally recommends BSU-backed images nowadays.
 
 # Outscale BSU Volume Builder
 
 Packer is able to create Outscale BSU Volumes which are preinitialized with a filesystem and data.
 
-- [osc-bsuvolume](/docs/builders/osc-bsuvolume) - Create EBS volumes by launching a source OMI with block devices mapped. Provision the VM, then destroy it, retaining the EBS volumes.
+- [outscale-bsuvolume](/docs/builders/outscale-bsuvolume) - Create EBS volumes by launching a source OMI with block devices mapped. Provision the VM, then destroy it, retaining the EBS volumes.
 
 ## Authentication
 
@@ -58,7 +58,7 @@ These look like:
   "access_key": "XXX_ACCESS_KEY_XXX",
   "secret_key": "XXX_SECRET_KEY_XXX",
   "region": "us-east-1",
-  "type": "osc-bsu",
+  "type": "outscale-bsu",
   "oapi_custom_endpoint": "outscale.com/oapi/latest"
 }
 ```
@@ -98,7 +98,7 @@ export OUTSCALE_X509KEY="the/path/to/your/x509key"
   "x509_cert_path": "the/path/to/your/x509cert",
   "x509_key_path": "the/path/to/your/x509key",
   "region": "cloudgouv-eu-west-1",
-  "type": "osc-bsu"
+  "type": "outscale-bsu"
 }
 ```
 
@@ -109,7 +109,7 @@ process](https://docs.outscale.com/en/userguide/About-Signatures-of-API-Requests
 your system clock is too skewed from the current time, your requests might
 fail. If that's the case, you might see an error like this:
 
-    ==> osc-bsu: Error querying OMI: AuthFailure: OUTSCALE was not able to validate the provided access credentials
+    ==> outscale-bsu: Error querying OMI: AuthFailure: OUTSCALE was not able to validate the provided access credentials
 
 If you suspect your system's date is wrong, you can compare it against
 <https://www.time.gov/>. On Linux/OS X, you can run the `date` command to get

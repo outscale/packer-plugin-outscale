@@ -4,19 +4,19 @@ The Outscale Packer Plugin is able to create Outscale OMIs. To achieve this, the
 multiple builders depending on the strategy you want to use to build the OMI.
 Packer supports the following builders at the moment:
 
-- [osc-bsu](/docs/builders/osc-bsu) - Create BSU-backed OMIs by
+- [outscale-bsu](/docs/builders/outscale-bsu) - Create BSU-backed OMIs by
   launching a source OMI and re-packaging it into a new OMI after
   provisioning. If in doubt, use this builder, which is the easiest to get
   started with.
 
-- [osc-chroot](/docs/builders/osc-chroot) - Create EBS-backed OMIs
+- [outscale-chroot](/docs/builders/outscale-chroot) - Create EBS-backed OMIs
   from an existing OUTSCALE VM by mounting the root device and using a
   [Chroot](https://en.wikipedia.org/wiki/Chroot) environment to provision
   that device. This is an **advanced builder and should not be used by
   newcomers**. However, it is also the fastest way to build an EBS-backed OMI
   since no new OUTSCALE VM needs to be launched.
 
-- [osc-bsusurrogate](/docs/builders/osc-bsusurrogate) - Create BSU-backed OMIs from scratch. Works similarly to the `chroot` builder but does
+- [outscale-bsusurrogate](/docs/builders/outscale-bsusurrogate) - Create BSU-backed OMIs from scratch. Works similarly to the `chroot` builder but does
   not require running in Outscale VM. This is an **advanced builder and should not be
   used by newcomers**.
 
@@ -27,7 +27,7 @@ builder](/docs/builders/osc-bsu). It is much easier to use and Outscale generall
 
 Packer is able to create Outscale BSU Volumes which are preinitialized with a filesystem and data.
 
-- [osc-bsuvolume](/docs/builders/osc-bsuvolume) - Create EBS volumes by launching a source OMI with block devices mapped. Provision the VM, then destroy it, retaining the EBS volumes.
+- [outscale-bsuvolume](/docs/builders/outscale-bsuvolume) - Create EBS volumes by launching a source OMI with block devices mapped. Provision the VM, then destroy it, retaining the EBS volumes.
 
 
 ## Installation

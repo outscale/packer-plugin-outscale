@@ -29,7 +29,7 @@ const testBuilderAccBasic = `
 {
     "builders": [
         {
-            "type": "osc-bsuvolume",
+            "type": "outscale-bsuvolume",
             "region": "eu-west-2",
             "vm_type": "t2.micro",
             "source_omi": "ami-6c274bbe",

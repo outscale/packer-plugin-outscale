@@ -28,7 +28,7 @@ func TestAccBuilder_basic(t *testing.T) {
 const testBuilderAccBasic = `
 {
 	"builders": [{
-		"type": "osc-bsu",
+		"type": "outscale-bsu",
 		"region": "eu-west-2",
 		"vm_type": "t2.micro",
 		"source_omi": "ami-6c274bbe",

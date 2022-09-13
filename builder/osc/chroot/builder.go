@@ -269,6 +269,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		&osccommon.StepUpdateOMIAttributes{
 			AccountIds:         b.config.OMIAccountIDs,
 			SnapshotAccountIds: b.config.SnapshotAccountIDs,
+			GlobalPermission:   b.config.GlobalPermission,
 			Ctx:                b.config.ctx,
 		},
 		&osccommon.StepCreateTags{

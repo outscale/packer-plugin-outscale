@@ -33,6 +33,7 @@ type FlatConfig struct {
 	SnapshotTags            common.TagMap                `mapstructure:"snapshot_tags" cty:"snapshot_tags" hcl:"snapshot_tags"`
 	SnapshotAccountIDs      []string                     `mapstructure:"snapshot_account_ids" cty:"snapshot_account_ids" hcl:"snapshot_account_ids"`
 	SnapshotGroups          []string                     `mapstructure:"snapshot_groups" cty:"snapshot_groups" hcl:"snapshot_groups"`
+	GlobalPermission        *bool                        `mapstructure:"global_permission" cty:"global_permission" hcl:"global_permission"`
 	AccessKey               *string                      `mapstructure:"access_key" cty:"access_key" hcl:"access_key"`
 	CustomEndpointOAPI      *string                      `mapstructure:"custom_endpoint_oapi" cty:"custom_endpoint_oapi" hcl:"custom_endpoint_oapi"`
 	InsecureSkipTLSVerify   *bool                        `mapstructure:"insecure_skip_tls_verify" cty:"insecure_skip_tls_verify" hcl:"insecure_skip_tls_verify"`
@@ -97,6 +98,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"snapshot_tags":              &hcldec.AttrSpec{Name: "snapshot_tags", Type: cty.Map(cty.String), Required: false},
 		"snapshot_account_ids":       &hcldec.AttrSpec{Name: "snapshot_account_ids", Type: cty.List(cty.String), Required: false},
 		"snapshot_groups":            &hcldec.AttrSpec{Name: "snapshot_groups", Type: cty.List(cty.String), Required: false},
+		"global_permission":          &hcldec.AttrSpec{Name: "global_permission", Type: cty.Bool, Required: false},
 		"access_key":                 &hcldec.AttrSpec{Name: "access_key", Type: cty.String, Required: false},
 		"custom_endpoint_oapi":       &hcldec.AttrSpec{Name: "custom_endpoint_oapi", Type: cty.String, Required: false},
 		"insecure_skip_tls_verify":   &hcldec.AttrSpec{Name: "insecure_skip_tls_verify", Type: cty.Bool, Required: false},

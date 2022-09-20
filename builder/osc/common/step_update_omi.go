@@ -8,19 +8,27 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	"github.com/outscale/osc-sdk-go/osc"
+
+	osc "github.com/outscale/osc-sdk-go/osc"
 )
 
 type StepUpdateOMIAttributes struct {
 	AccountIds         []string
 	SnapshotAccountIds []string
 	RawRegion          string
+	GlobalPermission   bool
 	Ctx                interpolate.Context
 }
 
 func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
-	config := state.Get("accessConfig").(*AccessConfig)
-	ui := state.Get("ui").(packersdk.Ui)
+	ui, ok := state.Get("ui").(packersdk.Ui)
+	if !ok {
+		return multistep.ActionContinue
+	}
+	config, ok := state.Get("accessConfig").(*AccessConfig)
+	if !ok {
+		return multistep.ActionContinue
+	}
 	omis := state.Get("omis").(map[string]string)
 	snapshots := state.Get("snapshots").(map[string][]string)
 
@@ -39,7 +47,7 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 		PermissionsToCreateVolume: osc.PermissionsOnResourceCreation{
 			Additions: osc.PermissionsOnResource{
 				AccountIds:       s.AccountIds,
-				GlobalPermission: false,
+				GlobalPermission: s.GlobalPermission,
 			},
 		},
 	}
@@ -48,7 +56,7 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 		PermissionsToLaunch: osc.PermissionsOnResourceCreation{
 			Additions: osc.PermissionsOnResource{
 				AccountIds:       s.AccountIds,
-				GlobalPermission: false,
+				GlobalPermission: s.GlobalPermission,
 			},
 		},
 	}
@@ -57,23 +65,6 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 	for region, omi := range omis {
 		ui.Say(fmt.Sprintf("Updating attributes on OMI (%s)...", omi))
 		regionconn := config.NewOSCClientByRegion(region)
-
-		// newConfig := &osc.Configuration{
-		// 	UserAgent: config.UserAgent,
-		// 	AccessKey: config.AccessKey,
-		// 	SecretKey: config.SecretKey,
-		// 	Service:   config.Service,
-		// 	Region:    region, //New region
-		// 	URL:       config.URL,
-		// }
-
-		// skipClient := &http.Client{
-		// 	Transport: &http.Transport{
-		// 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		// 	},
-		// }
-
-		//regionconn := oapi.NewClient(newConfig, skipClient)
 
 		ui.Message(fmt.Sprintf("Updating: %s", omi))
 		updateImageRequest.ImageId = omi

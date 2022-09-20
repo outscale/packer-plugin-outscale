@@ -190,6 +190,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			AccountIds:         b.config.OMIAccountIDs,
 			SnapshotAccountIds: b.config.SnapshotAccountIDs,
 			RawRegion:          b.config.RawRegion,
+			GlobalPermission:   b.config.GlobalPermission,
 			Ctx:                b.config.ctx,
 		},
 		&osccommon.StepCreateTags{

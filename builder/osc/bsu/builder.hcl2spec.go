@@ -43,6 +43,7 @@ type FlatConfig struct {
 	SnapshotTags                common.TagMap                          `mapstructure:"snapshot_tags" cty:"snapshot_tags" hcl:"snapshot_tags"`
 	SnapshotAccountIDs          []string                               `mapstructure:"snapshot_account_ids" cty:"snapshot_account_ids" hcl:"snapshot_account_ids"`
 	SnapshotGroups              []string                               `mapstructure:"snapshot_groups" cty:"snapshot_groups" hcl:"snapshot_groups"`
+	GlobalPermission            *bool                                  `mapstructure:"global_permission" cty:"global_permission" hcl:"global_permission"`
 	OMIMappings                 []common.FlatBlockDevice               `mapstructure:"omi_block_device_mappings" cty:"omi_block_device_mappings" hcl:"omi_block_device_mappings"`
 	LaunchMappings              []common.FlatBlockDevice               `mapstructure:"launch_block_device_mappings" cty:"launch_block_device_mappings" hcl:"launch_block_device_mappings"`
 	AssociatePublicIpAddress    *bool                                  `mapstructure:"associate_public_ip_address" cty:"associate_public_ip_address" hcl:"associate_public_ip_address"`
@@ -168,6 +169,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"snapshot_tags":                        &hcldec.AttrSpec{Name: "snapshot_tags", Type: cty.Map(cty.String), Required: false},
 		"snapshot_account_ids":                 &hcldec.AttrSpec{Name: "snapshot_account_ids", Type: cty.List(cty.String), Required: false},
 		"snapshot_groups":                      &hcldec.AttrSpec{Name: "snapshot_groups", Type: cty.List(cty.String), Required: false},
+		"global_permission":                    &hcldec.AttrSpec{Name: "global_permission", Type: cty.Bool, Required: false},
 		"omi_block_device_mappings":            &hcldec.BlockListSpec{TypeName: "omi_block_device_mappings", Nested: hcldec.ObjectSpec((*common.FlatBlockDevice)(nil).HCL2Spec())},
 		"launch_block_device_mappings":         &hcldec.BlockListSpec{TypeName: "launch_block_device_mappings", Nested: hcldec.ObjectSpec((*common.FlatBlockDevice)(nil).HCL2Spec())},
 		"associate_public_ip_address":          &hcldec.AttrSpec{Name: "associate_public_ip_address", Type: cty.Bool, Required: false},

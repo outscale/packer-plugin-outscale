@@ -84,4 +84,4 @@ release:
   - glob: ./docs.zip
 
 changelog:
-  skip: github-native
+  skip: true

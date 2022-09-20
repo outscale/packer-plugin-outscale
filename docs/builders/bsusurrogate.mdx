@@ -1,6 +1,6 @@
 ---
 description: |
-  The osc-bsusurrogate Packer builder is like the chroot builder, but does not
+  The outscale-bsusurrogate Packer builder is like the chroot builder, but does not
   require running inside an Outscale virtual machine.
 page_title: Outscale BSU Surrogate - Builders
 nav_title: BSU Surrogate
@@ -8,10 +8,10 @@ nav_title: BSU Surrogate
 
 # BSU Surrogate Builder
 
-Type: `osc-bsusurrogate`
+Type: `outscale-bsusurrogate`
 Artifact BuilderId: `oapi.outscale.bsusurrogate`
 
-The `osc-bsusurrogate` Packer builder is able to create Outscale OMIs by
+The `outscale-bsusurrogate` Packer builder is able to create Outscale OMIs by
 running a source virtual machine with an attached volume, provisioning the attached
 volume in such a way that it can be used as the root volume for the OMI, and
 then snapshotting and creating the OMI from that volume.
@@ -253,7 +253,7 @@ builder.
 
 ```json
 {
-  "type": "osc-bsusurrogate",
+  "type": "outscale-bsusurrogate",
   "secret_key": "YOUR SECRET KEY HERE",
   "access_key": "YOUR KEY HERE",
   "region": "eu-west-2",

@@ -42,7 +42,7 @@ func TestAccBuilder_VmTerminate(t *testing.T) {
 const testBuilderAccBasic = `
 {
 	"builders": [{
-		"type": "osc-bsusurrogate",
+		"type": "outscale-bsusurrogate",
 		"region": "eu-west-2",
 		"vm_type": "t2.micro",
 		"source_omi": "ami-6c274bbe",
@@ -73,7 +73,7 @@ const testBuilderAccBasic = `
 const testBuilderAccVmTerminate = `
 {
 	"builders": [{
-		"type": "osc-bsusurrogate",
+		"type": "outscale-bsusurrogate",
 		"region": "eu-west-2",
 		"vm_type": "t2.micro",
 		"source_omi": "ami-6c274bbe",

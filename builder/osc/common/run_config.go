@@ -83,7 +83,6 @@ type RunConfig struct {
 	NetFilter                   NetFilterOptions           `mapstructure:"net_filter"`
 	NetId                       string                     `mapstructure:"net_id"`
 	WindowsPasswordTimeout      time.Duration              `mapstructure:"windows_password_timeout"`
-
 	// Communicator settings
 	Comm         communicator.Config `mapstructure:",squash"`
 	SSHInterface string              `mapstructure:"ssh_interface"`

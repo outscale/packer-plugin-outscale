@@ -5,17 +5,16 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/antihax/optional"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 )
 
 // StepVmInfo verifies that this builder is running on an Outscale vm.
 type StepVmInfo struct{}
 
 func (s *StepVmInfo) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
-	oscconn := state.Get("osc").(*osc.APIClient)
+	oscconn := state.Get("osc").(*oscgo.APIClient)
 	//session := state.Get("clientConfig").(*session.Session)
 	ui := state.Get("ui").(packersdk.Ui)
 
@@ -37,11 +36,11 @@ func (s *StepVmInfo) Run(_ context.Context, state multistep.StateBag) multistep.
 	log.Printf("[Debug] VmID got: %s", string(vmID))
 
 	// Query the entire vm metadata
-	resp, _, err := oscconn.VmApi.ReadVms(context.Background(), &osc.ReadVmsOpts{
-		ReadVmsRequest: optional.NewInterface(osc.ReadVmsRequest{Filters: osc.FiltersVm{
-			VmIds: []string{string(vmID)},
-		}}),
-	})
+	resp, _, err := oscconn.VmApi.ReadVms(context.Background()).ReadVmsRequest(oscgo.ReadVmsRequest{
+		Filters: &oscgo.FiltersVm{
+			VmIds: &[]string{string(vmID)},
+		},
+	}).Execute()
 	if err != nil {
 		err := fmt.Errorf("Error getting vm data: %s", err)
 		state.Put("error", err)
@@ -49,16 +48,16 @@ func (s *StepVmInfo) Run(_ context.Context, state multistep.StateBag) multistep.
 		return multistep.ActionHalt
 	}
 
-	vmsResp := resp
+	vmsResp := resp.GetVms()
 
-	if len(vmsResp.Vms) == 0 {
+	if len(vmsResp) == 0 {
 		err := fmt.Errorf("Error getting vm data: no vm found")
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 
-	vm := vmsResp.Vms[0]
+	vm := vmsResp[0]
 	state.Put("vm", vm)
 
 	return multistep.ActionContinue

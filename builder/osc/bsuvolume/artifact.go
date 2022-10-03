@@ -1,16 +1,15 @@
 package bsuvolume
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"sort"
 	"strings"
 
-	"github.com/antihax/optional"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
 // map of region to list of volume IDs
@@ -31,7 +30,7 @@ type Artifact struct {
 	BuilderIdValue string
 
 	// Client connection for performing API stuff.
-	Conn *osc.APIClient
+	Conn *osccommon.OscClient
 
 	// StateData should store data such as GeneratedData
 	// to be shared with post-processors
@@ -85,12 +84,12 @@ func (a *Artifact) Destroy() error {
 		for _, volumeID := range volumeIDs {
 			log.Printf("Deregistering Volume ID (%s) from region (%s)", volumeID, region)
 
-			input := osc.DeleteVolumeRequest{
+			input := oscgo.DeleteVolumeRequest{
 				VolumeId: volumeID,
 			}
-			if _, _, err := a.Conn.VolumeApi.DeleteVolume(context.Background(), &osc.DeleteVolumeOpts{
-				DeleteVolumeRequest: optional.NewInterface(optional.NewInterface(input)),
-			}); err != nil {
+			oscClient := *(a.Conn)
+			_, _, err := oscClient.Api.VolumeApi.DeleteVolume(oscClient.Auth).DeleteVolumeRequest(input).Execute()
+			if err != nil {
 				errors = append(errors, err)
 			}
 		}

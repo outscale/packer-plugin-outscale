@@ -1,21 +1,13 @@
 package common
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"time"
 
-	"net/http"
-
-	"github.com/antihax/optional"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 )
-
-type oscDescriber interface {
-	ReadVms(ctx context.Context, localVarOptionals *osc.ReadVmsOpts) (osc.ReadVmsResponse, *http.Response, error)
-}
 
 var (
 	// modified in tests
@@ -24,65 +16,63 @@ var (
 
 // SSHHost returns a function that can be given to the SSH communicator
 // for determining the SSH address based on the vm DNS name.
-func SSHHost(e oscDescriber, sshInterface string) func(multistep.StateBag) (string, error) {
+func SSHHost(conn *OscClient, sshInterface string) func(multistep.StateBag) (string, error) {
 	return func(state multistep.StateBag) (string, error) {
 		const tries = 2
 		// <= with current structure to check result of describing `tries` times
 		for j := 0; j <= tries; j++ {
 			var host string
-			i := state.Get("vm").(osc.Vm)
+			i := state.Get("vm").(oscgo.Vm)
 
 			if sshInterface != "" {
 				switch sshInterface {
 				case "public_ip":
-					if i.PublicIp != "" {
-						host = i.PublicIp
+					if i.GetPublicIp() != "" {
+						host = i.GetPublicIp()
 					}
 				case "public_dns":
-					if i.PublicDnsName != "" {
-						host = i.PublicDnsName
+					if i.GetPublicDnsName() != "" {
+						host = i.GetPublicDnsName()
 					}
 				case "private_ip":
-					if i.PrivateIp != "" {
-						host = i.PrivateIp
+					if i.GetPrivateIp() != "" {
+						host = i.GetPrivateIp()
 					}
 				case "private_dns":
-					if i.PrivateDnsName != "" {
-						host = i.PrivateDnsName
+					if i.GetPrivateDnsName() != "" {
+						host = i.GetPrivateDnsName()
 					}
 				default:
 					panic(fmt.Sprintf("Unknown interface type: %s", sshInterface))
 				}
-			} else if i.NetId != "" {
-				if i.PublicIp != "" {
-					host = i.PublicIp
-				} else if i.PrivateIp != "" {
-					host = i.PrivateIp
+			} else if i.GetNetId() != "" {
+				if i.GetPublicIp() != "" {
+					host = i.GetPublicIp()
+				} else if i.GetPrivateIp() != "" {
+					host = i.GetPrivateIp()
 				}
-			} else if i.PublicDnsName != "" {
-				host = i.PublicDnsName
+			} else if i.GetPublicDnsName() != "" {
+				host = i.GetPublicDnsName()
 			}
 
 			if host != "" {
 				return host, nil
 			}
 
-			r, _, err := e.ReadVms(context.Background(), &osc.ReadVmsOpts{
-				ReadVmsRequest: optional.NewInterface(osc.ReadVmsRequest{
-					Filters: osc.FiltersVm{
-						VmIds: []string{i.VmId},
-					},
-				}),
-			})
+			r, _, err := conn.Api.VmApi.ReadVms(conn.Auth).ReadVmsRequest(oscgo.ReadVmsRequest{
+				Filters: &oscgo.FiltersVm{
+					VmIds: &[]string{i.GetVmId()},
+				}}).Execute()
+
 			if err != nil {
 				return "", err
 			}
 
-			if len(r.Vms) == 0 {
-				return "", fmt.Errorf("vm not found: %s", i.VmId)
+			if len(r.GetVms()) == 0 {
+				return "", fmt.Errorf("vm not found: %s", i.GetVmId())
 			}
 
-			state.Put("vm", r.Vms[0])
+			state.Put("vm", r.GetVms()[0])
 			time.Sleep(sshHostSleepDuration)
 		}
 
@@ -92,66 +82,63 @@ func SSHHost(e oscDescriber, sshInterface string) func(multistep.StateBag) (stri
 
 // SSHHost returns a function that can be given to the SSH communicator
 // for determining the SSH address based on the vm DNS name.
-func OscSSHHost(e oscDescriber, sshInterface string) func(multistep.StateBag) (string, error) {
+func OscSSHHost(conn *OscClient, sshInterface string) func(multistep.StateBag) (string, error) {
 	return func(state multistep.StateBag) (string, error) {
 		const tries = 2
 		// <= with current structure to check result of describing `tries` times
 		for j := 0; j <= tries; j++ {
 			var host string
-			i := state.Get("vm").(osc.Vm)
+			i := state.Get("vm").(oscgo.Vm)
 
 			if sshInterface != "" {
 				switch sshInterface {
 				case "public_ip":
-					if i.PublicIp != "" {
-						host = i.PublicIp
+					if i.GetPublicIp() != "" {
+						host = i.GetPublicIp()
 					}
 				case "public_dns":
-					if i.PublicDnsName != "" {
-						host = i.PublicDnsName
+					if i.GetPublicDnsName() != "" {
+						host = i.GetPublicDnsName()
 					}
 				case "private_ip":
-					if i.PrivateIp != "" {
-						host = i.PrivateIp
+					if i.GetPrivateIp() != "" {
+						host = i.GetPrivateIp()
 					}
 				case "private_dns":
-					if i.PrivateDnsName != "" {
-						host = i.PrivateDnsName
+					if i.GetPrivateDnsName() != "" {
+						host = i.GetPrivateDnsName()
 					}
 				default:
 					panic(fmt.Sprintf("Unknown interface type: %s", sshInterface))
 				}
-			} else if i.NetId != "" {
-				if i.PublicIp != "" {
-					host = i.PublicIp
-				} else if i.PrivateIp != "" {
-					host = i.PrivateIp
+			} else if i.GetNetId() != "" {
+				if i.GetPublicIp() != "" {
+					host = i.GetPublicIp()
+				} else if i.GetPrivateIp() != "" {
+					host = i.GetPrivateIp()
 				}
-			} else if i.PublicDnsName != "" {
-				host = i.PublicDnsName
+			} else if i.GetPublicDnsName() != "" {
+				host = i.GetPublicDnsName()
 			}
 
 			if host != "" {
 				return host, nil
 			}
 
-			r, _, err := e.ReadVms(context.Background(), &osc.ReadVmsOpts{
-				ReadVmsRequest: optional.NewInterface(osc.ReadVmsRequest{
-					Filters: osc.FiltersVm{
-						VmIds: []string{i.VmId},
-					},
-				}),
-			})
+			r, _, err := conn.Api.VmApi.ReadVms(conn.Auth).ReadVmsRequest(oscgo.ReadVmsRequest{
+				Filters: &oscgo.FiltersVm{
+					VmIds: &[]string{i.GetVmId()},
+				}}).Execute()
 
 			if err != nil {
 				return "", err
 			}
 
-			if len(r.Vms) == 0 {
-				return "", fmt.Errorf("vm not found: %s", i.VmId)
+			if len(r.GetVms()) == 0 {
+				return "", fmt.Errorf("vm not found: %s", i.GetVmId())
 			}
 
-			state.Put("vm", r.Vms[0])
+			state.Put("vm", r.GetVms()[0])
 			time.Sleep(sshHostSleepDuration)
 		}
 

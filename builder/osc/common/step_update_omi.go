@@ -4,12 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/antihax/optional"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-
-	osc "github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 )
 
 type StepUpdateOMIAttributes struct {
@@ -43,20 +41,20 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 
 	s.Ctx.Data = extractBuildInfo(s.RawRegion, state)
 
-	updateSnapshoptRequest := osc.UpdateSnapshotRequest{
-		PermissionsToCreateVolume: osc.PermissionsOnResourceCreation{
-			Additions: osc.PermissionsOnResource{
-				AccountIds:       s.AccountIds,
-				GlobalPermission: s.GlobalPermission,
+	updateSnapshoptRequest := oscgo.UpdateSnapshotRequest{
+		PermissionsToCreateVolume: oscgo.PermissionsOnResourceCreation{
+			Additions: &oscgo.PermissionsOnResource{
+				AccountIds:       &s.AccountIds,
+				GlobalPermission: &s.GlobalPermission,
 			},
 		},
 	}
 
-	updateImageRequest := osc.UpdateImageRequest{
-		PermissionsToLaunch: osc.PermissionsOnResourceCreation{
-			Additions: osc.PermissionsOnResource{
-				AccountIds:       s.AccountIds,
-				GlobalPermission: s.GlobalPermission,
+	updateImageRequest := oscgo.UpdateImageRequest{
+		PermissionsToLaunch: oscgo.PermissionsOnResourceCreation{
+			Additions: &oscgo.PermissionsOnResource{
+				AccountIds:       &s.AccountIds,
+				GlobalPermission: &s.GlobalPermission,
 			},
 		},
 	}
@@ -68,10 +66,7 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 
 		ui.Message(fmt.Sprintf("Updating: %s", omi))
 		updateImageRequest.ImageId = omi
-		_, _, err := regionconn.ImageApi.UpdateImage(context.Background(), &osc.UpdateImageOpts{
-			UpdateImageRequest: optional.NewInterface(updateImageRequest),
-		})
-
+		_, _, err := regionconn.Api.ImageApi.UpdateImage(regionconn.Auth).UpdateImageRequest(updateImageRequest).Execute()
 		if err != nil {
 			err := fmt.Errorf("Error updating OMI: %s", err)
 			state.Put("error", err)
@@ -88,9 +83,7 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 
 			ui.Message(fmt.Sprintf("Updating: %s", snapshot))
 			updateSnapshoptRequest.SnapshotId = snapshot
-			_, _, err := regionconn.SnapshotApi.UpdateSnapshot(context.Background(), &osc.UpdateSnapshotOpts{
-				UpdateSnapshotRequest: optional.NewInterface(updateSnapshoptRequest),
-			})
+			_, _, err := regionconn.Api.SnapshotApi.UpdateSnapshot(regionconn.Auth).UpdateSnapshotRequest(updateSnapshoptRequest).Execute()
 			if err != nil {
 				err := fmt.Errorf("Error updating snapshot: %s", err)
 				state.Put("error", err)

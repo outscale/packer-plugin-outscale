@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/antihax/optional"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 	"github.com/outscale/packer-plugin-outscale/builder/osc/common/retry"
 )
 
@@ -18,8 +17,8 @@ type StepStopBSUBackedVm struct {
 }
 
 func (s *StepStopBSUBackedVm) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	oscconn := state.Get("osc").(*osc.APIClient)
-	vm := state.Get("vm").(osc.Vm)
+	oscconn := state.Get("osc").(*OscClient)
+	vm := state.Get("vm").(oscgo.Vm)
 	ui := state.Get("ui").(packersdk.Ui)
 
 	// Skip when it is a spot vm
@@ -44,12 +43,9 @@ func (s *StepStopBSUBackedVm) Run(ctx context.Context, state multistep.StateBag)
 		err := retry.Run(10, 60, 6, func(i uint) (bool, error) {
 			ui.Message(fmt.Sprintf("Stopping vm, attempt %d", i+1))
 
-			_, _, err = oscconn.VmApi.StopVms(context.Background(), &osc.StopVmsOpts{
-				StopVmsRequest: optional.NewInterface(osc.StopVmsRequest{
-					VmIds: []string{vm.VmId},
-				}),
-			})
-
+			_, _, err = oscconn.Api.VmApi.StopVms(oscconn.Auth).StopVmsRequest(oscgo.StopVmsRequest{
+				VmIds: []string{*vm.VmId},
+			}).Execute()
 			if err == nil {
 				// success
 				return true, nil
@@ -81,11 +77,11 @@ func (s *StepStopBSUBackedVm) Run(ctx context.Context, state multistep.StateBag)
 
 	// Wait for the vm to actually stop
 	ui.Say("Waiting for the vm to stop...")
-	switch vm.VmInitiatedShutdownBehavior {
+	switch vm.GetVmInitiatedShutdownBehavior() {
 	case StopShutdownBehavior:
-		err = waitUntilOscVmStopped(oscconn, vm.VmId)
+		err = waitUntilOscVmStopped(oscconn, *vm.VmId)
 	case TerminateShutdownBehavior:
-		err = waitUntilOscVmDeleted(oscconn, vm.VmId)
+		err = waitUntilOscVmDeleted(oscconn, *vm.VmId)
 	default:
 		err := fmt.Errorf("Wrong value for the shutdown behavior")
 		state.Put("error", err)

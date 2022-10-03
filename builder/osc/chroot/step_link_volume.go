@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/antihax/optional"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
@@ -24,9 +23,9 @@ type StepLinkVolume struct {
 }
 
 func (s *StepLinkVolume) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	oscconn := state.Get("osc").(*osc.APIClient)
+	oscconn := state.Get("osc").(*osccommon.OscClient)
 	device := state.Get("device").(string)
-	vm := state.Get("vm").(osc.Vm)
+	vm := state.Get("vm").(oscgo.Vm)
 	ui := state.Get("ui").(packersdk.Ui)
 	volumeId := state.Get("volume_id").(string)
 
@@ -35,14 +34,12 @@ func (s *StepLinkVolume) Run(ctx context.Context, state multistep.StateBag) mult
 	linkVolume := device
 
 	ui.Say(fmt.Sprintf("Attaching the root volume to %s", linkVolume))
-	_, _, err := oscconn.VolumeApi.LinkVolume(context.Background(), &osc.LinkVolumeOpts{
-		LinkVolumeRequest: optional.NewInterface(osc.LinkVolumeRequest{
-			VmId:       vm.VmId,
-			VolumeId:   volumeId,
-			DeviceName: linkVolume,
-		}),
-	})
-
+	opts := oscgo.LinkVolumeRequest{
+		DeviceName: linkVolume,
+		VmId:       *vm.VmId,
+		VolumeId:   volumeId,
+	}
+	_, _, err := oscconn.Api.VolumeApi.LinkVolume(oscconn.Auth).LinkVolumeRequest(opts).Execute()
 	if err != nil {
 		err := fmt.Errorf("Error attaching volume: %s", err)
 		state.Put("error", err)
@@ -79,14 +76,14 @@ func (s *StepLinkVolume) CleanupFunc(state multistep.StateBag) error {
 		return nil
 	}
 
-	oscconn := state.Get("osc").(*osc.APIClient)
+	oscconn := state.Get("osc").(*osccommon.OscClient)
 	ui := state.Get("ui").(packersdk.Ui)
 
 	ui.Say("Detaching BSU volume...")
-	_, _, err := oscconn.VolumeApi.UnlinkVolume(context.Background(), &osc.UnlinkVolumeOpts{
-		UnlinkVolumeRequest: optional.NewInterface(osc.UnlinkVolumeRequest{VolumeId: s.volumeId}),
-	})
-
+	opts := oscgo.UnlinkVolumeRequest{
+		VolumeId: s.volumeId,
+	}
+	_, _, err := oscconn.Api.VolumeApi.UnlinkVolume(oscconn.Auth).UnlinkVolumeRequest(opts).Execute()
 	if err != nil {
 		return fmt.Errorf("Error detaching BSU volume: %s", err)
 	}

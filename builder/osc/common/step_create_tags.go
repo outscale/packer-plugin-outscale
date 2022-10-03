@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/antihax/optional"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 	"github.com/outscale/packer-plugin-outscale/builder/osc/common/retry"
 )
 
@@ -36,14 +35,11 @@ func (s *StepCreateTags) Run(_ context.Context, state multistep.StateBag) multis
 
 		// Retrieve image list for given OMI
 		resourceIds := []string{ami}
-		imageResp, _, err := regionconn.ImageApi.ReadImages(context.Background(), &osc.ReadImagesOpts{
-			ReadImagesRequest: optional.NewInterface(osc.ReadImagesRequest{
-				Filters: osc.FiltersImage{
-					ImageIds: resourceIds,
-				},
-			}),
-		})
-
+		imageResp, _, err := regionconn.Api.ImageApi.ReadImages(regionconn.Auth).ReadImagesRequest(oscgo.ReadImagesRequest{
+			Filters: &oscgo.FiltersImage{
+				ImageIds: &resourceIds,
+			},
+		}).Execute()
 		if err != nil {
 			err := fmt.Errorf("Error retrieving details for OMI (%s): %s", ami, err)
 			state.Put("error", err)
@@ -51,34 +47,34 @@ func (s *StepCreateTags) Run(_ context.Context, state multistep.StateBag) multis
 			return multistep.ActionHalt
 		}
 
-		if len(imageResp.Images) == 0 {
+		if len(imageResp.GetImages()) == 0 {
 			err := fmt.Errorf("Error retrieving details for OMI (%s), no images found", ami)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
 
-		image := imageResp.Images[0]
+		image := imageResp.GetImages()[0]
 		snapshotIds := []string{}
 
 		// Add only those with a Snapshot ID, i.e. not Ephemeral
-		for _, device := range image.BlockDeviceMappings {
-			if device.Bsu.SnapshotId != "" {
-				ui.Say(fmt.Sprintf("Tagging snapshot: %s", device.Bsu.SnapshotId))
-				resourceIds = append(resourceIds, device.Bsu.SnapshotId)
-				snapshotIds = append(snapshotIds, device.Bsu.SnapshotId)
+		for _, device := range image.GetBlockDeviceMappings() {
+			if device.GetBsu().SnapshotId != nil {
+				ui.Say(fmt.Sprintf("Tagging snapshot: %s", *device.GetBsu().SnapshotId))
+				resourceIds = append(resourceIds, *device.GetBsu().SnapshotId)
+				snapshotIds = append(snapshotIds, *device.GetBsu().SnapshotId)
 			}
 		}
 
 		// Convert tags to oapi.Tag format
 		ui.Say("Creating OMI tags")
-		amiTags, err := s.Tags.OSCTags(s.Ctx, config.RawRegion, state)
+		omiTags, err := s.Tags.OSCTags(s.Ctx, config.RawRegion, state)
 		if err != nil {
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
-		amiTags.Report(ui)
+		omiTags.Report(ui)
 
 		ui.Say("Creating snapshot tags")
 		snapshotTags, err := s.SnapshotTags.OSCTags(s.Ctx, config.RawRegion, state)
@@ -88,16 +84,15 @@ func (s *StepCreateTags) Run(_ context.Context, state multistep.StateBag) multis
 			return multistep.ActionHalt
 		}
 		snapshotTags.Report(ui)
-
 		// Retry creating tags for about 2.5 minutes
 		err = retry.Run(0.2, 30, 11, func(_ uint) (bool, error) {
 			// Tag images and snapshots
-			_, _, err := regionconn.TagApi.CreateTags(context.Background(), &osc.CreateTagsOpts{
-				CreateTagsRequest: optional.NewInterface(osc.CreateTagsRequest{
-					ResourceIds: resourceIds,
-					Tags:        amiTags,
-				}),
-			})
+			request := oscgo.CreateTagsRequest{
+				ResourceIds: resourceIds,
+				Tags:        omiTags,
+			}
+
+			_, _, err := regionconn.Api.TagApi.CreateTags(regionconn.Auth).CreateTagsRequest(request).Execute()
 			if awsErr, ok := err.(awserr.Error); ok {
 				if awsErr.Code() == "InvalidOMIID.NotFound" ||
 					awsErr.Code() == "InvalidSnapshot.NotFound" {
@@ -105,14 +100,13 @@ func (s *StepCreateTags) Run(_ context.Context, state multistep.StateBag) multis
 				}
 			}
 
+			requestSnap := oscgo.CreateTagsRequest{
+				ResourceIds: snapshotIds,
+				Tags:        snapshotTags,
+			}
 			// Override tags on snapshots
 			if len(snapshotTags) > 0 {
-				_, _, err = regionconn.TagApi.CreateTags(context.Background(), &osc.CreateTagsOpts{
-					CreateTagsRequest: optional.NewInterface(osc.CreateTagsRequest{
-						ResourceIds: snapshotIds,
-						Tags:        snapshotTags,
-					}),
-				})
+				_, _, err = regionconn.Api.TagApi.CreateTags(regionconn.Auth).CreateTagsRequest(requestSnap).Execute()
 			}
 			if err == nil {
 				return true, nil

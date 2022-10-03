@@ -1,18 +1,16 @@
 package common
 
 import (
-	"context"
 	"fmt"
 
-	"github.com/antihax/optional"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 )
 
 type TagMap map[string]string
-type OSCTags []osc.ResourceTag
+type OSCTags []oscgo.ResourceTag
 
 func (t OSCTags) Report(ui packersdk.Ui) {
 	for _, tag := range t {
@@ -26,7 +24,7 @@ func (t TagMap) IsSet() bool {
 }
 
 func (t TagMap) OSCTags(ctx interpolate.Context, region string, state multistep.StateBag) (OSCTags, error) {
-	var oscTags []osc.ResourceTag
+	var oscTags []oscgo.ResourceTag
 	ctx.Data = extractBuildInfo(region, state)
 
 	for key, value := range t {
@@ -38,7 +36,7 @@ func (t TagMap) OSCTags(ctx interpolate.Context, region string, state multistep.
 		if err != nil {
 			return nil, fmt.Errorf("Error processing tag: %s:%s - %s", key, value, err)
 		}
-		oscTags = append(oscTags, osc.ResourceTag{
+		oscTags = append(oscTags, oscgo.ResourceTag{
 			Key:   interpolatedKey,
 			Value: interpolatedValue,
 		})
@@ -46,15 +44,12 @@ func (t TagMap) OSCTags(ctx interpolate.Context, region string, state multistep.
 	return oscTags, nil
 }
 
-func CreateOSCTags(conn *osc.APIClient, resourceID string, ui packersdk.Ui, tags OSCTags) error {
+func CreateOSCTags(conn *OscClient, resourceID string, ui packersdk.Ui, tags OSCTags) error {
 	tags.Report(ui)
-
-	_, _, err := conn.TagApi.CreateTags(context.Background(), &osc.CreateTagsOpts{
-		CreateTagsRequest: optional.NewInterface(osc.CreateTagsRequest{
-			ResourceIds: []string{resourceID},
-			Tags:        tags,
-		}),
-	})
-
+	request := oscgo.CreateTagsRequest{
+		ResourceIds: []string{resourceID},
+		Tags:        tags,
+	}
+	_, _, err := conn.Api.TagApi.CreateTags(conn.Auth).CreateTagsRequest(request).Execute()
 	return err
 }

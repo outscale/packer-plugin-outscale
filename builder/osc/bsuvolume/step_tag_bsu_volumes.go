@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/antihax/optional"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
 type stepTagBSUVolumes struct {
@@ -18,17 +18,17 @@ type stepTagBSUVolumes struct {
 }
 
 func (s *stepTagBSUVolumes) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
-	oscconn := state.Get("osc").(*osc.APIClient)
-	vm := state.Get("vm").(osc.Vm)
+	oscconn := state.Get("osc").(*osccommon.OscClient)
+	vm := state.Get("vm").(oscgo.Vm)
 	ui := state.Get("ui").(packersdk.Ui)
 
 	volumes := make(BsuVolumes)
-	for _, instanceBlockDevices := range vm.BlockDeviceMappings {
+	for _, instanceBlockDevices := range *vm.BlockDeviceMappings {
 		for _, configVolumeMapping := range s.VolumeMapping {
-			if configVolumeMapping.DeviceName == instanceBlockDevices.DeviceName {
+			if &configVolumeMapping.DeviceName == instanceBlockDevices.DeviceName {
 				volumes[s.RawRegion] = append(
 					volumes[s.RawRegion],
-					instanceBlockDevices.Bsu.VolumeId)
+					instanceBlockDevices.Bsu.GetVolumeId())
 			}
 		}
 	}
@@ -37,7 +37,7 @@ func (s *stepTagBSUVolumes) Run(_ context.Context, state multistep.StateBag) mul
 	if len(s.VolumeMapping) > 0 {
 		ui.Say("Tagging BSU volumes...")
 
-		toTag := map[string][]osc.ResourceTag{}
+		toTag := map[string][]oscgo.ResourceTag{}
 		for _, mapping := range s.VolumeMapping {
 			if len(mapping.Tags) == 0 {
 				ui.Say(fmt.Sprintf("No tags specified for volume on %s...", mapping.DeviceName))
@@ -53,22 +53,21 @@ func (s *stepTagBSUVolumes) Run(_ context.Context, state multistep.StateBag) mul
 			}
 			tags.Report(ui)
 
-			for _, v := range vm.BlockDeviceMappings {
-				if v.DeviceName == mapping.DeviceName {
-					toTag[v.Bsu.VolumeId] = tags
+			for _, v := range *vm.BlockDeviceMappings {
+				if v.GetDeviceName() == mapping.DeviceName {
+					toTag[v.Bsu.GetVolumeId()] = tags
 				}
 			}
 		}
 
 		for volumeId, tags := range toTag {
-			_, _, err := oscconn.TagApi.CreateTags(context.Background(), &osc.CreateTagsOpts{
-				CreateTagsRequest: optional.NewInterface(osc.CreateTagsRequest{
-					ResourceIds: []string{volumeId},
-					Tags:        tags,
-				}),
-			})
+			request := oscgo.CreateTagsRequest{
+				ResourceIds: []string{volumeId},
+				Tags:        tags,
+			}
+			_, _, err := oscconn.Api.TagApi.CreateTags(oscconn.Auth).CreateTagsRequest(request).Execute()
 			if err != nil {
-				err := fmt.Errorf("Error tagging BSU Volume %s on %s: %s", volumeId, vm.VmId, err)
+				err := fmt.Errorf("Error tagging BSU Volume %s on %s: %s", volumeId, vm.GetVmId(), err)
 				state.Put("error", err)
 				ui.Error(err.Error())
 				return multistep.ActionHalt

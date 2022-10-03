@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/antihax/optional"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 )
 
 // StepPreValidate provides an opportunity to pre-validate any configuration for
@@ -26,20 +25,17 @@ func (s *StepPreValidate) Run(_ context.Context, state multistep.StateBag) multi
 	}
 
 	var (
-		conn   = state.Get("osc").(*osc.APIClient)
+		conn   = state.Get("osc").(*OscClient)
 		images []interface{}
 	)
 
 	ui.Say(fmt.Sprintf("Prevalidating OMI Name: %s", s.DestOmiName))
 
-	resp, _, err := conn.ImageApi.ReadImages(context.Background(), &osc.ReadImagesOpts{
-		ReadImagesRequest: optional.NewInterface(osc.ReadImagesRequest{
-			Filters: osc.FiltersImage{
-				ImageNames: []string{s.DestOmiName},
-			},
-		}),
-	})
-
+	resp, _, err := conn.Api.ImageApi.ReadImages(conn.Auth).ReadImagesRequest(oscgo.ReadImagesRequest{
+		Filters: &oscgo.FiltersImage{
+			ImageIds: &[]string{s.DestOmiName},
+		},
+	}).Execute()
 	if err != nil {
 		err := fmt.Errorf("Error querying OMI: %s", err)
 		state.Put("error", err)
@@ -47,8 +43,8 @@ func (s *StepPreValidate) Run(_ context.Context, state multistep.StateBag) multi
 		return multistep.ActionHalt
 	}
 
-	for _, omi := range resp.Images {
-		if omi.ImageName == s.DestOmiName {
+	for _, omi := range resp.GetImages() {
+		if omi.GetImageName() == s.DestOmiName {
 			images = append(images, omi)
 		}
 	}

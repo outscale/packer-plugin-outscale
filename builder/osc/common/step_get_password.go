@@ -11,11 +11,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/antihax/optional"
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 )
 
 // StepGetPassword reads the password from a Windows server and sets it
@@ -103,8 +102,8 @@ WaitLoop:
 func (s *StepGetPassword) Cleanup(multistep.StateBag) {}
 
 func (s *StepGetPassword) waitForPassword(state multistep.StateBag, cancel <-chan struct{}) (string, error) {
-	oscconn := state.Get("osc").(*osc.APIClient)
-	vm := state.Get("vm").(osc.Vm)
+	oscconn := state.Get("osc").(*oscgo.APIClient)
+	vm := state.Get("vm").(oscgo.Vm)
 	privateKey := s.Comm.SSHPrivateKey
 
 	for {
@@ -115,19 +114,15 @@ func (s *StepGetPassword) waitForPassword(state multistep.StateBag, cancel <-cha
 		case <-time.After(5 * time.Second):
 		}
 
-		resp, _, err := oscconn.VmApi.ReadAdminPassword(context.Background(), &osc.ReadAdminPasswordOpts{
-			ReadAdminPasswordRequest: optional.NewInterface(osc.ReadAdminPasswordRequest{
-				VmId: vm.VmId,
-			}),
-		})
+		resp, _, err := oscconn.VmApi.ReadAdminPassword(context.Background()).ReadAdminPasswordRequest(oscgo.ReadAdminPasswordRequest{VmId: *vm.VmId}).Execute()
 		if err != nil {
 			err := fmt.Errorf("Error retrieving auto-generated vm password: %s", err)
 			return "", err
 		}
 
-		if resp.AdminPassword != "" {
+		if resp.AdminPassword != nil {
 			decryptedPassword, err := decryptPasswordDataWithPrivateKey(
-				resp.AdminPassword, privateKey)
+				*resp.AdminPassword, privateKey)
 			if err != nil {
 				err := fmt.Errorf("Error decrypting auto-generated vm password: %s", err)
 				return "", err

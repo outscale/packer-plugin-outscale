@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/antihax/optional"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
@@ -23,19 +22,18 @@ type StepSnapshot struct {
 }
 
 func (s *StepSnapshot) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	oscconn := state.Get("osc").(*osc.APIClient)
+	oscconn := state.Get("osc").(*osccommon.OscClient)
 	ui := state.Get("ui").(packersdk.Ui)
 	volumeId := state.Get("volume_id").(string)
 
 	ui.Say("Creating snapshot...")
 	description := fmt.Sprintf("Packer: %s", time.Now().String())
 
-	createSnapResp, _, err := oscconn.SnapshotApi.CreateSnapshot(context.Background(), &osc.CreateSnapshotOpts{
-		CreateSnapshotRequest: optional.NewInterface(osc.CreateSnapshotRequest{
-			VolumeId:    volumeId,
-			Description: description,
-		}),
-	})
+	request := oscgo.CreateSnapshotRequest{
+		Description: &description,
+		VolumeId:    &volumeId,
+	}
+	createSnapResp, _, err := oscconn.Api.SnapshotApi.CreateSnapshot(oscconn.Auth).CreateSnapshotRequest(request).Execute()
 	if err != nil {
 		err := fmt.Errorf("Error creating snapshot: %s", err)
 		state.Put("error", err)
@@ -44,7 +42,7 @@ func (s *StepSnapshot) Run(ctx context.Context, state multistep.StateBag) multis
 	}
 
 	// Set the snapshot ID so we can delete it later
-	s.snapshotId = createSnapResp.Snapshot.SnapshotId
+	s.snapshotId = createSnapResp.Snapshot.GetSnapshotId()
 	ui.Message(fmt.Sprintf("Snapshot ID: %s", s.snapshotId))
 
 	// Wait for the snapshot to be ready
@@ -75,12 +73,11 @@ func (s *StepSnapshot) Cleanup(state multistep.StateBag) {
 	_, halted := state.GetOk(multistep.StateHalted)
 
 	if cancelled || halted {
-		oscconn := state.Get("osc").(*osc.APIClient)
+		oscconn := state.Get("osc").(*osccommon.OscClient)
 		ui := state.Get("ui").(packersdk.Ui)
 		ui.Say("Removing snapshot since we cancelled or halted...")
-		_, _, err := oscconn.SnapshotApi.DeleteSnapshot(context.Background(), &osc.DeleteSnapshotOpts{
-			DeleteSnapshotRequest: optional.NewInterface(osc.DeleteSnapshotRequest{SnapshotId: s.snapshotId}),
-		})
+		request := oscgo.DeleteSnapshotRequest{SnapshotId: s.snapshotId}
+		_, _, err := oscconn.Api.SnapshotApi.DeleteSnapshot(oscconn.Auth).DeleteSnapshotRequest(request).Execute()
 		if err != nil {
 			ui.Error(fmt.Sprintf("Error: %s", err))
 		}

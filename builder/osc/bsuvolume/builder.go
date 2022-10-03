@@ -17,7 +17,7 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
@@ -100,7 +100,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	// 	},
 	// }
 
-	var oscConn *osc.APIClient
+	var oscConn *oscgo.APIClient
 	var err error
 	if oscConn, err = b.config.NewOSCClient(); err != nil {
 		return nil, err
@@ -175,7 +175,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		&communicator.StepConnect{
 			Config: &b.config.RunConfig.Comm,
 			Host: osccommon.OscSSHHost(
-				oscConn.VmApi,
+				oscConn,
 				b.config.SSHInterface),
 			SSHConfig: b.config.RunConfig.Comm.SSHConfigFunc(),
 		},

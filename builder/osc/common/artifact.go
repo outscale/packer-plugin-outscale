@@ -1,16 +1,14 @@
 package common
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"sort"
 	"strings"
 
-	"github.com/antihax/optional"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 )
 
 // Artifact is an artifact implementation that contains built OMIs.
@@ -82,28 +80,25 @@ func (a *Artifact) Destroy() error {
 		regionConn := config.NewOSCClientByRegion(region)
 
 		// Get image metadata
-		imageResp, _, err := regionConn.ImageApi.ReadImages(context.Background(), &osc.ReadImagesOpts{
-			ReadImagesRequest: optional.NewInterface(osc.ReadImagesRequest{
-				Filters: osc.FiltersImage{
-					ImageIds: []string{imageId},
-				},
-			}),
-		})
+		imageResp, _, err := regionConn.Api.ImageApi.ReadImages(regionConn.Auth).ReadImagesRequest(oscgo.ReadImagesRequest{
+			Filters: &oscgo.FiltersImage{
+				ImageIds: &[]string{imageId},
+			},
+		}).Execute()
 		if err != nil {
 			errors = append(errors, err)
 		}
-		if len(imageResp.Images) == 0 {
+		if len(imageResp.GetImages()) == 0 {
 			err := fmt.Errorf("Error retrieving details for OMI (%s), no images found", imageId)
 			errors = append(errors, err)
 		}
 
 		// Deregister ami
-		input := osc.DeleteImageRequest{
+		input := oscgo.DeleteImageRequest{
 			ImageId: imageId,
 		}
-		if _, _, err := regionConn.ImageApi.DeleteImage(context.Background(), &osc.DeleteImageOpts{
-			DeleteImageRequest: optional.NewInterface(input),
-		}); err != nil {
+		_, _, err = regionConn.Api.ImageApi.DeleteImage(regionConn.Auth).DeleteImageRequest(input).Execute()
+		if err != nil {
 			errors = append(errors, err)
 		}
 

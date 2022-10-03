@@ -1,6 +1,7 @@
 package common
 
 import (
+	"context"
 	"crypto/tls"
 	"errors"
 	"fmt"
@@ -9,7 +10,8 @@ import (
 	"os"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	"github.com/outscale/osc-sdk-go/osc"
+	"github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 	"github.com/outscale/packer-plugin-outscale/version"
 )
 
@@ -40,8 +42,13 @@ func getValueFromEnvVariables(envVariables []string) (string, bool) {
 	return "", false
 }
 
+type OscClient struct {
+	Auth context.Context
+	Api  *oscgo.APIClient
+}
+
 // NewOSCClient retrieves the Outscale OSC-SDK client
-func (c *AccessConfig) NewOSCClient() (*osc.APIClient, error) {
+func (c *AccessConfig) NewOSCClient() (*OscClient, error) {
 	if c.AccessKey == "" {
 		var ok bool
 		if c.AccessKey, ok = getValueFromEnvVariables([]string{"OSC_ACCESS_KEY", "OUTSCALE_ACCESSKEYID"}); !ok {
@@ -92,7 +99,6 @@ func (c *AccessConfig) NewOSCClient() (*osc.APIClient, error) {
 			log.Printf("No Key Path has been setted")
 		}
 	}
-
 	return c.NewOSCClientByRegion(c.RawRegion), nil
 }
 
@@ -102,7 +108,7 @@ func (c *AccessConfig) GetRegion() string {
 }
 
 // NewOSCClientByRegion returns the connection depdending of the region given
-func (c *AccessConfig) NewOSCClientByRegion(region string) *osc.APIClient {
+func (c *AccessConfig) NewOSCClientByRegion(region string) *OscClient {
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: c.InsecureSkipTLSVerify},
 		Proxy:           http.ProxyFromEnvironment,
@@ -124,13 +130,22 @@ func (c *AccessConfig) NewOSCClientByRegion(region string) *osc.APIClient {
 
 	skipClient.Transport = NewTransport(c.AccessKey, c.SecretKey, c.RawRegion, skipClient.Transport)
 
-	return osc.NewAPIClient(&osc.Configuration{
-		BasePath:      fmt.Sprintf("https://api.%s.%s", region, c.CustomEndpointOAPI),
-		DefaultHeader: make(map[string]string),
-		UserAgent:     fmt.Sprintf("packer-osc/%s", version.PluginVersion.String()),
-		HTTPClient:    skipClient,
-		Debug:         true,
+	config := oscgo.NewConfiguration()
+	config.Debug = true
+	config.UserAgent = fmt.Sprintf("packer-plugin-outscale/%s", version.PluginVersion.String())
+	auth := context.WithValue(context.Background(), oscgo.ContextAWSv4, osc.AWSv4{
+		AccessKey: os.Getenv("OSC_ACCESS_KEY"),
+		SecretKey: os.Getenv("OSC_SECRET_KEY"),
 	})
+	config.HTTPClient = skipClient
+	auth = context.WithValue(auth, oscgo.ContextServerIndex, 0)
+	auth = context.WithValue(auth, oscgo.ContextServerVariables, map[string]string{"region": os.Getenv("OSC_REGION")})
+
+	oscClient := &OscClient{
+		Api:  oscgo.NewAPIClient(config),
+		Auth: auth,
+	}
+	return oscClient
 }
 
 func (c *AccessConfig) Prepare(ctx *interpolate.Context) []error {

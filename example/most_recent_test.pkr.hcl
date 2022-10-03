@@ -32,15 +32,15 @@ source "outscale-bsusurrogate" "test" {
         volume_size = "${var.volsize}"
         volume_type = "io1"
     }
-    omi_name      = "${var.omi_name}"
+    omi_name = "${var.omi_name}"
     source_omi_filter {
         filters = {
             name                = "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*"
             root-device-type    = "ebs"
             virtualization-type = "hvm"
         }
+	    owners = ["099720109477"]
         most_recent = true
-        owners = ["099720109477"]
     }
     omi_root_device {
         delete_on_vm_deletion = true

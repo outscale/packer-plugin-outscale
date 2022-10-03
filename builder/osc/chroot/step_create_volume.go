@@ -6,11 +6,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/antihax/optional"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	"github.com/outscale/osc-sdk-go/osc"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
@@ -31,8 +30,8 @@ type StepCreateVolume struct {
 
 func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	config := state.Get("config").(*Config)
-	oscconn := state.Get("osc").(*osc.APIClient)
-	vm := state.Get("vm").(osc.Vm)
+	oscconn := state.Get("osc").(*osccommon.OscClient)
+	vm := state.Get("vm").(oscgo.Vm)
 	ui := state.Get("ui").(packersdk.Ui)
 
 	var err error
@@ -45,7 +44,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 		return multistep.ActionHalt
 	}
 
-	var createVolume *osc.CreateVolumeRequest
+	var createVolume *oscgo.CreateVolumeRequest
 	if config.FromScratch {
 		rootVolumeType := osccommon.VolumeTypeGp2
 		if s.RootVolumeType == "io1" {
@@ -56,18 +55,19 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 		} else if s.RootVolumeType != "" {
 			rootVolumeType = s.RootVolumeType
 		}
-		createVolume = &osc.CreateVolumeRequest{
-			SubregionName: vm.Placement.SubregionName,
-			Size:          int32(s.RootVolumeSize),
-			VolumeType:    rootVolumeType,
+		size := int32(s.RootVolumeSize)
+		createVolume = &oscgo.CreateVolumeRequest{
+			SubregionName: vm.Placement.GetSubregionName(),
+			Size:          &size,
+			VolumeType:    &rootVolumeType,
 		}
 
 	} else {
 		// Determine the root device snapshot
-		image := state.Get("source_image").(osc.Image)
-		log.Printf("Searching for root device of the image (%s)", image.RootDeviceName)
-		var rootDevice *osc.BlockDeviceMappingImage
-		for _, device := range image.BlockDeviceMappings {
+		image := state.Get("source_image").(oscgo.Image)
+		log.Printf("Searching for root device of the image (%s)", image.GetRootDeviceName())
+		var rootDevice *oscgo.BlockDeviceMappingImage
+		for _, device := range *image.BlockDeviceMappings {
 			if device.DeviceName == image.RootDeviceName {
 				rootDevice = &device
 				break
@@ -75,7 +75,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 		}
 
 		ui.Say("Creating the root volume...")
-		createVolume, err = s.buildCreateVolumeInput(vm.Placement.SubregionName, rootDevice)
+		createVolume, err = s.buildCreateVolumeInput(vm.Placement.GetSubregionName(), rootDevice)
 		if err != nil {
 			state.Put("error", err)
 			ui.Error(err.Error())
@@ -85,9 +85,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 
 	log.Printf("Create args: %+v", createVolume)
 
-	createVolumeResp, _, err := oscconn.VolumeApi.CreateVolume(context.Background(), &osc.CreateVolumeOpts{
-		CreateVolumeRequest: optional.NewInterface(*createVolume),
-	})
+	createVolumeResp, _, err := oscconn.Api.VolumeApi.CreateVolume(oscconn.Auth).CreateVolumeRequest(*createVolume).Execute()
 	if err != nil {
 		err := fmt.Errorf("Error creating root volume: %s", err)
 		state.Put("error", err)
@@ -96,7 +94,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	// Set the volume ID so we remember to delete it later
-	s.volumeId = createVolumeResp.Volume.VolumeId
+	s.volumeId = *createVolumeResp.GetVolume().VolumeId
 	log.Printf("Volume ID: %s", s.volumeId)
 
 	//Create tags for volume
@@ -127,47 +125,45 @@ func (s *StepCreateVolume) Cleanup(state multistep.StateBag) {
 		return
 	}
 
-	oscconn := state.Get("osc").(*osc.APIClient)
+	oscconn := state.Get("osc").(*osccommon.OscClient)
 	ui := state.Get("ui").(packersdk.Ui)
 
 	ui.Say("Deleting the created BSU volume...")
-	_, _, err := oscconn.VolumeApi.DeleteVolume(context.Background(), &osc.DeleteVolumeOpts{
-		DeleteVolumeRequest: optional.NewInterface(osc.DeleteVolumeRequest{VolumeId: s.volumeId}),
-	})
+	_, _, err := oscconn.Api.VolumeApi.DeleteVolume(oscconn.Auth).DeleteVolumeRequest(oscgo.DeleteVolumeRequest{VolumeId: s.volumeId}).Execute()
 	if err != nil {
 		ui.Error(fmt.Sprintf("Error deleting BSU volume: %s", err))
 	}
 }
 
-func (s *StepCreateVolume) buildCreateVolumeInput(suregionName string, rootDevice *osc.BlockDeviceMappingImage) (*osc.CreateVolumeRequest, error) {
+func (s *StepCreateVolume) buildCreateVolumeInput(suregionName string, rootDevice *oscgo.BlockDeviceMappingImage) (*oscgo.CreateVolumeRequest, error) {
 	if rootDevice == nil {
 		return nil, fmt.Errorf("Couldn't find root device")
 	}
 
 	//FIX: Temporary fix
-	gibSize := rootDevice.Bsu.VolumeSize / (1024 * 1024 * 1024)
-	createVolumeInput := &osc.CreateVolumeRequest{
+	gibSize := *rootDevice.GetBsu().VolumeSize / (1024 * 1024 * 1024)
+	createVolumeInput := &oscgo.CreateVolumeRequest{
 		SubregionName: suregionName,
-		Size:          gibSize,
+		Size:          &gibSize,
 		SnapshotId:    rootDevice.Bsu.SnapshotId,
 		VolumeType:    rootDevice.Bsu.VolumeType,
 		Iops:          rootDevice.Bsu.Iops,
 	}
-	if int32(s.RootVolumeSize) > rootDevice.Bsu.VolumeSize {
-		createVolumeInput.Size = int32(s.RootVolumeSize)
+	if int32(s.RootVolumeSize) > *rootDevice.Bsu.VolumeSize {
+		*createVolumeInput.Size = int32(s.RootVolumeSize)
 	}
 
-	if s.RootVolumeType == "" || s.RootVolumeType == rootDevice.Bsu.VolumeType {
+	if s.RootVolumeType == "" || s.RootVolumeType == rootDevice.Bsu.GetVolumeType() {
 		return createVolumeInput, nil
 	}
 
 	if s.RootVolumeType == "io1" {
-		return nil, fmt.Errorf("Root volume type cannot be io1, because existing root volume type was %s", rootDevice.Bsu.VolumeType)
+		return nil, fmt.Errorf("Root volume type cannot be io1, because existing root volume type was %s", rootDevice.Bsu.GetVolumeType())
 	}
 
-	createVolumeInput.VolumeType = s.RootVolumeType
+	createVolumeInput.VolumeType = &s.RootVolumeType
 	// non io1 cannot set iops
-	createVolumeInput.Iops = 0
+	*createVolumeInput.Iops = 0
 
 	return createVolumeInput, nil
 }

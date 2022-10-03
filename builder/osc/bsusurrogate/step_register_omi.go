@@ -4,45 +4,43 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/antihax/optional"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/outscale/osc-sdk-go/osc"
+	"github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
 // StepRegisterOMI creates the OMI.
 type StepRegisterOMI struct {
 	RootDevice    RootBlockDevice
-	OMIDevices    []osc.BlockDeviceMappingImage
-	LaunchDevices []osc.BlockDeviceMappingVmCreation
-	image         *osc.Image
+	OMIDevices    []oscgo.BlockDeviceMappingImage
+	LaunchDevices []oscgo.BlockDeviceMappingVmCreation
+	image         *oscgo.Image
 	RawRegion     string
 }
 
 func (s *StepRegisterOMI) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	config := state.Get("config").(*Config)
-	oscconn := state.Get("osc").(*osc.APIClient)
+	oscconn := state.Get("osc").(*(osccommon.OscClient))
 	snapshotIds := state.Get("snapshot_ids").(map[string]string)
 	ui := state.Get("ui").(packersdk.Ui)
 
 	ui.Say("Registering the OMI...")
 
 	blockDevices := s.combineDevices(snapshotIds)
-
-	registerOpts := osc.CreateImageRequest{
-		ImageName:           config.OMIName,
-		Architecture:        "x86_64",
-		RootDeviceName:      s.RootDevice.DeviceName,
-		BlockDeviceMappings: blockDevices,
+	architecture := "x86_64"
+	registerOpts := oscgo.CreateImageRequest{
+		ImageName:           &config.OMIName,
+		Architecture:        &architecture,
+		RootDeviceName:      &s.RootDevice.DeviceName,
+		BlockDeviceMappings: &blockDevices,
 	}
 
 	if config.OMIDescription != "" {
-		registerOpts.Description = config.OMIDescription
+		registerOpts.Description = &config.OMIDescription
 	}
-	registerResp, _, err := oscconn.ImageApi.CreateImage(context.Background(), &osc.CreateImageOpts{
-		CreateImageRequest: optional.NewInterface(registerOpts),
-	})
+	registerResp, _, err := oscconn.Api.ImageApi.CreateImage(oscconn.Auth).CreateImageRequest(registerOpts).Execute()
 	if err != nil {
 		state.Put("error", fmt.Errorf("Error registering OMI: %s", err))
 		ui.Error(state.Get("error").(error).Error())
@@ -50,40 +48,37 @@ func (s *StepRegisterOMI) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 
 	// Set the OMI ID in the state
-	ui.Say(fmt.Sprintf("OMI: %s", registerResp.Image.ImageId))
+	ui.Say(fmt.Sprintf("OMI: %s", *registerResp.GetImage().ImageId))
 	omis := make(map[string]string)
-	omis[s.RawRegion] = registerResp.Image.ImageId
+	omis[s.RawRegion] = *registerResp.GetImage().ImageId
 	state.Put("omis", omis)
 
 	// Wait for the image to become ready
 	ui.Say("Waiting for OMI to become ready...")
-	if err := osccommon.WaitUntilOscImageAvailable(oscconn, registerResp.Image.ImageId); err != nil {
+	if err := osccommon.WaitUntilOscImageAvailable(oscconn, *registerResp.GetImage().ImageId); err != nil {
 		err := fmt.Errorf("Error waiting for OMI: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 
-	imagesResp, _, err := oscconn.ImageApi.ReadImages(context.Background(), &osc.ReadImagesOpts{
-		ReadImagesRequest: optional.NewInterface(osc.ReadImagesRequest{
-			Filters: osc.FiltersImage{
-				ImageIds: []string{registerResp.Image.ImageId},
-			},
-		}),
-	})
-
+	filterReq := oscgo.ReadImagesRequest{
+		Filters: &oscgo.FiltersImage{ImageIds: &[]string{*registerResp.GetImage().ImageId}},
+	}
+	imagesResp, _, err := oscconn.Api.ImageApi.ReadImages(oscconn.Auth).ReadImagesRequest(filterReq).Execute()
 	if err != nil {
 		err := fmt.Errorf("Error searching for OMI: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	s.image = &imagesResp.Images[0]
+	s.image = &imagesResp.GetImages()[0]
 
 	snapshots := make(map[string][]string)
-	for _, blockDeviceMapping := range imagesResp.Images[0].BlockDeviceMappings {
-		if blockDeviceMapping.Bsu.SnapshotId != "" {
-			snapshots[s.RawRegion] = append(snapshots[s.RawRegion], blockDeviceMapping.Bsu.SnapshotId)
+	block := imagesResp.GetImages()[0].BlockDeviceMappings
+	for _, blockDeviceMapping := range *block {
+		if blockDeviceMapping.Bsu.GetSnapshotId() != "" {
+			snapshots[s.RawRegion] = append(snapshots[s.RawRegion], blockDeviceMapping.Bsu.GetSnapshotId())
 		}
 	}
 	state.Put("snapshots", snapshots)
@@ -102,62 +97,59 @@ func (s *StepRegisterOMI) Cleanup(state multistep.StateBag) {
 		return
 	}
 
-	oscconn := state.Get("osc").(*osc.APIClient)
+	oscconn := state.Get("osc").(*(osccommon.OscClient))
 	ui := state.Get("ui").(packersdk.Ui)
 
 	ui.Say("Deregistering the OMI because cancellation or error...")
-	deregisterOpts := osc.DeleteImageRequest{ImageId: s.image.ImageId}
-	_, _, err := oscconn.ImageApi.DeleteImage(context.Background(), &osc.DeleteImageOpts{
-		DeleteImageRequest: optional.NewInterface(deregisterOpts),
-	})
-
+	deregisterOpts := oscgo.DeleteImageRequest{ImageId: *s.image.ImageId}
+	_, _, err := oscconn.Api.ImageApi.DeleteImage(oscconn.Auth).DeleteImageRequest(deregisterOpts).Execute()
 	if err != nil {
 		ui.Error(fmt.Sprintf("Error deregistering OMI, may still be around: %s", err))
 		return
 	}
 }
 
-func (s *StepRegisterOMI) combineDevices(snapshotIDs map[string]string) []osc.BlockDeviceMappingImage {
-	devices := map[string]osc.BlockDeviceMappingImage{}
+func (s *StepRegisterOMI) combineDevices(snapshotIDs map[string]string) []oscgo.BlockDeviceMappingImage {
+	devices := map[string]oscgo.BlockDeviceMappingImage{}
 
 	for _, device := range s.OMIDevices {
-		devices[device.DeviceName] = device
+		devices[device.GetDeviceName()] = device
 	}
 
 	// Devices in launch_block_device_mappings override any with
 	// the same name in ami_block_device_mappings, except for the
 	// one designated as the root device in ami_root_device
 	for _, device := range s.LaunchDevices {
-		snapshotID, ok := snapshotIDs[device.DeviceName]
+		snapshotID, ok := snapshotIDs[device.GetDeviceName()]
 		if ok {
-			device.Bsu.SnapshotId = snapshotID
+			device.Bsu.SnapshotId = &snapshotID
 		}
-		if device.DeviceName == s.RootDevice.SourceDeviceName {
-			device.DeviceName = s.RootDevice.DeviceName
+		if device.GetDeviceName() == s.RootDevice.SourceDeviceName {
+			device.DeviceName = &s.RootDevice.DeviceName
 
-			if device.Bsu.VolumeType != "" {
-				device.Bsu.VolumeType = s.RootDevice.VolumeType
-				if device.Bsu.VolumeType != "io1" {
-					device.Bsu.Iops = 0
+			if _, ok := device.Bsu.GetVolumeTypeOk(); ok {
+				device.Bsu.VolumeType = &s.RootDevice.VolumeType
+				if device.Bsu.GetVolumeType() != "io1" {
+					*device.Bsu.Iops = 0
 				}
 			}
 
 		}
-		devices[device.DeviceName] = copyToDeviceMappingImage(device)
+		devices[device.GetDeviceName()] = copyToDeviceMappingImage(device)
 	}
 
-	blockDevices := []osc.BlockDeviceMappingImage{}
+	blockDevices := []oscgo.BlockDeviceMappingImage{}
 	for _, device := range devices {
 		blockDevices = append(blockDevices, device)
 	}
 	return blockDevices
 }
 
-func copyToDeviceMappingImage(device osc.BlockDeviceMappingVmCreation) osc.BlockDeviceMappingImage {
-	deviceImage := osc.BlockDeviceMappingImage{
+func copyToDeviceMappingImage(device osc.BlockDeviceMappingVmCreation) oscgo.BlockDeviceMappingImage {
+	deviceImage := oscgo.BlockDeviceMappingImage{
 		DeviceName:        device.DeviceName,
 		VirtualDeviceName: device.VirtualDeviceName,
-		Bsu: osc.BsuToCreate{
+		Bsu: &oscgo.BsuToCreate{
 			DeleteOnVmDeletion: device.Bsu.DeleteOnVmDeletion,
 			Iops:               device.Bsu.Iops,
 			SnapshotId:         device.Bsu.SnapshotId,

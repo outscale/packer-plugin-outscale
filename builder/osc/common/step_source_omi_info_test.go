@@ -1,13 +1,11 @@
 package common
 
 import (
-	"fmt"
+	"bytes"
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	"github.com/outscale/osc-sdk-go/osc"
 
-	"bytes"
 	"context"
 
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
@@ -18,10 +16,8 @@ func getState() (multistep.StateBag, error) {
 	state := new(multistep.BasicStateBag)
 	accessConfig := &AccessConfig{}
 	accessConfig.RawRegion = "eu-west-2"
-	var oscConn *osc.APIClient
-	var err error
-	if oscConn, err = accessConfig.NewOSCClient(); err != nil {
-		err := fmt.Errorf("error in creating osc Client: %s", err.Error())
+	oscConn, err := accessConfig.NewOSCClient()
+	if err != nil {
 		return nil, err
 	}
 	state.Put("osc", oscConn)

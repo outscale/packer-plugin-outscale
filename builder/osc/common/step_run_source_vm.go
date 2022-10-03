@@ -8,9 +8,9 @@ import (
 	"log"
 	"reflect"
 
-	"github.com/antihax/optional"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/outscale/osc-sdk-go/osc"
+	"github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
@@ -46,7 +46,7 @@ type StepRunSourceVm struct {
 }
 
 func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	oscconn := state.Get("osc").(*osc.APIClient)
+	oscconn := state.Get("osc").(*OscClient)
 	securityGroupIds := state.Get("securityGroupIds").([]string)
 	ui := state.Get("ui").(packersdk.Ui)
 
@@ -68,18 +68,18 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 
 	ui.Say("Launching a source OUTSCALE vm...")
-	image, ok := state.Get("source_image").(osc.Image)
+	image, ok := state.Get("source_image").(oscgo.Image)
 	if !ok {
 		state.Put("error", fmt.Errorf("source_image type assertion failed"))
 		return multistep.ActionHalt
 	}
-	s.SourceOMI = image.ImageId
+	s.SourceOMI = *image.ImageId
 
-	if s.ExpectedRootDevice != "" && image.RootDeviceType != s.ExpectedRootDevice {
+	if s.ExpectedRootDevice != "" && *image.RootDeviceType != s.ExpectedRootDevice {
 		state.Put("error", fmt.Errorf(
 			"The provided source OMI has an invalid root device type.\n"+
 				"Expected '%s', got '%s'.",
-			s.ExpectedRootDevice, image.RootDeviceType))
+			s.ExpectedRootDevice, image.GetRootDeviceType()))
 		return multistep.ActionHalt
 	}
 
@@ -109,33 +109,32 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 
 	subregion := state.Get("subregion_name").(string)
-	runOpts := osc.CreateVmsRequest{
-		ImageId:             s.SourceOMI,
-		VmType:              s.VmType,
-		UserData:            userData,
-		MaxVmsCount:         1,
-		MinVmsCount:         1,
-		Placement:           osc.Placement{SubregionName: subregion},
-		BsuOptimized:        s.BsuOptimized,
-		BlockDeviceMappings: s.BlockDevices.BuildOSCLaunchDevices(),
+	vmcount := int32(1)
+	runOpts := oscgo.CreateVmsRequest{
+		ImageId:      s.SourceOMI,
+		VmType:       &s.VmType,
+		UserData:     &userData,
+		MaxVmsCount:  &vmcount,
+		MinVmsCount:  &vmcount,
+		Placement:    &oscgo.Placement{SubregionName: &subregion},
+		BsuOptimized: &s.BsuOptimized,
+		//BlockDeviceMappings: s.BlockDevices.BuildOSCLaunchDevices(),
 	}
 
 	if s.Comm.SSHKeyPairName != "" {
-		runOpts.KeypairName = s.Comm.SSHKeyPairName
+		runOpts.KeypairName = &s.Comm.SSHKeyPairName
 	}
 
 	subnetID := state.Get("subnet_id").(string)
 
-	runOpts.SubnetId = subnetID
-	runOpts.SecurityGroupIds = securityGroupIds
+	runOpts.SubnetId = &subnetID
+	runOpts.SecurityGroupIds = &securityGroupIds
 
 	if s.ExpectedRootDevice == "bsu" {
-		runOpts.VmInitiatedShutdownBehavior = s.VmInitiatedShutdownBehavior
+		runOpts.VmInitiatedShutdownBehavior = &s.VmInitiatedShutdownBehavior
 	}
 
-	runResp, _, err := oscconn.VmApi.CreateVms(context.Background(), &osc.CreateVmsOpts{
-		CreateVmsRequest: optional.NewInterface(runOpts),
-	})
+	runResp, _, err := oscconn.Api.VmApi.CreateVms(oscconn.Auth).CreateVmsRequest(runOpts).Execute()
 
 	if err != nil {
 		err := fmt.Errorf("Error launching source vm: %s", err)
@@ -143,8 +142,8 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	vmId = runResp.Vms[0].VmId
-	volumeId := runResp.Vms[0].BlockDeviceMappings[0].Bsu.VolumeId
+	vmId = *runResp.GetVms()[0].VmId
+	volumeId := *runResp.GetVms()[0].GetBlockDeviceMappings()[0].Bsu.VolumeId
 
 	// Set the vm ID so that the cleanup works properly
 	s.vmId = vmId
@@ -152,9 +151,9 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 	ui.Message(fmt.Sprintf("Vm ID: %s", vmId))
 	ui.Say(fmt.Sprintf("Waiting for vm (%v) to become ready...", vmId))
 
-	request := osc.ReadVmsRequest{
-		Filters: osc.FiltersVm{
-			VmIds: []string{vmId},
+	request := oscgo.ReadVmsRequest{
+		Filters: &oscgo.FiltersVm{
+			VmIds: &[]string{vmId},
 		},
 	}
 	if err := waitUntilForOscVmRunning(oscconn, vmId); err != nil {
@@ -185,9 +184,8 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 
 	if publicip_id, ok := state.Get("publicip_id").(string); ok {
 		ui.Say(fmt.Sprintf("Linking temporary PublicIp %s to instance %s", publicip_id, vmId))
-		_, _, err := oscconn.PublicIpApi.LinkPublicIp(context.Background(), &osc.LinkPublicIpOpts{
-			LinkPublicIpRequest: optional.NewInterface(osc.LinkPublicIpRequest{PublicIpId: publicip_id, VmId: vmId}),
-		})
+		request := oscgo.LinkPublicIpRequest{PublicIpId: &publicip_id, VmId: &vmId}
+		_, _, err := oscconn.Api.PublicIpApi.LinkPublicIp(oscconn.Auth).LinkPublicIpRequest(request).Execute()
 		if err != nil {
 			state.Put("error", fmt.Errorf("Error linking PublicIp to VM: %s", err))
 			ui.Error(err.Error())
@@ -195,31 +193,28 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 		}
 	}
 
-	resp, _, err := oscconn.VmApi.ReadVms(context.Background(), &osc.ReadVmsOpts{
-		ReadVmsRequest: optional.NewInterface(request),
-	})
-
+	resp, _, err := oscconn.Api.VmApi.ReadVms(oscconn.Auth).ReadVmsRequest(request).Execute()
 	r := resp
 
-	if err != nil || len(r.Vms) == 0 {
+	if err != nil || len(r.GetVms()) == 0 {
 		err := fmt.Errorf("Error finding source vm.")
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	vm := r.Vms[0]
+	vm := r.GetVms()[0]
 
 	if s.Debug {
-		if vm.PublicDnsName != "" {
-			ui.Message(fmt.Sprintf("Public DNS: %s", vm.PublicDnsName))
+		if vm.PublicDnsName != nil {
+			ui.Message(fmt.Sprintf("Public DNS: %s", vm.GetPublicDnsName()))
 		}
 
-		if vm.PublicIp != "" {
-			ui.Message(fmt.Sprintf("Public IP: %s", vm.PublicIp))
+		if vm.PublicIp != nil {
+			ui.Message(fmt.Sprintf("Public IP: %s", vm.GetPublicIp()))
 		}
 
-		if vm.PrivateIp != "" {
-			ui.Message(fmt.Sprintf("Private IP: %s", vm.PrivateIp))
+		if vm.PrivateIp != nil {
+			ui.Message(fmt.Sprintf("Private IP: %s", vm.GetPrivateIp()))
 		}
 	}
 
@@ -235,12 +230,11 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 		oscTags.Report(ui)
 		// Retry creating tags for about 2.5 minutes
 		err = retry.Run(0.2, 30, 11, func(_ uint) (bool, error) {
-			_, _, err := oscconn.TagApi.CreateTags(context.Background(), &osc.CreateTagsOpts{
-				CreateTagsRequest: optional.NewInterface(osc.CreateTagsRequest{
-					Tags:        oscTags,
-					ResourceIds: []string{vmId},
-				}),
-			})
+			request := oscgo.CreateTagsRequest{
+				Tags:        oscTags,
+				ResourceIds: []string{vmId},
+			}
+			_, _, err := oscconn.Api.TagApi.CreateTags(oscconn.Auth).CreateTagsRequest(request).Execute()
 			if err == nil {
 				return true, nil
 			}
@@ -263,9 +257,9 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 		// Now tag volumes
 
 		volumeIds := make([]string, 0)
-		for _, v := range vm.BlockDeviceMappings {
+		for _, v := range *vm.BlockDeviceMappings {
 			if bsu := v.Bsu; !reflect.DeepEqual(bsu, osc.BsuCreated{}) {
-				volumeIds = append(volumeIds, bsu.VolumeId)
+				volumeIds = append(volumeIds, *bsu.VolumeId)
 			}
 		}
 
@@ -274,22 +268,20 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 
 			volumeTags, err := s.VolumeTags.OSCTags(s.Ctx, rawRegion, state)
 			if err != nil {
-				err := fmt.Errorf("Error tagging source BSU Volumes on %s: %s", vm.VmId, err)
+				err := fmt.Errorf("Error tagging source BSU Volumes on %s: %s", vm.GetVmId(), err)
 				state.Put("error", err)
 				ui.Error(err.Error())
 				return multistep.ActionHalt
 			}
 			volumeTags.Report(ui)
-
-			_, _, err = oscconn.TagApi.CreateTags(context.Background(), &osc.CreateTagsOpts{
-				CreateTagsRequest: optional.NewInterface(osc.CreateTagsRequest{
-					ResourceIds: volumeIds,
-					Tags:        volumeTags,
-				}),
-			})
+			request := oscgo.CreateTagsRequest{
+				ResourceIds: volumeIds,
+				Tags:        volumeTags,
+			}
+			_, _, err = oscconn.Api.TagApi.CreateTags(oscconn.Auth).CreateTagsRequest(request).Execute()
 
 			if err != nil {
-				err := fmt.Errorf("Error tagging source BSU Volumes on %s: %s", vm.VmId, err)
+				err := fmt.Errorf("Error tagging source BSU Volumes on %s: %s", vm.GetVmId(), err)
 				state.Put("error", err)
 				ui.Error(err.Error())
 				return multistep.ActionHalt
@@ -301,15 +293,16 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 }
 
 func (s *StepRunSourceVm) Cleanup(state multistep.StateBag) {
-	oscconn := state.Get("osc").(*osc.APIClient)
+	oscconn := state.Get("osc").(*OscClient)
 	ui := state.Get("ui").(packersdk.Ui)
 
 	// Terminate the source vm if it exists
 	if s.vmId != "" {
 		ui.Say("Terminating the source OUTSCALE vm...")
-		if _, _, err := oscconn.VmApi.DeleteVms(context.Background(), &osc.DeleteVmsOpts{
-			DeleteVmsRequest: optional.NewInterface(osc.DeleteVmsRequest{VmIds: []string{s.vmId}}),
-		}); err != nil {
+		_, _, err := oscconn.Api.VmApi.DeleteVms(oscconn.Auth).DeleteVmsRequest(oscgo.DeleteVmsRequest{
+			VmIds: []string{s.vmId},
+		}).Execute()
+		if err != nil {
 			ui.Error(fmt.Sprintf("Error terminating vm, may still be around: %s", err))
 			return
 		}

@@ -66,7 +66,7 @@ func TestOMIConfigPrepare_regions(t *testing.T) {
 	c.OMIRegions = []string{"us-east-1", "us-east-2", "us-west-1"}
 
 	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
-		t.Fatal(fmt.Sprintf("shouldn't have error: %s", errs[0]))
+		t.Fatalf(fmt.Sprintf("shouldn't have error: %s", errs[0]))
 	}
 
 	c.OMIRegions = []string{"us-east-1", "us-east-2", "us-west-1"}
@@ -138,7 +138,7 @@ func TestOMINameValidation(t *testing.T) {
 
 	c.OMIName = `xyz-base-2017-04-05-1934`
 	if err := c.Prepare(accessConf, nil); err != nil {
-		t.Fatalf("expected `xyz-base-2017-04-05-1934` to pass validation.")
+		t.Fatal("expected `xyz-base-2017-04-05-1934` to pass validation.")
 	}
 
 }

@@ -17,7 +17,8 @@ import (
 // StepSnapshotVolumes creates snapshots of the created volumes.
 //
 // Produces:
-//   snapshot_ids map[string]string - IDs of the created snapshots
+//
+//	snapshot_ids map[string]string - IDs of the created snapshots
 type StepSnapshotVolumes struct {
 	LaunchDevices []osc.BlockDeviceMappingVmCreation
 	snapshotIds   map[string]string

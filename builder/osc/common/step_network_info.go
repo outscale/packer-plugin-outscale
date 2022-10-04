@@ -17,9 +17,10 @@ import (
 // NET's and Subnets that is used throughout the OMI creation process.
 //
 // Produces (adding them to the state bag):
-//   vpc_id string - the NET ID
-//   subnet_id string - the Subnet ID
-//   availability_zone string - the Subregion name
+//
+//	vpc_id string - the NET ID
+//	subnet_id string - the Subnet ID
+//	availability_zone string - the Subregion name
 type StepNetworkInfo struct {
 	NetId               string
 	NetFilter           NetFilterOptions
@@ -45,7 +46,7 @@ func mostFreeOscSubnet(subnets []osc.Subnet) osc.Subnet {
 	return sortedSubnets[len(sortedSubnets)-1]
 }
 
-//Run ...
+// Run ...
 func (s *StepNetworkInfo) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
 	oscconn := state.Get("osc").(*osc.APIClient)
 	ui := state.Get("ui").(packersdk.Ui)
@@ -162,5 +163,5 @@ func (s *StepNetworkInfo) Run(_ context.Context, state multistep.StateBag) multi
 	return multistep.ActionContinue
 }
 
-//Cleanup ...
+// Cleanup ...
 func (s *StepNetworkInfo) Cleanup(multistep.StateBag) {}

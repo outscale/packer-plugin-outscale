@@ -15,8 +15,9 @@ import (
 // available device location.
 //
 // Produces:
-//   device string - The location where the volume was attached.
-//   attach_cleanup CleanupFunc
+//
+//	device string - The location where the volume was attached.
+//	attach_cleanup CleanupFunc
 type StepLinkVolume struct {
 	attached bool
 	volumeId string

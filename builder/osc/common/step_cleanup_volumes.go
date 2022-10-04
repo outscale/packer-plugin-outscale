@@ -18,7 +18,7 @@ type StepCleanupVolumes struct {
 	BlockDevices BlockDevices
 }
 
-//Run ...
+// Run ...
 func (s *StepCleanupVolumes) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
 	// stepCleanupVolumes is for Cleanup only
 	return multistep.ActionContinue

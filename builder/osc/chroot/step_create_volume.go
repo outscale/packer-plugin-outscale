@@ -18,7 +18,8 @@ import (
 // device of the OMI.
 //
 // Produces:
-//   volume_id string - The ID of the created volume
+//
+//	volume_id string - The ID of the created volume
 type StepCreateVolume struct {
 	volumeId       string
 	RootVolumeSize int64

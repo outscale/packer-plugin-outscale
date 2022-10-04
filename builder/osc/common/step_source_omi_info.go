@@ -18,7 +18,8 @@ import (
 // that is used throughout the OMI creation process.
 //
 // Produces:
-//   source_image *osc.Image - the source OMI info
+//
+//	source_image *osc.Image - the source OMI info
 type StepSourceOMIInfo struct {
 	SourceOmi  string
 	OmiFilters OmiFilterOptions

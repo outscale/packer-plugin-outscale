@@ -1,4 +1,4 @@
-//TODO: explain how to delete the image.
+// TODO: explain how to delete the image.
 package bsu
 
 import (

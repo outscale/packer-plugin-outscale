@@ -38,9 +38,9 @@ jobs:
             make generate
             echo "==> Checking that auto-generated code is not changed..."
             git diff --exit-code; if [ $? -eq 1 ]; then \
-                echo "Found diffs in go generated code."; \
-                echo "You can use the command: \`make generate\` to reformat code."; \
-                exit 1; \
+            echo "Found diffs in go generated code."; \
+            echo "You can use the command: \`make generate\` to reformat code."; \
+            exit 1; \
             fi
   test:
       strategy:

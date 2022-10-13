@@ -55,6 +55,10 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
         - name: Test
+          env:
+            OSC_ACCESS_KEY: ${{secrets.OSC_ACCESS_KEY}}
+            OSC_SECRET_KEY: ${{secrets.OSC_SECRET_KEY}}
+            OSC_REGION: ${{secrets.OSC_REGION}}
           run: go test -count 1 ./... -coverprofile=coverage.txt -covermode=atomic -timeout=3m
   build:
     strategy:

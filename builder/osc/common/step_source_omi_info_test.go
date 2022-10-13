@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
@@ -13,14 +14,15 @@ import (
 )
 
 // Create statebag for running test
-func getState() multistep.StateBag {
+func getState() (multistep.StateBag, error) {
 	state := new(multistep.BasicStateBag)
 	accessConfig := &AccessConfig{}
 	accessConfig.RawRegion = "eu-west-2"
 	var oscConn *osc.APIClient
 	var err error
 	if oscConn, err = accessConfig.NewOSCClient(); err != nil {
-		return nil
+		err := fmt.Errorf("error in creating osc Client: %s", err.Error())
+		return nil, err
 	}
 	state.Put("osc", oscConn)
 	state.Put("ui", &packersdk.BasicUi{
@@ -28,7 +30,7 @@ func getState() multistep.StateBag {
 		Writer: new(bytes.Buffer),
 	})
 	state.Put("accessConfig", accessConfig)
-	return state
+	return state, err
 }
 
 func TestMostRecentOmiFilter(t *testing.T) {
@@ -38,9 +40,9 @@ func TestMostRecentOmiFilter(t *testing.T) {
 			MostRecent: true,
 		},
 	}
-	state := getState()
+	state, err := getState()
 	if state == nil {
-		t.Fatalf("error retrieving state, but")
+		t.Fatalf("error retrieving state %s", err.Error())
 	}
 
 	action := stepSourceOMIInfo.Run(context.Background(), state)

@@ -10,7 +10,7 @@ require (
 	github.com/hashicorp/packer-plugin-sdk v0.3.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/outscale/osc-sdk-go v1.11.2
-	github.com/zclconf/go-cty v1.11.1
+	github.com/zclconf/go-cty v1.12.0
 	golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab
 )
 

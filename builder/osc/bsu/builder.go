@@ -55,7 +55,6 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 				"omi_description",
 				"run_tags",
 				"run_volume_tags",
-				"spot_tags",
 				"snapshot_tags",
 				"tags",
 			},

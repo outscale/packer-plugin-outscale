@@ -74,9 +74,6 @@ type RunConfig struct {
 	SecurityGroupIds            []string                   `mapstructure:"security_group_ids"`
 	SourceOmi                   string                     `mapstructure:"source_omi"`
 	SourceOmiFilter             OmiFilterOptions           `mapstructure:"source_omi_filter"`
-	SpotPrice                   string                     `mapstructure:"spot_price"`
-	SpotPriceAutoProduct        string                     `mapstructure:"spot_price_auto_product"`
-	SpotTags                    map[string]string          `mapstructure:"spot_tags"`
 	SubnetFilter                SubnetFilterOptions        `mapstructure:"subnet_filter"`
 	SubnetId                    string                     `mapstructure:"subnet_id"`
 	TemporaryKeyPairName        string                     `mapstructure:"temporary_key_pair_name"`
@@ -157,27 +154,6 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 			"block_duration_minutes must be multiple of 60"))
 	}
 
-	if c.SpotPrice == "auto" {
-		if c.SpotPriceAutoProduct == "" {
-			errs = append(errs, fmt.Errorf(
-				"spot_price_auto_product must be specified when spot_price is auto"))
-		}
-	}
-
-	if c.SpotPriceAutoProduct != "" {
-		if c.SpotPrice != "auto" {
-			errs = append(errs, fmt.Errorf(
-				"spot_price should be set to auto when spot_price_auto_product is specified"))
-		}
-	}
-
-	if c.SpotTags != nil {
-		if c.SpotPrice == "" || c.SpotPrice == "0" {
-			errs = append(errs, fmt.Errorf(
-				"spot_tags should not be set when not requesting a spot vm"))
-		}
-	}
-
 	if c.UserData != "" && c.UserDataFile != "" {
 		errs = append(errs, fmt.Errorf("Only one of user_data or user_data_file can be specified."))
 	} else if c.UserDataFile != "" {
@@ -210,9 +186,6 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 	}
 
 	if c.EnableT2Unlimited {
-		if c.SpotPrice != "" {
-			errs = append(errs, fmt.Errorf("Error: T2 Unlimited cannot be used in conjuction with Spot Vms"))
-		}
 		firstDotIndex := strings.Index(c.VmType, ".")
 		if firstDotIndex == -1 {
 			errs = append(errs, fmt.Errorf("Error determining main Vm Type from: %s", c.VmType))
@@ -222,8 +195,4 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 	}
 
 	return errs
-}
-
-func (c *RunConfig) IsSpotVm() bool {
-	return c.SpotPrice != "" && c.SpotPrice != "0"
 }

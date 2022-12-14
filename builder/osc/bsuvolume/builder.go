@@ -184,7 +184,6 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			Comm: &b.config.RunConfig.Comm,
 		},
 		&osccommon.StepStopBSUBackedVm{
-			Skip:          b.config.IsSpotVm(),
 			DisableStopVm: b.config.DisableStopVm,
 		},
 	}

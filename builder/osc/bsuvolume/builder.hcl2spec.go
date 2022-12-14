@@ -85,9 +85,6 @@ type FlatConfig struct {
 	SecurityGroupIds            []string                               `mapstructure:"security_group_ids" cty:"security_group_ids" hcl:"security_group_ids"`
 	SourceOmi                   *string                                `mapstructure:"source_omi" cty:"source_omi" hcl:"source_omi"`
 	SourceOmiFilter             *common.FlatOmiFilterOptions           `mapstructure:"source_omi_filter" cty:"source_omi_filter" hcl:"source_omi_filter"`
-	SpotPrice                   *string                                `mapstructure:"spot_price" cty:"spot_price" hcl:"spot_price"`
-	SpotPriceAutoProduct        *string                                `mapstructure:"spot_price_auto_product" cty:"spot_price_auto_product" hcl:"spot_price_auto_product"`
-	SpotTags                    map[string]string                      `mapstructure:"spot_tags" cty:"spot_tags" hcl:"spot_tags"`
 	SubnetFilter                *common.FlatSubnetFilterOptions        `mapstructure:"subnet_filter" cty:"subnet_filter" hcl:"subnet_filter"`
 	SubnetId                    *string                                `mapstructure:"subnet_id" cty:"subnet_id" hcl:"subnet_id"`
 	TemporaryKeyPairName        *string                                `mapstructure:"temporary_key_pair_name" cty:"temporary_key_pair_name" hcl:"temporary_key_pair_name"`
@@ -196,9 +193,6 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"security_group_ids":                   &hcldec.AttrSpec{Name: "security_group_ids", Type: cty.List(cty.String), Required: false},
 		"source_omi":                           &hcldec.AttrSpec{Name: "source_omi", Type: cty.String, Required: false},
 		"source_omi_filter":                    &hcldec.BlockSpec{TypeName: "source_omi_filter", Nested: hcldec.ObjectSpec((*common.FlatOmiFilterOptions)(nil).HCL2Spec())},
-		"spot_price":                           &hcldec.AttrSpec{Name: "spot_price", Type: cty.String, Required: false},
-		"spot_price_auto_product":              &hcldec.AttrSpec{Name: "spot_price_auto_product", Type: cty.String, Required: false},
-		"spot_tags":                            &hcldec.AttrSpec{Name: "spot_tags", Type: cty.Map(cty.String), Required: false},
 		"subnet_filter":                        &hcldec.BlockSpec{TypeName: "subnet_filter", Nested: hcldec.ObjectSpec((*common.FlatSubnetFilterOptions)(nil).HCL2Spec())},
 		"subnet_id":                            &hcldec.AttrSpec{Name: "subnet_id", Type: cty.String, Required: false},
 		"temporary_key_pair_name":              &hcldec.AttrSpec{Name: "temporary_key_pair_name", Type: cty.String, Required: false},

@@ -31,7 +31,7 @@ func getState() (multistep.StateBag, error) {
 
 func TestMostRecentOmiFilter(t *testing.T) {
 	stepSourceOMIInfo := StepSourceOMIInfo{
-		SourceOmi: "ami-7cab7c18",
+		SourceOmi: "ami-e58ac287",
 		OmiFilters: OmiFilterOptions{
 			MostRecent: true,
 		},

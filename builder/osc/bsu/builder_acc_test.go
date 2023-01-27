@@ -31,7 +31,7 @@ const testBuilderAccBasic = `
 		"type": "outscale-bsu",
 		"region": "eu-west-2",
 		"vm_type": "t2.micro",
-		"source_omi": "ami-6c274bbe",
+		"source_omi": "ami-6b9aeecd",
 		"ssh_username": "outscale",
 		"omi_name": "packer-test",
 		"associate_public_ip_address": true,

@@ -32,7 +32,7 @@ const testBuilderAccBasic = `
             "type": "outscale-bsuvolume",
             "region": "eu-west-2",
             "vm_type": "t2.micro",
-            "source_omi": "ami-6c274bbe",
+            "source_omi": "ami-6b9aeecd",
             "ssh_username": "outscale",
             "bsu_volumes": [
                 {

@@ -1,0 +1,1048 @@
+2023/05/22 06:07:53 [INFO] Packer version: 1.8.5 [go1.18.9 linux amd64]
+2023/05/22 06:07:53 Old default config directory found: /home/outscale/.packer.d
+2023/05/22 06:07:53 [TRACE] discovering plugins in /usr/local/bin
+2023/05/22 06:07:53 Old default config directory found: /home/outscale/.packer.d
+2023/05/22 06:07:53 [TRACE] discovering plugins in /home/outscale/.packer.d/plugins
+2023/05/22 06:07:53 [DEBUG] Discovered plugin: windows-update = /home/outscale/.packer.d/plugins/github.com/rgl/windows-update/packer-plugin-windows-update_v0.14.1_x5.0_linux_amd64
+2023/05/22 06:07:53 found external [-packer-default-plugin-name-] provisioner from windows-update plugin
+2023/05/22 06:07:53 [DEBUG] Discovered plugin: outscale = /home/outscale/.packer.d/plugins/packer-plugin-outscale
+2023/05/22 06:07:53 [INFO] found external [bsu bsusurrogate bsuvolume chroot] builders from outscale plugin
+2023/05/22 06:07:53 found external [omi] datasource from outscale plugin
+2023/05/22 06:07:53 [TRACE] discovering plugins in .
+2023/05/22 06:07:53 [INFO] PACKER_CONFIG env var not set; checking the default config file path
+2023/05/22 06:07:53 [INFO] PACKER_CONFIG env var set; attempting to open config file: /home/outscale/.packerconfig
+2023/05/22 06:07:53 [WARN] Config file doesn't exist: /home/outscale/.packerconfig
+2023/05/22 06:07:53 Old default config directory found: /home/outscale/.packer.d
+2023/05/22 06:07:53 [INFO] Setting cache directory: /home/outscale/.cache/packer
+2023/05/22 06:07:53 Old default config directory found: /home/outscale/.packer.d
+2023/05/22 06:07:53 [TRACE] Starting external plugin /home/outscale/.packer.d/plugins/packer-plugin-outscale start builder bsusurrogate
+2023/05/22 06:07:53 Starting plugin: /home/outscale/.packer.d/plugins/packer-plugin-outscale []string{"/home/outscale/.packer.d/plugins/packer-plugin-outscale", "start", "builder", "bsusurrogate"}
+2023/05/22 06:07:53 Waiting for RPC address for: /home/outscale/.packer.d/plugins/packer-plugin-outscale
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53 Plugin address: unix /tmp/packer-plugin3407362924
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53 Waiting for connection...
+2023/05/22 06:07:53 Received unix RPC address for /home/outscale/.packer.d/plugins/packer-plugin-outscale: addr is /tmp/packer-plugin3407362924
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53 Serving a plugin connection...
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53 [TRACE] starting builder bsusurrogate
+2023/05/22 06:07:53 Preparing build: outscale-bsusurrogate
+2023/05/22 06:07:53 ui: [1;32moutscale-bsusurrogate: output will be in this color.[0m
+2023/05/22 06:07:53 ui: 
+2023/05/22 06:07:53 Build debug mode: false
+2023/05/22 06:07:53 Force build: false
+2023/05/22 06:07:53 On error: 
+2023/05/22 06:07:53 Waiting on builds to complete...
+2023/05/22 06:07:53 Starting build run: outscale-bsusurrogate
+2023/05/22 06:07:53 Running builder: outscale-bsusurrogate
+2023/05/22 06:07:53 [INFO] (telemetry) Starting builder outscale-bsusurrogate
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53 No Custom Endpoint has been setted
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53 No Certificat Path has been setted
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53 No Key Path has been setted
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53 [DEBUG] Launch Block Device []common.BlockDevice{common.BlockDevice{DeleteOnVmDeletion:false, DeviceName:"/dev/xvdf", IOPS:300, NoDevice:false, SnapshotId:"", VirtualName:"", VolumeType:"io1", VolumeSize:10}}
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53 block device mapping
+2023/05/22 06:07:53 ui: [1;32m==> outscale-bsusurrogate: Prevalidating OMI Name: packer-test 1684735673[0m
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53
+2023/05/22 06:07:53 packer-plugin-outscale plugin: POST /oapi/latest/ReadImages HTTP/1.1
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:07:53 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Length: 52
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=a5a4208bbfc94d8c93c9a47cde7a2d92339dd9339e2dc60b81726d1a1ca32763
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060753Z
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 
+2023/05/22 06:07:53 packer-plugin-outscale plugin: {"Filters":{"ImageIds":["packer-test 1684735673"]}}
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53
+2023/05/22 06:07:53 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Length: 84
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:07:53 GMT
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 
+2023/05/22 06:07:53 packer-plugin-outscale plugin: {"ResponseContext":{"RequestId":"957154ea-60c5-4399-a0eb-f83458ba1814"},"Images":[]}
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53 filters to pass to API are &[]string{"ami-68ed4301"}
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53 Using OMI Filters osc.ReadImagesRequest{DryRun:(*bool)(nil), Filters:(*osc.FiltersImage)(0xc0008000c0)}
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53
+2023/05/22 06:07:53 packer-plugin-outscale plugin: POST /oapi/latest/ReadImages HTTP/1.1
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:07:53 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Length: 42
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=09eaf236e3838bd60a7c62a175f0291ad4199c0373621e7cffb0069fa831c798
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060753Z
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 
+2023/05/22 06:07:53 packer-plugin-outscale plugin: {"Filters":{"ImageIds":["ami-68ed4301"]}}
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53
+2023/05/22 06:07:53 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Length: 689
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:07:53 GMT
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 
+2023/05/22 06:07:53 packer-plugin-outscale plugin: {"ResponseContext":{"RequestId":"3d998546-5297-4627-9c20-1d523b318745"},"Images":[{"StateComment":{},"State":"available","RootDeviceType":"bsu","RootDeviceName":"/dev/sda1","ProductCodes":["0001"],"PermissionsToLaunch":{"GlobalPermission":true,"AccountIds":[]},"AccountId":"741259254063","Tags":[],"Description":"For examples","ImageId":"ami-68ed4301","BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeType":"standard","DeleteOnVmDeletion":true,"VolumeSize":10,"SnapshotId":"snap-6b09c470"}}],"ImageType":"machine","CreationDate":"2022-09-27T08:01:17.143530Z","FileLocation":"741259254063/Debian-11-2022.03.10-0","Architecture":"x86_64","ImageName":"Debian-11-2022.03.10-0"}]}
+2023/05/22 06:07:53 ui: [0;32m    outscale-bsusurrogate: Found Image ID: ami-68ed4301[0m
+2023/05/22 06:07:53 ui: [1;32m==> outscale-bsusurrogate: Creating temporary keypair: packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a[0m
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53
+2023/05/22 06:07:53 packer-plugin-outscale plugin: POST /oapi/latest/CreateKeypair HTTP/1.1
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:07:53 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Length: 62
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=065848b16d4a830dbc5e41c7edbd9c823bfa45fb82e0d6002c7c298e3fe864bc
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060753Z
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 
+2023/05/22 06:07:53 packer-plugin-outscale plugin: {"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a"}
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53
+2023/05/22 06:07:53 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Length: 1927
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:07:53 GMT
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 
+2023/05/22 06:07:53 packer-plugin-outscale plugin: {"ResponseContext":{"RequestId":"2271d472-7e35-4466-ab6e-6ffca85fe68b"},"Keypair":{"PrivateKey":"-----BEGIN RSA PRIVATE KEY-----\nMIIEpQIBAAKCAQEAqwe9r8J8bTnnWJZvVTYyTDc5/pZ/z4e7CU0nwNK5ofUSEUWdigNq8gO8Gawm\n+K7Tf1E5sRuN2yeZdQn20ovHp1oN4ZFSdhZ6bd5q02gFV3f0Rfd3drjwI9Qk7J9VQaMHnYTZ9hIW\nymHylZn+RGSZom6luvsQu8o/ACyffa3IFHYp5/62Uxyk9ITlrtCuci5PbySj9+0G2HmPgPqoA+Ou\nab2nJ/X5tC6IvevysBvwk+3sPCZlGlnb8a3REh/DcirAKcT8JHeyBJU/101sydqvQbLfxnG48pZh\noWf2rTrofaHYg+wxadzSewQjeP9A7CuI54RFkHh7JrxvPJXr1+IShwIDAQABAoIBAQCgPel4cnUX\n9WePNatsIBIyHJBGuwVXEOmpxlNXs1ffqXjbG+mFtLwPsnYba5M77rkUEatHB/T5/3klEkfibrqK\nTrKww/KJ13ev1vMpzc0rbaU9pKWWY6IDP7G0zXgYvkHVUPLSPZKC3hBmIFj+BW94o8i9jpvYBp7O\ncACixR6wI5m36t77/FpnWDTVMbXhNks4TTFgp0amyzMVbgt4BOCq5W2wDDiAsRO/Xmpth2Ywizgj\nVzGt6MqRpig8rApdM7kCAu2ZLy+iVstGZ01LR35BJivEbJNN3FWPAgaiXAMLS9wfxf4GE3UsC6HB\nR++b1WVJNBuWNWfB/v/TROa6G3FhAoGBANjh2su+pFqdyPHJwvrFUdNqYs3aXIMi1Nd6n4UZjTDl\nHlYwgsh9dzNH1DUdeHuTZOd6183vLKsFRfAWjsmV9HvpRjrwD/D/1NDOpC47R0zDdTOJzI6vsInK\noZkfr0jNypRDRh6xt000kj+8MDFbj2jnnfpcETz36OrQHnGBmDQxAoGBAMngwLlCWjQ36cAZcO6g\nsvUn3TVYJJTgv8oyFgH3UsoU7w/WgFf8yYSYnfSdUQVkuRg9UEmK1Qk5A/tNrEV/FJ3GC/IN8x87\nP9hr5ctqEkAmILOXz6eAaD6yABKQgcqKYqlLSKe72McLx/z1DnZBwQex6dnX7DGmENNmOPCzMZw3\nAoGARTiIsaCuKjHT8b/YmFskC5sX3+XCwyP51LBRe5S1KJboANBI3Z6VzesuAqneS2q2uN7PQ+4D\nTq5HLSK1/gb7WhUREjyOiffNP7vEUPEgh5KWtJVVkXDnooLm4s1nD5CHCJ0UIzXLcDvINcllhEtZ\n0TyjgkWiRthFIbS9ErMvFfECgYEAu/Ocet7jzKoh3s/Q7NqAwu6SbQ/bPyDgbweipcH2Ol6zFDPI\n2iJoHCNbLFsrC7JzAbZUAaRYI3YJ1vbB5RIjx6CTjpCeQf2Pu5b5IyFmTIMy/wHgOzq502U13BLe\nRAwDP0rwIfoqIWc+kqw1ArTFWryx1DfLl43dLHSHntG25pECgYEAprrWcKr/864sIddQwa0yJWNi\nbUSCwZ4I/BQqOZSd881F97IFlpIt7SWlyr2gor5FTWB3HzUu4SruzbWN6t9jiCb+o4QkoyRLe8Cd\nyq6j7NzZgqkz0WqBt7qdslovQmxvZOoqsznQhLVcT7dDwtehuM5SPnnaEqZ5eMyLOUo+Zig=\n-----END RSA PRIVATE KEY-----","KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","KeypairFingerprint":"2e:96:bf:56:02:8a:1e:7d:8b:1c:e3:e3:a8:6d:f4:85"}}
+2023/05/22 06:07:53 ui: [1;32m==> outscale-bsusurrogate: Creating temporary security group for this instance: packer_osc_646b06b9-1bdf-16c1-814d-232118705aac[0m
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 2023/05/22 06:07:53
+2023/05/22 06:07:53 packer-plugin-outscale plugin: POST /oapi/latest/CreateSecurityGroup HTTP/1.1
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:07:53 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Length: 115
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=8854e19e3465b44d67e7e5da3f8b7920dab83441cdd3ceb2a4120e00b884a36f
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:53 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060753Z
+2023/05/22 06:07:53 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 
+2023/05/22 06:07:53 packer-plugin-outscale plugin: {"Description":"Temporary group for Packer","SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac"}
+2023/05/22 06:07:53 packer-plugin-outscale plugin: 
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 2023/05/22 06:07:56
+2023/05/22 06:07:56 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Content-Length: 309
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:07:56 GMT
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:07:56 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:07:56 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:07:56 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 
+2023/05/22 06:07:56 packer-plugin-outscale plugin: {"SecurityGroup":{"Tags":[],"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","OutboundRules":[],"SecurityGroupId":"sg-56461778","AccountId":"527836537156","Description":"Temporary group for Packer","InboundRules":[]},"ResponseContext":{"RequestId":"8b872a73-2aac-48a6-ac32-3d487592dd4a"}}
+2023/05/22 06:07:56 ui: [1;32m==> outscale-bsusurrogate: Authorizing access to port 22 from 0.0.0.0/0 in the temporary security group...[0m
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 2023/05/22 06:07:56
+2023/05/22 06:07:56 packer-plugin-outscale plugin: POST /oapi/latest/CreateSecurityGroupRule HTTP/1.1
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:07:56 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Content-Length: 143
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=e03123abb0b4e989dcf67a6ec1d8626e7f48fa5bd000e52a8aaa95276fbae547
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:56 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060756Z
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 
+2023/05/22 06:07:56 packer-plugin-outscale plugin: {"Flow":"Inbound","Rules":[{"FromPortRange":22,"IpProtocol":"tcp","IpRanges":["0.0.0.0/0"],"ToPortRange":22}],"SecurityGroupId":"sg-56461778"}
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 2023/05/22 06:07:56
+2023/05/22 06:07:56 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Content-Length: 390
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:07:56 GMT
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:07:56 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:07:56 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:07:56 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 
+2023/05/22 06:07:56 packer-plugin-outscale plugin: {"SecurityGroup":{"Tags":[],"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","OutboundRules":[],"SecurityGroupId":"sg-56461778","AccountId":"527836537156","Description":"Temporary group for Packer","InboundRules":[{"FromPortRange":22,"IpProtocol":"tcp","ToPortRange":22,"IpRanges":["0.0.0.0/0"]}]},"ResponseContext":{"RequestId":"aff6a8e8-624f-40f8-b076-ae5126f7c6ef"}}
+2023/05/22 06:07:56 ui: [1;32m==> outscale-bsusurrogate: Launching a source OUTSCALE vm...[0m
+2023/05/22 06:07:56 ui: [1;32m==> outscale-bsusurrogate: Adding tags to source vm[0m
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 2023/05/22 06:07:56 [DEBUG] Launch Block Device []common.BlockDevice{common.BlockDevice{DeleteOnVmDeletion:false, DeviceName:"/dev/xvdf", IOPS:300, NoDevice:false, SnapshotId:"", VirtualName:"", VolumeType:"io1", VolumeSize:10}}
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 2023/05/22 06:07:56 block device mapping
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 2023/05/22 06:07:56 subregion is eu-west-2a
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 2023/05/22 06:07:56
+2023/05/22 06:07:56 packer-plugin-outscale plugin: POST /oapi/latest/CreateVms HTTP/1.1
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:07:56 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Content-Length: 440
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=d28c47f57f14110a58581b0bd80767d626de15463924ab2b104dd9cf3323c409
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:56 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060756Z
+2023/05/22 06:07:56 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 
+2023/05/22 06:07:56 packer-plugin-outscale plugin: {"BlockDeviceMappings":[{"Bsu":{"DeleteOnVmDeletion":false,"Iops":300,"VolumeSize":10,"VolumeType":"io1"},"DeviceName":"/dev/xvdf"}],"BsuOptimized":false,"ImageId":"ami-68ed4301","KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","MaxVmsCount":1,"MinVmsCount":1,"Placement":{"SubregionName":"eu-west-2a"},"SecurityGroupIds":["sg-56461778"],"SubnetId":"","UserData":"","VmInitiatedShutdownBehavior":"terminate","VmType":"t2.micro"}
+2023/05/22 06:07:56 packer-plugin-outscale plugin: 
+2023/05/22 06:07:58 packer-plugin-outscale plugin: 2023/05/22 06:07:58
+2023/05/22 06:07:58 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Content-Length: 1228
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:07:58 GMT
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:07:58 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:07:58 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:07:58 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:07:58 packer-plugin-outscale plugin: 
+2023/05/22 06:07:58 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"pending","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","ImageId":"ami-68ed4301","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attaching","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attaching","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"8d37904f-abb8-4673-836a-619468be5ce0"}}
+2023/05/22 06:07:58 ui: [0;32m    outscale-bsusurrogate: Vm ID: i-411ea2d8[0m
+2023/05/22 06:07:58 ui: [1;32m==> outscale-bsusurrogate: Waiting for vm (i-411ea2d8) to become ready...[0m
+2023/05/22 06:07:58 packer-plugin-outscale plugin: 2023/05/22 06:07:58 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:07:58 packer-plugin-outscale plugin: 2023/05/22 06:07:58
+2023/05/22 06:07:58 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:07:58 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=254b721c35ea75c0c38ea48e2eb14ba6dd07e0e0bf0a4ccad01cc2def00ddaf1
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:58 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060758Z
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:07:58 packer-plugin-outscale plugin: 
+2023/05/22 06:07:58 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:07:58 packer-plugin-outscale plugin: 
+2023/05/22 06:07:58 packer-plugin-outscale plugin: 2023/05/22 06:07:58
+2023/05/22 06:07:58 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Content-Length: 1228
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:07:58 GMT
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:07:58 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:07:58 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:07:58 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:07:58 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:07:58 packer-plugin-outscale plugin: 
+2023/05/22 06:07:58 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"pending","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","ImageId":"ami-68ed4301","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attaching","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attaching","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"791eddad-8abd-4526-a00e-334af0ab3488"}}
+2023/05/22 06:08:00 packer-plugin-outscale plugin: 2023/05/22 06:08:00 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:08:00 packer-plugin-outscale plugin: 2023/05/22 06:08:00
+2023/05/22 06:08:00 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:08:00 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=f3fbc76b5438ae9c09127a4af03357a5f02781c925d6479df0526a4aa5e31f18
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:00 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060800Z
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:08:00 packer-plugin-outscale plugin: 
+2023/05/22 06:08:00 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:08:00 packer-plugin-outscale plugin: 
+2023/05/22 06:08:00 packer-plugin-outscale plugin: 2023/05/22 06:08:00
+2023/05/22 06:08:00 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Content-Length: 1228
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:08:00 GMT
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:08:00 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:08:00 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:08:00 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:08:00 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:08:00 packer-plugin-outscale plugin: 
+2023/05/22 06:08:00 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"pending","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","ImageId":"ami-68ed4301","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attaching","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attaching","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"58ad9a6a-743a-4c29-b64c-08959eadafdb"}}
+2023/05/22 06:08:02 packer-plugin-outscale plugin: 2023/05/22 06:08:02 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:08:02 packer-plugin-outscale plugin: 2023/05/22 06:08:02
+2023/05/22 06:08:02 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:08:02 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=e130d03b1b9904561d7a6c6f50036f8c0cebe2543e684137c4912412c3b83290
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:02 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060802Z
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:08:02 packer-plugin-outscale plugin: 
+2023/05/22 06:08:02 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:08:02 packer-plugin-outscale plugin: 
+2023/05/22 06:08:02 packer-plugin-outscale plugin: 2023/05/22 06:08:02
+2023/05/22 06:08:02 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Content-Length: 1228
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:08:02 GMT
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:08:02 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:08:02 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:08:02 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:08:02 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:08:02 packer-plugin-outscale plugin: 
+2023/05/22 06:08:02 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"pending","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","ImageId":"ami-68ed4301","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attaching","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attaching","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"72bda0c2-0b6d-4f70-8ff0-2c61acc322da"}}
+2023/05/22 06:08:04 packer-plugin-outscale plugin: 2023/05/22 06:08:04 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:08:04 packer-plugin-outscale plugin: 2023/05/22 06:08:04
+2023/05/22 06:08:04 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:08:04 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=1a49cc99e5db9b5dfd03763d7089ab03deb6fc189a137e026296692ddf01e221
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:04 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060804Z
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:08:04 packer-plugin-outscale plugin: 
+2023/05/22 06:08:04 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:08:04 packer-plugin-outscale plugin: 
+2023/05/22 06:08:04 packer-plugin-outscale plugin: 2023/05/22 06:08:04
+2023/05/22 06:08:04 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Content-Length: 1320
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:08:04 GMT
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:08:04 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:08:04 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:08:04 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:08:04 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:08:04 packer-plugin-outscale plugin: 
+2023/05/22 06:08:04 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"pending","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"a1fe83be-c0d0-442f-8aee-f6228dc77fc2"}}
+2023/05/22 06:08:06 packer-plugin-outscale plugin: 2023/05/22 06:08:06 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:08:06 packer-plugin-outscale plugin: 2023/05/22 06:08:06
+2023/05/22 06:08:06 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:08:06 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=8728489016002170beb16f7e310e01790837ae7a71014a43b4a75e2100850b96
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:06 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060806Z
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:08:06 packer-plugin-outscale plugin: 
+2023/05/22 06:08:06 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:08:06 packer-plugin-outscale plugin: 
+2023/05/22 06:08:06 packer-plugin-outscale plugin: 2023/05/22 06:08:06
+2023/05/22 06:08:06 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Content-Length: 1320
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:08:06 GMT
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:08:06 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:08:06 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:08:06 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:08:06 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:08:06 packer-plugin-outscale plugin: 
+2023/05/22 06:08:06 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"pending","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"a550c474-5f4e-4684-b864-6b705a668a30"}}
+2023/05/22 06:08:08 packer-plugin-outscale plugin: 2023/05/22 06:08:08 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:08:08 packer-plugin-outscale plugin: 2023/05/22 06:08:08
+2023/05/22 06:08:08 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:08:08 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=c49cf2f6cb39924ad4f5926ecbef695602208485482c194f43963749e7934ce2
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:08 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060808Z
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:08:08 packer-plugin-outscale plugin: 
+2023/05/22 06:08:08 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:08:08 packer-plugin-outscale plugin: 
+2023/05/22 06:08:08 packer-plugin-outscale plugin: 2023/05/22 06:08:08
+2023/05/22 06:08:08 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Content-Length: 1320
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:08:08 GMT
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:08:08 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:08:08 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:08:08 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:08:08 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:08:08 packer-plugin-outscale plugin: 
+2023/05/22 06:08:08 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"pending","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"b06f164b-3b90-428e-91ca-1de8c25878e2"}}
+2023/05/22 06:08:10 packer-plugin-outscale plugin: 2023/05/22 06:08:10 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:08:10 packer-plugin-outscale plugin: 2023/05/22 06:08:10
+2023/05/22 06:08:10 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:08:10 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=438e026accb262368ba374c57f8b098b3e1bb7586007cd182c15dfc5e31e19aa
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:10 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060810Z
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:08:10 packer-plugin-outscale plugin: 
+2023/05/22 06:08:10 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:08:10 packer-plugin-outscale plugin: 
+2023/05/22 06:08:10 packer-plugin-outscale plugin: 2023/05/22 06:08:10
+2023/05/22 06:08:10 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Content-Length: 1320
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:08:10 GMT
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:08:10 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:08:10 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:08:10 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:08:10 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:08:10 packer-plugin-outscale plugin: 
+2023/05/22 06:08:10 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"pending","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"9a1a2f4e-1d78-4a50-89cc-0f3711034787"}}
+2023/05/22 06:08:12 packer-plugin-outscale plugin: 2023/05/22 06:08:12 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:08:12 packer-plugin-outscale plugin: 2023/05/22 06:08:12
+2023/05/22 06:08:12 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:08:12 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=e524618b5ff5127af74a0f3414e90d3ca3596e353f7697bb87d77683d74ce859
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:12 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060812Z
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:08:12 packer-plugin-outscale plugin: 
+2023/05/22 06:08:12 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:08:12 packer-plugin-outscale plugin: 
+2023/05/22 06:08:12 packer-plugin-outscale plugin: 2023/05/22 06:08:12
+2023/05/22 06:08:12 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Content-Length: 1320
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:08:12 GMT
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:08:12 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:08:12 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:08:12 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:08:12 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:08:12 packer-plugin-outscale plugin: 
+2023/05/22 06:08:12 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"pending","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"31389a19-9dd3-4cc6-9151-1b0ad1ad4f7e"}}
+2023/05/22 06:08:14 packer-plugin-outscale plugin: 2023/05/22 06:08:14 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:08:14 packer-plugin-outscale plugin: 2023/05/22 06:08:14
+2023/05/22 06:08:14 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:08:14 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=32250c00aef7eec472c8d675229e3d44eb013899d16738c8c57cb3b910c7bbe9
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:14 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060814Z
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:08:14 packer-plugin-outscale plugin: 
+2023/05/22 06:08:14 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:08:14 packer-plugin-outscale plugin: 
+2023/05/22 06:08:14 packer-plugin-outscale plugin: 2023/05/22 06:08:14
+2023/05/22 06:08:14 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Content-Length: 1320
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:08:14 GMT
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:08:14 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:08:14 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:08:14 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:08:14 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:08:14 packer-plugin-outscale plugin: 
+2023/05/22 06:08:14 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"pending","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"608f9e75-f84d-41e5-8996-b9ba853c32ca"}}
+2023/05/22 06:08:16 packer-plugin-outscale plugin: 2023/05/22 06:08:16 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:08:16 packer-plugin-outscale plugin: 2023/05/22 06:08:16
+2023/05/22 06:08:16 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:08:16 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:08:16 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:08:16 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:08:16 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:08:16 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=1f566b5310f09b471f25a3d998ecfc257d2c96eb0588bf1d155065ef4c595e40
+2023/05/22 06:08:16 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:16 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060816Z
+2023/05/22 06:08:16 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:08:16 packer-plugin-outscale plugin: 
+2023/05/22 06:08:16 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:08:16 packer-plugin-outscale plugin: 
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 2023/05/22 06:08:17
+2023/05/22 06:08:17 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Content-Length: 1320
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:08:17 GMT
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:08:17 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:08:17 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:08:17 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 
+2023/05/22 06:08:17 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"running","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"c3655515-5193-41d9-8e62-0dbb25a89092"}}
+2023/05/22 06:08:17 ui: [0;32m    outscale-bsusurrogate: Adding tag: "Name": "Packer Builder"[0m
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 2023/05/22 06:08:17
+2023/05/22 06:08:17 packer-plugin-outscale plugin: POST /oapi/latest/CreateTags HTTP/1.1
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:08:17 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Content-Length: 80
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=7bbd476ae16bc8a12188c7b562e621e28e9013fe94aa2b8d5ce57243d5b50af4
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:17 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060817Z
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 
+2023/05/22 06:08:17 packer-plugin-outscale plugin: {"ResourceIds":["i-411ea2d8"],"Tags":[{"Key":"Name","Value":"Packer Builder"}]}
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 2023/05/22 06:08:17
+2023/05/22 06:08:17 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Content-Length: 72
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:08:17 GMT
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:08:17 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:08:17 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:08:17 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 
+2023/05/22 06:08:17 packer-plugin-outscale plugin: {"ResponseContext":{"RequestId":"a8cf244d-e9e6-4a0e-9600-758e1c49ec4f"}}
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 2023/05/22 06:08:17
+2023/05/22 06:08:17 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:08:17 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=b090eb2f5a6097ed73fdf445928aabffd03b68e0ef5993d8a647d13486771dfb
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:17 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060817Z
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 
+2023/05/22 06:08:17 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 2023/05/22 06:08:17
+2023/05/22 06:08:17 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Content-Length: 1359
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:08:17 GMT
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:08:17 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:08:17 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:08:17 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:08:17 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 
+2023/05/22 06:08:17 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"running","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[{"Value":"Packer Builder","Key":"Name"}],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"f954b095-04dc-45ad-8f81-b5150e835375"}}
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 2023/05/22 06:08:17 [INFO] Not using winrm communicator, skipping get password...
+2023/05/22 06:08:17 ui: [1;32m==> outscale-bsusurrogate: Using SSH communicator to connect: ows-142-44-35-185.eu-west-2.compute.outscale.com[0m
+2023/05/22 06:08:17 packer-plugin-outscale plugin: 2023/05/22 06:08:17 [INFO] Waiting for SSH, up to timeout: 5m0s
+2023/05/22 06:08:17 ui: [1;32m==> outscale-bsusurrogate: Waiting for SSH to become available...[0m
+2023/05/22 06:08:32 packer-plugin-outscale plugin: 2023/05/22 06:08:32 [DEBUG] TCP connection to SSH ip/port failed: dial tcp 142.44.35.185:22: i/o timeout
+2023/05/22 06:08:52 packer-plugin-outscale plugin: 2023/05/22 06:08:52 [DEBUG] TCP connection to SSH ip/port failed: dial tcp 142.44.35.185:22: i/o timeout
+2023/05/22 06:08:57 packer-plugin-outscale plugin: 2023/05/22 06:08:57 [DEBUG] TCP connection to SSH ip/port failed: dial tcp 10.9.40.24:22: connect: connection refused
+2023/05/22 06:09:02 packer-plugin-outscale plugin: 2023/05/22 06:09:02 [DEBUG] TCP connection to SSH ip/port failed: dial tcp 10.9.40.24:22: connect: connection refused
+2023/05/22 06:09:07 packer-plugin-outscale plugin: 2023/05/22 06:09:07 [DEBUG] TCP connection to SSH ip/port failed: dial tcp 10.9.40.24:22: connect: connection refused
+2023/05/22 06:09:12 packer-plugin-outscale plugin: 2023/05/22 06:09:12 [INFO] Attempting SSH connection to ows-142-44-35-185.eu-west-2.compute.outscale.com:22...
+2023/05/22 06:09:12 packer-plugin-outscale plugin: 2023/05/22 06:09:12 [DEBUG] reconnecting to TCP connection for SSH
+2023/05/22 06:09:12 packer-plugin-outscale plugin: 2023/05/22 06:09:12 [DEBUG] handshaking with SSH
+2023/05/22 06:09:12 packer-plugin-outscale plugin: 2023/05/22 06:09:12 [DEBUG] SSH handshake err: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+2023/05/22 06:09:12 packer-plugin-outscale plugin: 2023/05/22 06:09:12 [DEBUG] Detected authentication error. Increasing handshake attempts.
+2023/05/22 06:09:19 packer-plugin-outscale plugin: 2023/05/22 06:09:19 [INFO] Attempting SSH connection to ows-142-44-35-185.eu-west-2.compute.outscale.com:22...
+2023/05/22 06:09:19 packer-plugin-outscale plugin: 2023/05/22 06:09:19 [DEBUG] reconnecting to TCP connection for SSH
+2023/05/22 06:09:19 packer-plugin-outscale plugin: 2023/05/22 06:09:19 [DEBUG] handshaking with SSH
+2023/05/22 06:09:19 packer-plugin-outscale plugin: 2023/05/22 06:09:19 [DEBUG] SSH handshake err: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+2023/05/22 06:09:19 packer-plugin-outscale plugin: 2023/05/22 06:09:19 [DEBUG] Detected authentication error. Increasing handshake attempts.
+2023/05/22 06:09:26 packer-plugin-outscale plugin: 2023/05/22 06:09:26 [INFO] Attempting SSH connection to ows-142-44-35-185.eu-west-2.compute.outscale.com:22...
+2023/05/22 06:09:26 packer-plugin-outscale plugin: 2023/05/22 06:09:26 [DEBUG] reconnecting to TCP connection for SSH
+2023/05/22 06:09:26 packer-plugin-outscale plugin: 2023/05/22 06:09:26 [DEBUG] handshaking with SSH
+2023/05/22 06:09:26 packer-plugin-outscale plugin: 2023/05/22 06:09:26 [DEBUG] SSH handshake err: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+2023/05/22 06:09:26 packer-plugin-outscale plugin: 2023/05/22 06:09:26 [DEBUG] Detected authentication error. Increasing handshake attempts.
+2023/05/22 06:09:33 packer-plugin-outscale plugin: 2023/05/22 06:09:33 [INFO] Attempting SSH connection to ows-142-44-35-185.eu-west-2.compute.outscale.com:22...
+2023/05/22 06:09:33 packer-plugin-outscale plugin: 2023/05/22 06:09:33 [DEBUG] reconnecting to TCP connection for SSH
+2023/05/22 06:09:33 packer-plugin-outscale plugin: 2023/05/22 06:09:33 [DEBUG] handshaking with SSH
+2023/05/22 06:09:33 packer-plugin-outscale plugin: 2023/05/22 06:09:33 [DEBUG] SSH handshake err: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+2023/05/22 06:09:33 packer-plugin-outscale plugin: 2023/05/22 06:09:33 [DEBUG] Detected authentication error. Increasing handshake attempts.
+2023/05/22 06:09:40 packer-plugin-outscale plugin: 2023/05/22 06:09:40 [INFO] Attempting SSH connection to ows-142-44-35-185.eu-west-2.compute.outscale.com:22...
+2023/05/22 06:09:40 packer-plugin-outscale plugin: 2023/05/22 06:09:40 [DEBUG] reconnecting to TCP connection for SSH
+2023/05/22 06:09:40 packer-plugin-outscale plugin: 2023/05/22 06:09:40 [DEBUG] handshaking with SSH
+2023/05/22 06:09:40 packer-plugin-outscale plugin: 2023/05/22 06:09:40 [DEBUG] SSH handshake err: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+2023/05/22 06:09:40 packer-plugin-outscale plugin: 2023/05/22 06:09:40 [DEBUG] Detected authentication error. Increasing handshake attempts.
+2023/05/22 06:09:47 packer-plugin-outscale plugin: 2023/05/22 06:09:47 [INFO] Attempting SSH connection to ows-142-44-35-185.eu-west-2.compute.outscale.com:22...
+2023/05/22 06:09:47 packer-plugin-outscale plugin: 2023/05/22 06:09:47 [DEBUG] reconnecting to TCP connection for SSH
+2023/05/22 06:09:47 packer-plugin-outscale plugin: 2023/05/22 06:09:47 [DEBUG] handshaking with SSH
+2023/05/22 06:09:47 packer-plugin-outscale plugin: 2023/05/22 06:09:47 [DEBUG] SSH handshake err: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+2023/05/22 06:09:47 packer-plugin-outscale plugin: 2023/05/22 06:09:47 [DEBUG] Detected authentication error. Increasing handshake attempts.
+2023/05/22 06:09:54 packer-plugin-outscale plugin: 2023/05/22 06:09:54 [INFO] Attempting SSH connection to ows-142-44-35-185.eu-west-2.compute.outscale.com:22...
+2023/05/22 06:09:54 packer-plugin-outscale plugin: 2023/05/22 06:09:54 [DEBUG] reconnecting to TCP connection for SSH
+2023/05/22 06:09:54 packer-plugin-outscale plugin: 2023/05/22 06:09:54 [DEBUG] handshaking with SSH
+2023/05/22 06:09:54 packer-plugin-outscale plugin: 2023/05/22 06:09:54 [DEBUG] SSH handshake err: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+2023/05/22 06:09:54 packer-plugin-outscale plugin: 2023/05/22 06:09:54 [DEBUG] Detected authentication error. Increasing handshake attempts.
+2023/05/22 06:10:01 packer-plugin-outscale plugin: 2023/05/22 06:10:01 [INFO] Attempting SSH connection to ows-142-44-35-185.eu-west-2.compute.outscale.com:22...
+2023/05/22 06:10:01 packer-plugin-outscale plugin: 2023/05/22 06:10:01 [DEBUG] reconnecting to TCP connection for SSH
+2023/05/22 06:10:01 packer-plugin-outscale plugin: 2023/05/22 06:10:01 [DEBUG] handshaking with SSH
+2023/05/22 06:10:01 packer-plugin-outscale plugin: 2023/05/22 06:10:01 [DEBUG] SSH handshake err: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+2023/05/22 06:10:01 packer-plugin-outscale plugin: 2023/05/22 06:10:01 [DEBUG] Detected authentication error. Increasing handshake attempts.
+2023/05/22 06:10:08 packer-plugin-outscale plugin: 2023/05/22 06:10:08 [INFO] Attempting SSH connection to ows-142-44-35-185.eu-west-2.compute.outscale.com:22...
+2023/05/22 06:10:08 packer-plugin-outscale plugin: 2023/05/22 06:10:08 [DEBUG] reconnecting to TCP connection for SSH
+2023/05/22 06:10:08 packer-plugin-outscale plugin: 2023/05/22 06:10:08 [DEBUG] handshaking with SSH
+2023/05/22 06:10:08 packer-plugin-outscale plugin: 2023/05/22 06:10:08 [DEBUG] SSH handshake err: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+2023/05/22 06:10:08 packer-plugin-outscale plugin: 2023/05/22 06:10:08 [DEBUG] Detected authentication error. Increasing handshake attempts.
+2023/05/22 06:10:15 packer-plugin-outscale plugin: 2023/05/22 06:10:15 [INFO] Attempting SSH connection to ows-142-44-35-185.eu-west-2.compute.outscale.com:22...
+2023/05/22 06:10:15 packer-plugin-outscale plugin: 2023/05/22 06:10:15 [DEBUG] reconnecting to TCP connection for SSH
+2023/05/22 06:10:15 packer-plugin-outscale plugin: 2023/05/22 06:10:15 [DEBUG] handshaking with SSH
+2023/05/22 06:10:15 packer-plugin-outscale plugin: 2023/05/22 06:10:15 [DEBUG] SSH handshake err: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+2023/05/22 06:10:15 packer-plugin-outscale plugin: 2023/05/22 06:10:15 [DEBUG] Detected authentication error. Increasing handshake attempts.
+2023/05/22 06:10:15 ui error: [1;31m==> outscale-bsusurrogate: Error waiting for SSH: Packer experienced an authentication error when trying to connect via SSH. This can happen if your username/password are wrong. You may want to double-check your credentials as part of your debugging process. original error: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain[0m
+2023/05/22 06:10:15 ui: [1;32m==> outscale-bsusurrogate: Terminating the source OUTSCALE vm...[0m
+2023/05/22 06:10:15 packer-plugin-outscale plugin: 2023/05/22 06:10:15
+2023/05/22 06:10:15 packer-plugin-outscale plugin: POST /oapi/latest/DeleteVms HTTP/1.1
+2023/05/22 06:10:15 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:10:15 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:10:15 packer-plugin-outscale plugin: Content-Length: 25
+2023/05/22 06:10:15 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:10:15 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=e385fc1d3d954138c883cd412dd0e7fb50e6e7f6ed507e2143bb38f6c70e30f8
+2023/05/22 06:10:15 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:10:15 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061015Z
+2023/05/22 06:10:15 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:10:15 packer-plugin-outscale plugin: 
+2023/05/22 06:10:15 packer-plugin-outscale plugin: {"VmIds":["i-411ea2d8"]}
+2023/05/22 06:10:15 packer-plugin-outscale plugin: 
+2023/05/22 06:10:53 packer-plugin-outscale plugin: 2023/05/22 06:10:53
+2023/05/22 06:10:53 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Content-Length: 159
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:10:53 GMT
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:10:53 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:10:53 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:10:53 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:10:53 packer-plugin-outscale plugin: 
+2023/05/22 06:10:53 packer-plugin-outscale plugin: {"Vms":[{"VmId":"i-411ea2d8","PreviousState":"running","CurrentState":"shutting-down"}],"ResponseContext":{"RequestId":"9c7272da-edcc-439d-8261-671ed9ebddf9"}}
+2023/05/22 06:10:53 packer-plugin-outscale plugin: 2023/05/22 06:10:53 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:10:53 packer-plugin-outscale plugin: 2023/05/22 06:10:53
+2023/05/22 06:10:53 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:10:53 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=1ca9e9e5d8a8b0d4c29bc97ea667075c9353c1c3324956e28079ebff69a8cdd2
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:10:53 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061053Z
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:10:53 packer-plugin-outscale plugin: 
+2023/05/22 06:10:53 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:10:53 packer-plugin-outscale plugin: 
+2023/05/22 06:10:53 packer-plugin-outscale plugin: 2023/05/22 06:10:53
+2023/05/22 06:10:53 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Content-Length: 1365
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:10:53 GMT
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:10:53 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:10:53 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:10:53 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:10:53 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:10:53 packer-plugin-outscale plugin: 
+2023/05/22 06:10:53 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"shutting-down","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[{"Value":"Packer Builder","Key":"Name"}],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"910f714a-a549-430f-8a92-5bd7078079a0"}}
+2023/05/22 06:10:55 packer-plugin-outscale plugin: 2023/05/22 06:10:55 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:10:55 packer-plugin-outscale plugin: 2023/05/22 06:10:55
+2023/05/22 06:10:55 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:10:55 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:10:55 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:10:55 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:10:55 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:10:55 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=e66ee966b9fc73c545d2ad11dc562441b7ffaf93b74f4bacd900013f77d1e32b
+2023/05/22 06:10:55 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:10:55 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061055Z
+2023/05/22 06:10:55 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:10:55 packer-plugin-outscale plugin: 
+2023/05/22 06:10:55 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:10:55 packer-plugin-outscale plugin: 
+2023/05/22 06:10:56 packer-plugin-outscale plugin: 2023/05/22 06:10:56
+2023/05/22 06:10:56 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:10:56 packer-plugin-outscale plugin: Content-Length: 1365
+2023/05/22 06:10:56 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:10:56 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:10:56 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:10:56 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:10:56 GMT
+2023/05/22 06:10:56 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:10:56 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:10:56 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:10:56 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:10:56 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:10:56 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:10:56 packer-plugin-outscale plugin: 
+2023/05/22 06:10:56 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"shutting-down","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[{"Value":"Packer Builder","Key":"Name"}],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"daba4226-6e04-47fe-ad96-0022cb0e5894"}}
+2023/05/22 06:10:58 packer-plugin-outscale plugin: 2023/05/22 06:10:58 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:10:58 packer-plugin-outscale plugin: 2023/05/22 06:10:58
+2023/05/22 06:10:58 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:10:58 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=917c8608f8b97f0fa14e623fe9433d905c1ad430dced407704432d8c0966bbef
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:10:58 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061058Z
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:10:58 packer-plugin-outscale plugin: 
+2023/05/22 06:10:58 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:10:58 packer-plugin-outscale plugin: 
+2023/05/22 06:10:58 packer-plugin-outscale plugin: 2023/05/22 06:10:58
+2023/05/22 06:10:58 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Content-Length: 1365
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:10:58 GMT
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:10:58 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:10:58 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:10:58 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:10:58 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:10:58 packer-plugin-outscale plugin: 
+2023/05/22 06:10:58 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"shutting-down","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[{"Value":"Packer Builder","Key":"Name"}],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"941ba885-7a17-4718-aca7-6335693b090e"}}
+2023/05/22 06:11:00 packer-plugin-outscale plugin: 2023/05/22 06:11:00 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:11:00 packer-plugin-outscale plugin: 2023/05/22 06:11:00
+2023/05/22 06:11:00 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:11:00 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=1eff9899cb4dbe59a6c2a43a92aa1abe8d811bb6e155daf6d78a3f9bce2eb08b
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:00 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061100Z
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:11:00 packer-plugin-outscale plugin: 
+2023/05/22 06:11:00 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:11:00 packer-plugin-outscale plugin: 
+2023/05/22 06:11:00 packer-plugin-outscale plugin: 2023/05/22 06:11:00
+2023/05/22 06:11:00 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Content-Length: 1365
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:11:00 GMT
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:11:00 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:11:00 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:11:00 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:11:00 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:11:00 packer-plugin-outscale plugin: 
+2023/05/22 06:11:00 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"shutting-down","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[{"Value":"Packer Builder","Key":"Name"}],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"3702b721-b42c-4819-a059-3317db90f12d"}}
+2023/05/22 06:11:02 packer-plugin-outscale plugin: 2023/05/22 06:11:02 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:11:02 packer-plugin-outscale plugin: 2023/05/22 06:11:02
+2023/05/22 06:11:02 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:11:02 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=067ac5cddc8c65a969bd9a4261016c9fc430241c8b1d657af2eb2a5bf497340a
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:02 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061102Z
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:11:02 packer-plugin-outscale plugin: 
+2023/05/22 06:11:02 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:11:02 packer-plugin-outscale plugin: 
+2023/05/22 06:11:02 packer-plugin-outscale plugin: 2023/05/22 06:11:02
+2023/05/22 06:11:02 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Content-Length: 1365
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:11:02 GMT
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:11:02 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:11:02 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:11:02 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:11:02 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:11:02 packer-plugin-outscale plugin: 
+2023/05/22 06:11:02 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"shutting-down","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[{"Value":"Packer Builder","Key":"Name"}],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"e120b70f-56ce-44cd-b1ce-da82f4fa26ae"}}
+2023/05/22 06:11:04 packer-plugin-outscale plugin: 2023/05/22 06:11:04 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:11:04 packer-plugin-outscale plugin: 2023/05/22 06:11:04
+2023/05/22 06:11:04 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:11:04 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=cb4e4be82e3426ad241cb341d615344178dc481a7b22323e3f78b2ee3b849949
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:04 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061104Z
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:11:04 packer-plugin-outscale plugin: 
+2023/05/22 06:11:04 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:11:04 packer-plugin-outscale plugin: 
+2023/05/22 06:11:04 packer-plugin-outscale plugin: 2023/05/22 06:11:04
+2023/05/22 06:11:04 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Content-Length: 1365
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:11:04 GMT
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:11:04 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:11:04 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:11:04 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:11:04 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:11:04 packer-plugin-outscale plugin: 
+2023/05/22 06:11:04 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"shutting-down","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[{"Value":"Packer Builder","Key":"Name"}],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"9700183e-d896-4fb4-9df3-7cfe5f430f5d"}}
+2023/05/22 06:11:06 packer-plugin-outscale plugin: 2023/05/22 06:11:06 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:11:06 packer-plugin-outscale plugin: 2023/05/22 06:11:06
+2023/05/22 06:11:06 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:11:06 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=d27b62867e68f464b1a7f60d53e060ce2d994809409545af9178e8cea0656b45
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:06 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061106Z
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:11:06 packer-plugin-outscale plugin: 
+2023/05/22 06:11:06 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:11:06 packer-plugin-outscale plugin: 
+2023/05/22 06:11:06 packer-plugin-outscale plugin: 2023/05/22 06:11:06
+2023/05/22 06:11:06 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Content-Length: 1365
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:11:06 GMT
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:11:06 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:11:06 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:11:06 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:11:06 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:11:06 packer-plugin-outscale plugin: 
+2023/05/22 06:11:06 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"shutting-down","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[{"Value":"Packer Builder","Key":"Name"}],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"a96574b9-ac25-442f-b5f3-b89c598887bf"}}
+2023/05/22 06:11:08 packer-plugin-outscale plugin: 2023/05/22 06:11:08 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:11:08 packer-plugin-outscale plugin: 2023/05/22 06:11:08
+2023/05/22 06:11:08 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:11:08 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=d2f2eee75bb05911e598b1809135151f839ef08cdbe1a01dbf571dfb3513a375
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:08 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061108Z
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:11:08 packer-plugin-outscale plugin: 
+2023/05/22 06:11:08 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:11:08 packer-plugin-outscale plugin: 
+2023/05/22 06:11:08 packer-plugin-outscale plugin: 2023/05/22 06:11:08
+2023/05/22 06:11:08 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Content-Length: 1365
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:11:08 GMT
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:11:08 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:11:08 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:11:08 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:11:08 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:11:08 packer-plugin-outscale plugin: 
+2023/05/22 06:11:08 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"shutting-down","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[{"Value":"Packer Builder","Key":"Name"}],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"21024fe3-72e1-4705-9826-70f9657fdeeb"}}
+2023/05/22 06:11:10 packer-plugin-outscale plugin: 2023/05/22 06:11:10 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:11:10 packer-plugin-outscale plugin: 2023/05/22 06:11:10
+2023/05/22 06:11:10 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:11:10 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=0a48d66f5822c800daac514e1c1cfb13e4b22c797f21fe0f3b1f0a82aaba9375
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:10 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061110Z
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:11:10 packer-plugin-outscale plugin: 
+2023/05/22 06:11:10 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:11:10 packer-plugin-outscale plugin: 
+2023/05/22 06:11:10 packer-plugin-outscale plugin: 2023/05/22 06:11:10
+2023/05/22 06:11:10 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Content-Length: 1365
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:11:10 GMT
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:11:10 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:11:10 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:11:10 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:11:10 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:11:10 packer-plugin-outscale plugin: 
+2023/05/22 06:11:10 packer-plugin-outscale plugin: {"Vms":[{"VmType":"t2.micro","VmInitiatedShutdownBehavior":"terminate","State":"shutting-down","StateReason":"","RootDeviceType":"ebs","RootDeviceName":"/dev/sda1","IsSourceDestChecked":true,"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a","PublicIp":"142.44.35.185","ImageId":"ami-68ed4301","PublicDnsName":"ows-142-44-35-185.eu-west-2.compute.outscale.com","DeletionProtection":false,"Architecture":"x86_64","NestedVirtualization":false,"BlockDeviceMappings":[{"DeviceName":"/dev/sda1","Bsu":{"VolumeId":"vol-b300824d","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":true}},{"DeviceName":"/dev/xvdf","Bsu":{"VolumeId":"vol-c5cf21ce","State":"attached","LinkDate":"2023-05-22T06:07:56.155Z","DeleteOnVmDeletion":false}}],"VmId":"i-411ea2d8","ReservationId":"r-9d42d617","Hypervisor":"xen","Placement":{"Tenancy":"default","SubregionName":"eu-west-2a"},"ProductCodes":["0001"],"CreationDate":"2023-05-22T06:07:56.155Z","UserData":"","PrivateIp":"10.9.40.24","SecurityGroups":[{"SecurityGroupName":"packer_osc_646b06b9-1bdf-16c1-814d-232118705aac","SecurityGroupId":"sg-56461778"}],"BsuOptimized":false,"LaunchNumber":0,"Performance":"medium","Tags":[{"Value":"Packer Builder","Key":"Name"}],"PrivateDnsName":"ip-10-9-40-24.eu-west-2.compute.internal"}],"ResponseContext":{"RequestId":"f1da0dca-9638-44c8-8821-f77c7cc8562e"}}
+2023/05/22 06:11:12 packer-plugin-outscale plugin: 2023/05/22 06:11:12 [Debug] Retrieving state for VM with id i-411ea2d8
+2023/05/22 06:11:12 packer-plugin-outscale plugin: 2023/05/22 06:11:12
+2023/05/22 06:11:12 packer-plugin-outscale plugin: POST /oapi/latest/ReadVms HTTP/1.1
+2023/05/22 06:11:12 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:11:12 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:11:12 packer-plugin-outscale plugin: Content-Length: 37
+2023/05/22 06:11:12 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:11:12 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=10e97c2922890a3c3b87e4ea2eca0f26ab887472bcdd1b0c78f75b2339765969
+2023/05/22 06:11:12 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:11:12 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061112Z
+2023/05/22 06:11:12 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:11:12 packer-plugin-outscale plugin: 
+2023/05/22 06:11:12 packer-plugin-outscale plugin: {"Filters":{"VmIds":["i-411ea2d8"]}}
+2023/05/22 06:11:12 packer-plugin-outscale plugin: 
+2023/05/22 06:12:07 packer-plugin-outscale plugin: 2023/05/22 06:12:07 Received interrupt signal (count: 1). Ignoring.
+2023/05/22 06:12:07 ui error: Cancelling build after receiving interrupt
+2023/05/22 06:12:07 Cancelling builder after context cancellation context canceled
+2023/05/22 06:13:17 packer-plugin-outscale plugin: 2023/05/22 06:13:17
+2023/05/22 06:13:17 packer-plugin-outscale plugin: HTTP/1.1 504 Gateway Time-out
+2023/05/22 06:13:17 packer-plugin-outscale plugin: Content-Length: 160
+2023/05/22 06:13:17 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:13:17 packer-plugin-outscale plugin: Content-Type: text/html
+2023/05/22 06:13:17 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:13:17 GMT
+2023/05/22 06:13:17 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:13:17 packer-plugin-outscale plugin: 
+2023/05/22 06:13:17 packer-plugin-outscale plugin: <html>
+2023/05/22 06:13:17 packer-plugin-outscale plugin: <head><title>504 Gateway Time-out</title></head>
+2023/05/22 06:13:17 packer-plugin-outscale plugin: <body>
+2023/05/22 06:13:17 packer-plugin-outscale plugin: <center><h1>504 Gateway Time-out</h1></center>
+2023/05/22 06:13:17 packer-plugin-outscale plugin: <hr><center>nginx</center>
+2023/05/22 06:13:17 packer-plugin-outscale plugin: </body>
+2023/05/22 06:13:17 packer-plugin-outscale plugin: </html>
+2023/05/22 06:13:17 packer-plugin-outscale plugin: 
+2023/05/22 06:13:17 ui error: [1;31m==> outscale-bsusurrogate: 504 Gateway Time-out[0m
+2023/05/22 06:13:17 ui: [1;32m==> outscale-bsusurrogate: Cleaning up any extra volumes...[0m
+2023/05/22 06:13:17 packer-plugin-outscale plugin: 2023/05/22 06:13:17
+2023/05/22 06:13:17 packer-plugin-outscale plugin: POST /oapi/latest/ReadVolumes HTTP/1.1
+2023/05/22 06:13:17 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:13:17 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:13:17 packer-plugin-outscale plugin: Content-Length: 58
+2023/05/22 06:13:17 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:13:17 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=2be700b5fda89aef6afe730a26a7742813e055d0fc42d995dae422d427849da9
+2023/05/22 06:13:17 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:13:17 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061317Z
+2023/05/22 06:13:17 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:13:17 packer-plugin-outscale plugin: 
+2023/05/22 06:13:17 packer-plugin-outscale plugin: {"Filters":{"VolumeIds":["vol-b300824d","vol-c5cf21ce"]}}
+2023/05/22 06:13:17 packer-plugin-outscale plugin: 
+2023/05/22 06:13:59 packer-plugin-outscale plugin: 2023/05/22 06:13:59
+2023/05/22 06:13:59 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Content-Length: 712
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:13:59 GMT
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:13:59 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:13:59 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:13:59 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:13:59 packer-plugin-outscale plugin: 
+2023/05/22 06:13:59 packer-plugin-outscale plugin: {"Volumes":[{"VolumeId":"vol-b300824d","Tags":[],"VolumeType":"standard","SubregionName":"eu-west-2a","State":"in-use","SnapshotId":"snap-6b09c470","CreationDate":"2023-05-22T06:07:56.155Z","LinkedVolumes":[{"VolumeId":"vol-b300824d","DeleteOnVmDeletion":true,"DeviceName":"/dev/sda1","State":"attached","VmId":"i-411ea2d8"}],"Size":10},{"VolumeId":"vol-c5cf21ce","Tags":[],"VolumeType":"io1","SubregionName":"eu-west-2a","State":"in-use","CreationDate":"2023-05-22T06:07:56.155Z","Iops":300,"LinkedVolumes":[{"VolumeId":"vol-c5cf21ce","DeleteOnVmDeletion":false,"DeviceName":"/dev/xvdf","State":"attached","VmId":"i-411ea2d8"}],"Size":10}],"ResponseContext":{"RequestId":"7f320c9a-8576-4f93-9df5-1d053a80720f"}}
+2023/05/22 06:13:59 ui: [1;32m==> outscale-bsusurrogate: Deleting temporary security group...[0m
+2023/05/22 06:13:59 packer-plugin-outscale plugin: 2023/05/22 06:13:59
+2023/05/22 06:13:59 packer-plugin-outscale plugin: POST /oapi/latest/DeleteSecurityGroup HTTP/1.1
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:13:59 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Content-Length: 34
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=ba815c032df27acb76256478d76e2ce1caf357c1c9830ec51427ca8b039956ff
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:13:59 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061359Z
+2023/05/22 06:13:59 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:13:59 packer-plugin-outscale plugin: 
+2023/05/22 06:13:59 packer-plugin-outscale plugin: {"SecurityGroupId":"sg-56461778"}
+2023/05/22 06:13:59 packer-plugin-outscale plugin: 
+2023/05/22 06:14:02 packer-plugin-outscale plugin: 2023/05/22 06:14:02
+2023/05/22 06:14:02 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Content-Length: 72
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:14:02 GMT
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:14:02 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:14:02 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:14:02 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:14:02 packer-plugin-outscale plugin: 
+2023/05/22 06:14:02 packer-plugin-outscale plugin: {"ResponseContext":{"RequestId":"b67a1e94-913d-43b8-91fd-5e9c0420178c"}}
+2023/05/22 06:14:02 ui: [1;32m==> outscale-bsusurrogate: Deleting temporary keypair...[0m
+2023/05/22 06:14:02 packer-plugin-outscale plugin: 2023/05/22 06:14:02
+2023/05/22 06:14:02 packer-plugin-outscale plugin: POST /oapi/latest/DeleteKeypair HTTP/1.1
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:14:02 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Content-Length: 62
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=21553876fe2332e71e4234d0cccce67bd48f356fe0e0f62bc5e22ddc9ac9ba41
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:14:02 packer-plugin-outscale plugin: X-Amz-Date: 20230522T061402Z
+2023/05/22 06:14:02 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:14:02 packer-plugin-outscale plugin: 
+2023/05/22 06:14:02 packer-plugin-outscale plugin: {"KeypairName":"packer_646b06b9-958e-7e0b-142c-f8b9be9dc71a"}
+2023/05/22 06:14:02 packer-plugin-outscale plugin: 
+2023/05/22 06:14:03 packer-plugin-outscale plugin: 2023/05/22 06:14:03
+2023/05/22 06:14:03 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:14:03 packer-plugin-outscale plugin: Content-Length: 72
+2023/05/22 06:14:03 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:14:03 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:14:03 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:14:03 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:14:03 GMT
+2023/05/22 06:14:03 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:14:03 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:14:03 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:14:03 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:14:03 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:14:03 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:14:03 packer-plugin-outscale plugin: 
+2023/05/22 06:14:03 packer-plugin-outscale plugin: {"ResponseContext":{"RequestId":"488f3f6f-54bf-4f84-9f83-dba0b172b3ee"}}
+2023/05/22 06:14:03 [INFO] (telemetry) ending outscale-bsusurrogate
+2023/05/22 06:14:03 ui error: [1;31mBuild 'outscale-bsusurrogate' errored after 6 minutes 9 seconds: Packer experienced an authentication error when trying to connect via SSH. This can happen if your username/password are wrong. You may want to double-check your credentials as part of your debugging process. original error: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain[0m
+2023/05/22 06:14:03 ui: 
+==> Wait completed after 6 minutes 9 seconds
+2023/05/22 06:14:03 ui: Cleanly cancelled builds after being interrupted.
+2023/05/22 06:14:03 [INFO] (telemetry) Finalizing.
+2023/05/22 06:14:03 waiting for all plugin processes to complete...
+2023/05/22 06:14:03 /home/outscale/.packer.d/plugins/packer-plugin-outscale: plugin process exited

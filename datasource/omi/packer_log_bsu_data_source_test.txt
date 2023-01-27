@@ -1,0 +1,67 @@
+2023/05/22 06:06:47 [INFO] Packer version: 1.8.5 [go1.18.9 linux amd64]
+2023/05/22 06:06:47 Old default config directory found: /home/outscale/.packer.d
+2023/05/22 06:06:47 [TRACE] discovering plugins in /usr/local/bin
+2023/05/22 06:06:47 Old default config directory found: /home/outscale/.packer.d
+2023/05/22 06:06:47 [TRACE] discovering plugins in /home/outscale/.packer.d/plugins
+2023/05/22 06:06:47 [DEBUG] Discovered plugin: windows-update = /home/outscale/.packer.d/plugins/github.com/rgl/windows-update/packer-plugin-windows-update_v0.14.1_x5.0_linux_amd64
+2023/05/22 06:06:47 found external [-packer-default-plugin-name-] provisioner from windows-update plugin
+2023/05/22 06:06:47 [DEBUG] Discovered plugin: outscale = /home/outscale/.packer.d/plugins/packer-plugin-outscale
+2023/05/22 06:06:47 [INFO] found external [bsu bsusurrogate bsuvolume chroot] builders from outscale plugin
+2023/05/22 06:06:47 found external [omi] datasource from outscale plugin
+2023/05/22 06:06:47 [TRACE] discovering plugins in .
+2023/05/22 06:06:47 [INFO] PACKER_CONFIG env var not set; checking the default config file path
+2023/05/22 06:06:47 [INFO] PACKER_CONFIG env var set; attempting to open config file: /home/outscale/.packerconfig
+2023/05/22 06:06:47 [WARN] Config file doesn't exist: /home/outscale/.packerconfig
+2023/05/22 06:06:47 Old default config directory found: /home/outscale/.packer.d
+2023/05/22 06:06:47 [INFO] Setting cache directory: /home/outscale/.cache/packer
+2023/05/22 06:06:47 Old default config directory found: /home/outscale/.packer.d
+2023/05/22 06:06:47 [TRACE] Starting external plugin /home/outscale/.packer.d/plugins/packer-plugin-outscale start datasource omi
+2023/05/22 06:06:47 Starting plugin: /home/outscale/.packer.d/plugins/packer-plugin-outscale []string{"/home/outscale/.packer.d/plugins/packer-plugin-outscale", "start", "datasource", "omi"}
+2023/05/22 06:06:47 Waiting for RPC address for: /home/outscale/.packer.d/plugins/packer-plugin-outscale
+2023/05/22 06:06:47 Received unix RPC address for /home/outscale/.packer.d/plugins/packer-plugin-outscale: addr is /tmp/packer-plugin720724873
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47 Plugin address: unix /tmp/packer-plugin720724873
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47 Waiting for connection...
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47 Serving a plugin connection...
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47 [TRACE] starting datasource omi
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47 No Custom Endpoint has been setted
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47 No Certificat Path has been setted
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47 No Key Path has been setted
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47 [WARN] Unknown Filter Name: name.
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47 filters to pass to API are (*[]string)(nil)
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47 Using OMI Filters osc.ReadImagesRequest{DryRun:(*bool)(nil), Filters:(*osc.FiltersImage)(0xc0001626c0)}
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47
+2023/05/22 06:06:47 packer-plugin-outscale plugin: POST /oapi/latest/ReadImages HTTP/1.1
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Host: api.eu-west-2.outscale.com
+2023/05/22 06:06:47 packer-plugin-outscale plugin: User-Agent: packer-plugin-outscale/1.0.1-dev
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Content-Length: 122
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Accept: application/json
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Authorization: AWS4-HMAC-SHA256 Credential=5R2WD5V3P4U96TIRU5UF/20230522/eu-west-2/oapi/aws4_request, SignedHeaders=accept;content-type;host;x-amz-date, Signature=2def5f4244c723cded9d4765f64ce897d3fa25f58af4bf93f3e2963d889abb06
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:06:47 packer-plugin-outscale plugin: X-Amz-Date: 20230522T060647Z
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Accept-Encoding: gzip
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 
+2023/05/22 06:06:47 packer-plugin-outscale plugin: {"Filters":{"AccountAliases":null,"AccountIds":["099720109477"],"RootDeviceTypes":["ebs"],"VirtualizationTypes":["hvm"]}}
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 2023/05/22 06:06:47
+2023/05/22 06:06:47 packer-plugin-outscale plugin: HTTP/1.1 200 OK
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Content-Length: 84
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Access-Control-Allow-Origin: *
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Connection: keep-alive
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Content-Type: application/json
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Date: Mon, 22 May 2023 06:06:47 GMT
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Referrer-Policy: same-origin
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Server: nginx
+2023/05/22 06:06:47 packer-plugin-outscale plugin: Strict-Transport-Security: max-age=31536000; includeSubdomains;
+2023/05/22 06:06:47 packer-plugin-outscale plugin: X-Content-Type-Options: nosniff
+2023/05/22 06:06:47 packer-plugin-outscale plugin: X-Frame-Options: SAMEORIGIN
+2023/05/22 06:06:47 packer-plugin-outscale plugin: X-Xss-Protection: 1; mode=block
+2023/05/22 06:06:47 packer-plugin-outscale plugin: 
+2023/05/22 06:06:47 packer-plugin-outscale plugin: {"ResponseContext":{"RequestId":"da027df6-c8ad-48f6-9c86-8454b8d6d9de"},"Images":[]}
+2023/05/22 06:06:47 ui error: Error: Datasource.Execute failed: No OMI was found matching filters: osc.ReadImagesRequest{DryRun:(*bool)(nil), Filters:(*osc.FiltersImage)(0xc0001626c0)}
+
+  on ./bsu_data_source_test.pkr.hcl line 2:
+  (source code not available)
+
+2023/05/22 06:06:47 [INFO] (telemetry) Finalizing.
+2023/05/22 06:06:47 waiting for all plugin processes to complete...
+2023/05/22 06:06:47 /home/outscale/.packer.d/plugins/packer-plugin-outscale: plugin process exited

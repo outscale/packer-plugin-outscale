@@ -1,0 +1,14 @@
+
+{
+	"builders": [{
+		"type": "outscale-bsu",
+		"region": "eu-west-2",
+		"vm_type": "t2.micro",
+		"source_omi": "ami-68ed4301",
+		"ssh_username": "outscale",
+		"omi_name": "packer-test",
+		"product_codes": "pty-2ffc33dc",
+		"associate_public_ip_address": true,
+		"force_deregister": true
+	}]
+}

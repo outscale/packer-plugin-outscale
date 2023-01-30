@@ -44,8 +44,7 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 	updateSnapshoptRequest := oscgo.UpdateSnapshotRequest{
 		PermissionsToCreateVolume: oscgo.PermissionsOnResourceCreation{
 			Additions: &oscgo.PermissionsOnResource{
-				AccountIds:       &s.AccountIds,
-				GlobalPermission: &s.GlobalPermission,
+				AccountIds: &s.AccountIds,
 			},
 		},
 	}

@@ -5,7 +5,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	oscgo "github.com/outscale/osc-sdk-go/v2"
 )
@@ -69,7 +68,7 @@ func buildOscBlockDevicesImage(b []BlockDevice) []oscgo.BlockDeviceMappingImage 
 				bsu.SnapshotId = &blockDevice.SnapshotId
 			}
 
-			mapping.Bsu = &bsu
+			mapping.SetBsu(bsu)
 		}
 
 		blockDevices = append(blockDevices, mapping)
@@ -88,7 +87,7 @@ func buildOscBlockDevicesVmCreation(b []BlockDevice) []oscgo.BlockDeviceMappingV
 		}
 
 		if blockDevice.NoDevice {
-			mapping.NoDevice = aws.String("")
+			mapping.NoDevice = oscgo.PtrString("")
 			//blockDevices = mapping[0]
 		} else if blockDevice.VirtualName != "" {
 			if strings.HasPrefix(blockDevice.VirtualName, "ephemeral") {
@@ -117,7 +116,7 @@ func buildOscBlockDevicesVmCreation(b []BlockDevice) []oscgo.BlockDeviceMappingV
 				bsu.SnapshotId = &blockDevice.SnapshotId
 			}
 
-			mapping.Bsu = &bsu
+			mapping.SetBsu(bsu)
 		}
 
 		blockDevices = append(blockDevices, mapping)

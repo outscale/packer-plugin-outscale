@@ -7,6 +7,7 @@ variable "osc_secret_key" {
     type    = string
     default = "${env("OSC_SECRET_KEY")}"
 }
+
 packer {
   required_plugins {
     outscale = {
@@ -23,12 +24,15 @@ source "outscale-chroot" "windows" {
   from_scratch = true
   pre_mount_commands = [
     "parted {{.Device}} mklabel msdos mkpart primary 1M 100% set 1 boot on print",
-    "mkfs.ext4 {{.Device}}1"
+    "fdisk  {{.Device}}",
+    "sleep 1",
+    "mkfs -t xfs -f {{.Device}}"
   ]
   root_volume_size = 15
-  root_device_name = "xvdf"
+  root_device_name =  "xvda"
   omi_block_device_mappings {
-      device_name = "xvdf"
+      delete_on_vm_deletion = false
+      device_name =  "xvda"
       volume_type = "gp2"
   }
 }

@@ -71,38 +71,7 @@ func (s *StepMountDevice) Run(_ context.Context, state multistep.StateBag) multi
 		return multistep.ActionHalt
 	}
 
-	//Check the symbolic link for the device to get the real device name
-	cmd := ShellCommand(fmt.Sprintf("lsblk -no pkname $(readlink -f %s)", device))
-
-	realDeviceName, err := cmd.Output()
-	if err != nil {
-		err := fmt.Errorf(
-			"Error retrieving the symlink of the device %s.\n", device)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
-	}
-
-	log.Printf("[DEBUG] RealDeviceName: %s", realDeviceName)
-
-	realDeviceNameSplitted := strings.Split(string(realDeviceName), "\n")
-	log.Printf("[DEBUG] RealDeviceName Splitted %+v", realDeviceNameSplitted)
-	log.Printf("[DEBUG] RealDeviceName Splitted Length %d", len(realDeviceNameSplitted))
-	log.Printf("[DEBUG] RealDeviceName Splitted [0] %s", realDeviceNameSplitted[0])
-	log.Printf("[DEBUG] RealDeviceName Splitted [1] %s", realDeviceNameSplitted[1])
-
-	realDeviceNameStr := realDeviceNameSplitted[0]
-	if realDeviceNameStr == "" {
-		realDeviceNameStr = realDeviceNameSplitted[1]
-	}
-
-	deviceMount := fmt.Sprintf("/dev/%s", strings.Replace(realDeviceNameStr, "\n", "", -1))
-
-	log.Printf("[DEBUG] s.MountPartition  = %s", s.MountPartition)
-	log.Printf("[DEBUG ] DeviceMount: %s", deviceMount)
-
-	state.Put("deviceMount", deviceMount)
-
+	state.Put("deviceMount", device)
 	ui.Say("Mounting the root device...")
 	stderr := new(bytes.Buffer)
 
@@ -113,7 +82,7 @@ func (s *StepMountDevice) Run(_ context.Context, state multistep.StateBag) multi
 		opts = "-o " + strings.Join(s.MountOptions, " -o ")
 	}
 	mountCommand, err := wrappedCommand(
-		fmt.Sprintf("mount %s %s %s", opts, deviceMount, mountPath))
+		fmt.Sprintf("mount %s %s %s", opts, device, mountPath))
 	if err != nil {
 		err := fmt.Errorf("Error creating mount command: %s", err)
 		state.Put("error", err)
@@ -121,7 +90,7 @@ func (s *StepMountDevice) Run(_ context.Context, state multistep.StateBag) multi
 		return multistep.ActionHalt
 	}
 	log.Printf("[DEBUG] (step mount) mount command is %s", mountCommand)
-	cmd = ShellCommand(mountCommand)
+	cmd := ShellCommand(mountCommand)
 	cmd.Stderr = stderr
 	if err := cmd.Run(); err != nil {
 		err := fmt.Errorf(

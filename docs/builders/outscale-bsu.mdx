@@ -87,6 +87,8 @@ builder.
 
 - `omi_account_ids` (array of strings) - A list of account IDs that have access to launch the resulting OMI(s). By default no additional users other than the user creating the OMIS has permissions to launch it.
 
+- `global_permission` (boolean) - This option is useful to make the OMI publicly accessible.
+
 - `omi_virtualization_type` (string) - The type of virtualization for the OMI you are building. This option must match the supported virtualization type of `source_omi`. Can be `paravirtual` or `hvm`.
 
 - `associate_public_ip_address` (boolean) - If using a non-default Net, public IP addresses are not provided by default. If this is toggled, your new VM will get a Public IP.

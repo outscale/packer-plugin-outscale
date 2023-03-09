@@ -108,24 +108,29 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 		return multistep.ActionHalt
 	}
 
-	subregion := state.Get("subregion_name").(string)
+	blockDevice := s.BlockDevices.BuildOSCLaunchDevices()
 	vmcount := int32(1)
+	subregion := state.Get("subregion_name").(string)
+	subnetID := state.Get("subnet_id").(string)
+
 	runOpts := oscgo.CreateVmsRequest{
-		ImageId:      s.SourceOMI,
-		VmType:       &s.VmType,
-		UserData:     &userData,
-		MaxVmsCount:  &vmcount,
-		MinVmsCount:  &vmcount,
-		Placement:    &oscgo.Placement{SubregionName: &subregion},
-		BsuOptimized: &s.BsuOptimized,
-		//BlockDeviceMappings: s.BlockDevices.BuildOSCLaunchDevices(),
+		ImageId:             s.SourceOMI,
+		VmType:              &s.VmType,
+		UserData:            &userData,
+		MaxVmsCount:         &vmcount,
+		MinVmsCount:         &vmcount,
+		BsuOptimized:        &s.BsuOptimized,
+		BlockDeviceMappings: &blockDevice,
+	}
+
+	log.Printf("subregion is %s", subregion)
+	if subregion != "" {
+		runOpts.Placement = &oscgo.Placement{SubregionName: &subregion}
 	}
 
 	if s.Comm.SSHKeyPairName != "" {
 		runOpts.KeypairName = &s.Comm.SSHKeyPairName
 	}
-
-	subnetID := state.Get("subnet_id").(string)
 
 	runOpts.SubnetId = &subnetID
 	runOpts.SecurityGroupIds = &securityGroupIds

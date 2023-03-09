@@ -31,7 +31,7 @@ func (s *StepSnapshotVolumes) snapshotVolume(ctx context.Context, deviceName str
 	var volumeId string
 	for _, volume := range *vm.BlockDeviceMappings {
 		if volume.GetDeviceName() == deviceName {
-			volumeId = volume.Bsu.GetVolumeId()
+			volumeId = *volume.GetBsu().VolumeId
 		}
 	}
 	if volumeId == "" {

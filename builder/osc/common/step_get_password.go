@@ -102,7 +102,7 @@ WaitLoop:
 func (s *StepGetPassword) Cleanup(multistep.StateBag) {}
 
 func (s *StepGetPassword) waitForPassword(state multistep.StateBag, cancel <-chan struct{}) (string, error) {
-	oscconn := state.Get("osc").(*oscgo.APIClient)
+	oscconn := state.Get("osc").(*OscClient)
 	vm := state.Get("vm").(oscgo.Vm)
 	privateKey := s.Comm.SSHPrivateKey
 
@@ -114,7 +114,7 @@ func (s *StepGetPassword) waitForPassword(state multistep.StateBag, cancel <-cha
 		case <-time.After(5 * time.Second):
 		}
 
-		resp, _, err := oscconn.VmApi.ReadAdminPassword(context.Background()).ReadAdminPasswordRequest(oscgo.ReadAdminPasswordRequest{VmId: *vm.VmId}).Execute()
+		resp, _, err := oscconn.Api.VmApi.ReadAdminPassword(oscconn.Auth).ReadAdminPasswordRequest(oscgo.ReadAdminPasswordRequest{VmId: vm.GetVmId()}).Execute()
 		if err != nil {
 			err := fmt.Errorf("Error retrieving auto-generated vm password: %s", err)
 			return "", err

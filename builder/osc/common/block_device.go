@@ -120,6 +120,8 @@ func buildOscBlockDevicesVmCreation(b []BlockDevice) []oscgo.BlockDeviceMappingV
 			mapping.Bsu = &bsu
 		}
 
+		log.Printf("block device mapping")
+
 		blockDevices = append(blockDevices, mapping)
 	}
 	return blockDevices

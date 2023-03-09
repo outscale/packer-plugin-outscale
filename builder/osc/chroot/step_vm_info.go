@@ -8,13 +8,14 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	oscgo "github.com/outscale/osc-sdk-go/v2"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
 )
 
 // StepVmInfo verifies that this builder is running on an Outscale vm.
 type StepVmInfo struct{}
 
 func (s *StepVmInfo) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
-	oscconn := state.Get("osc").(*oscgo.APIClient)
+	oscconn := state.Get("osc").(*osccommon.OscClient)
 	//session := state.Get("clientConfig").(*session.Session)
 	ui := state.Get("ui").(packersdk.Ui)
 
@@ -36,7 +37,8 @@ func (s *StepVmInfo) Run(_ context.Context, state multistep.StateBag) multistep.
 	log.Printf("[Debug] VmID got: %s", string(vmID))
 
 	// Query the entire vm metadata
-	resp, _, err := oscconn.VmApi.ReadVms(context.Background()).ReadVmsRequest(oscgo.ReadVmsRequest{
+
+	resp, _, err := oscconn.Api.VmApi.ReadVms(oscconn.Auth).ReadVmsRequest(oscgo.ReadVmsRequest{
 		Filters: &oscgo.FiltersVm{
 			VmIds: &[]string{string(vmID)},
 		},

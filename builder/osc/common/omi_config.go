@@ -21,7 +21,6 @@ type OMIConfig struct {
 	OMIForceDeleteSnapshot  bool     `mapstructure:"force_delete_snapshot"`
 	SnapshotTags            TagMap   `mapstructure:"snapshot_tags"`
 	SnapshotAccountIDs      []string `mapstructure:"snapshot_account_ids"`
-	SnapshotGroups          []string `mapstructure:"snapshot_groups"`
 	GlobalPermission        bool     `mapstructure:"global_permission"`
 }
 

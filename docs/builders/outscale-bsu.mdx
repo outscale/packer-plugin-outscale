@@ -165,11 +165,6 @@ builder.
   to create volumes from the snapshot(s). `all` will make the snapshot
   publicly accessible.
 
-- `snapshot_users` (array of strings) - A list of account IDs that have
-  access to create volumes from the snapshot(s). By default no additional
-  users other than the user creating the OMIS has permissions to create
-  volumes from the backing snapshot(s).
-
 - `snapshot_tags` (object of key/value strings) - Tags to apply to snapshot.
   They will override OMIS tags if already applied to snapshot. This is a
   [template engine](/docs/templates/legacy_json_templates/engine), see [Build template

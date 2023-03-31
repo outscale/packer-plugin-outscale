@@ -111,7 +111,7 @@ func (s *StepGetPassword) waitForPassword(state multistep.StateBag, cancel <-cha
 		case <-cancel:
 			log.Println("[INFO] Retrieve password wait cancelled. Exiting loop.")
 			return "", errors.New("Retrieve password wait cancelled")
-		case <-time.After(5 * time.Second):
+		case <-time.After(15 * time.Second):
 		}
 
 		resp, _, err := oscconn.Api.VmApi.ReadAdminPassword(oscconn.Auth).ReadAdminPasswordRequest(oscgo.ReadAdminPasswordRequest{VmId: vm.GetVmId()}).Execute()

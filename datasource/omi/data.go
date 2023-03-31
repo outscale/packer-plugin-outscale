@@ -55,17 +55,17 @@ func (d *Datasource) Configure(raws ...interface{}) error {
 }
 
 type DatasourceOutput struct {
-	// The ID of the AMI.
+	// The ID of the OMI.
 	ID string `mapstructure:"id"`
-	// The name of the AMI.
+	// The name of the OMI.
 	Name string `mapstructure:"name"`
-	// The date of creation of the AMI.
+	// The date of creation of the OMI.
 	CreationDate string `mapstructure:"creation_date"`
-	// The AWS account ID of the owner.
+	// The Outscale account Id of the owner.
 	Owner string `mapstructure:"owner"`
 	// The owner alias.
 	OwnerName string `mapstructure:"owner_name"`
-	// The key/value combination of the tags assigned to the AMI.
+	// The key/value combination of the tags assigned to the OMI.
 	Tags map[string]string `mapstructure:"tags"`
 }
 

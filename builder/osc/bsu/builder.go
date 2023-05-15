@@ -182,7 +182,8 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			Regions:             b.config.OMIRegions,
 		},
 		&stepCreateOMI{
-			RawRegion: b.config.RawRegion,
+			RawRegion:    b.config.RawRegion,
+			ProductCodes: b.config.ProductCodes,
 		},
 		&osccommon.StepUpdateOMIAttributes{
 			AccountIds:         b.config.OMIAccountIDs,

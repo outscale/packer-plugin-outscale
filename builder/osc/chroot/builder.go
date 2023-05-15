@@ -265,6 +265,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		&StepCreateOMI{
 			RootVolumeSize: b.config.RootVolumeSize,
 			RawRegion:      b.config.RawRegion,
+			ProductCodes:   b.config.ProductCodes,
 		},
 		&osccommon.StepUpdateOMIAttributes{
 			AccountIds:         b.config.OMIAccountIDs,

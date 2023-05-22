@@ -19,6 +19,7 @@ type StepRegisterOMI struct {
 	LaunchDevices []oscgo.BlockDeviceMappingVmCreation
 	image         *oscgo.Image
 	RawRegion     string
+	ProductCodes  []string
 }
 
 func (s *StepRegisterOMI) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -40,6 +41,9 @@ func (s *StepRegisterOMI) Run(ctx context.Context, state multistep.StateBag) mul
 
 	if config.OMIDescription != "" {
 		registerOpts.Description = &config.OMIDescription
+	}
+	if config.ProductCodes != nil {
+		registerOpts.ProductCodes = &config.ProductCodes
 	}
 	registerResp, _, err := oscconn.Api.ImageApi.CreateImage(oscconn.Auth).CreateImageRequest(registerOpts).Execute()
 	if err != nil {

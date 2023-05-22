@@ -14,6 +14,7 @@ import (
 type StepCreateOMI struct {
 	RootVolumeSize int64
 	RawRegion      string
+	ProductCodes   []string
 }
 
 func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -78,6 +79,9 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 
 	if config.OMIDescription != "" {
 		registerOpts.Description = &config.OMIDescription
+	}
+	if config.ProductCodes != nil {
+		registerOpts.ProductCodes = &config.ProductCodes
 	}
 
 	registerResp, _, err := osconn.Api.ImageApi.CreateImage(osconn.Auth).CreateImageRequest(registerOpts).Execute()

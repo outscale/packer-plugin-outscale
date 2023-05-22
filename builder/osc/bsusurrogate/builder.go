@@ -212,6 +212,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			OMIDevices:    omiDevices,
 			LaunchDevices: launchOSCDevices,
 			RawRegion:     b.config.RawRegion,
+			ProductCodes:  b.config.ProductCodes,
 		},
 		&osccommon.StepUpdateOMIAttributes{
 			AccountIds:         b.config.OMIAccountIDs,

@@ -12,8 +12,9 @@ import (
 )
 
 type stepCreateOMI struct {
-	image     *oscgo.Image
-	RawRegion string
+	image        *oscgo.Image
+	RawRegion    string
+	ProductCodes []string
 }
 
 func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -34,6 +35,9 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	}
 	if config.OMIDescription != "" {
 		createOpts.Description = &config.OMIDescription
+	}
+	if config.ProductCodes != nil {
+		createOpts.ProductCodes = &config.ProductCodes
 	}
 
 	resp, _, err := oscconn.Api.ImageApi.CreateImage(oscconn.Auth).CreateImageRequest(createOpts).Execute()

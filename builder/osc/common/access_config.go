@@ -10,7 +10,6 @@ import (
 	"os"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	"github.com/outscale/osc-sdk-go/v2"
 	oscgo "github.com/outscale/osc-sdk-go/v2"
 	"github.com/outscale/packer-plugin-outscale/version"
 )
@@ -133,13 +132,24 @@ func (c *AccessConfig) NewOSCClientByRegion(region string) *OscClient {
 	config := oscgo.NewConfiguration()
 	config.Debug = true
 	config.UserAgent = fmt.Sprintf("packer-plugin-outscale/%s", version.PluginVersion.String())
-	auth := context.WithValue(context.Background(), oscgo.ContextAWSv4, osc.AWSv4{
-		AccessKey: os.Getenv("OSC_ACCESS_KEY"),
-		SecretKey: os.Getenv("OSC_SECRET_KEY"),
+	auth := context.WithValue(context.Background(), oscgo.ContextAWSv4, oscgo.AWSv4{
+		AccessKey: c.AccessKey,
+		SecretKey: c.SecretKey,
 	})
 	config.HTTPClient = skipClient
-	auth = context.WithValue(auth, oscgo.ContextServerIndex, 0)
-	auth = context.WithValue(auth, oscgo.ContextServerVariables, map[string]string{"region": os.Getenv("OSC_REGION")})
+	config.Servers = oscgo.ServerConfigurations{
+		{
+			URL:         fmt.Sprintf("https://api.%s.%s", region, c.CustomEndpointOAPI),
+			Description: "Loaded from profile",
+			Variables: map[string]oscgo.ServerVariable{
+				"region": {
+					Description:  "Loaded from env variables",
+					DefaultValue: region,
+					EnumValues:   []string{region},
+				},
+			},
+		},
+	}
 
 	oscClient := &OscClient{
 		Api:  oscgo.NewAPIClient(config),

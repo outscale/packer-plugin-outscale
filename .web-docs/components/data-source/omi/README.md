@@ -1,18 +1,7 @@
----
-description: |
-  The Outscale OMI data source provides information from an OMI that will be fetched based
-  on the filter options provided in the configuration.
-
-page_title: Outscale OMI - Data Source
-nav_title: Outscale OMI
----
-
-# Outscale OMI Data Source
-
 Type: `outscale-omi`
 
 The Outscale OMI Data source will filter and fetch an Outscale OMI, and output all the OMI information that will
-be then available to use in the [Outscale builders](https://developer.hashicorp.com/packer/plugins/builders/outscale).
+be then available to use in the [Outscale builders](https://developer.hashicorp.com/packer/plugins/builder/outscale).
 
 -> **Note:** Data sources is a feature exclusively available to HCL2 templates.
 

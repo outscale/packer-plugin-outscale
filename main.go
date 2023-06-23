@@ -10,6 +10,7 @@ import (
 	"github.com/outscale/packer-plugin-outscale/builder/osc/bsusurrogate"
 	"github.com/outscale/packer-plugin-outscale/builder/osc/bsuvolume"
 	"github.com/outscale/packer-plugin-outscale/builder/osc/chroot"
+	"github.com/outscale/packer-plugin-outscale/datasource/omi"
 	"github.com/outscale/packer-plugin-outscale/version"
 )
 
@@ -20,6 +21,7 @@ func main() {
 	pps.RegisterBuilder("chroot", new(chroot.Builder))
 	pps.RegisterBuilder("bsusurrogate", new(bsusurrogate.Builder))
 	pps.RegisterBuilder("bsuvolume", new(bsuvolume.Builder))
+	pps.RegisterDatasource("omi", new(omi.Datasource))
 	err := pps.Run()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())

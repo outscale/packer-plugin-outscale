@@ -48,6 +48,11 @@ jobs:
           platform: [ubuntu-latest, macos-latest, windows-latest]
       runs-on: ${{ matrix.platform }}
       steps:
+        - uses: outscale-dev/frieza-github-actions/frieza-clean@master
+        with:
+          access_key: ${{ secrets.OSC_ACCESS_KEY }}
+          secret_key: ${{ secrets.OSC_SECRET_KEY }}
+          region: ${{ secrets.OSC_REGION }}
         - name: Install Go
           uses: actions/setup-go@v2
           with:

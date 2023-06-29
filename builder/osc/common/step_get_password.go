@@ -120,7 +120,7 @@ func (s *StepGetPassword) waitForPassword(state multistep.StateBag, cancel <-cha
 			return "", err
 		}
 
-		if resp.AdminPassword != nil {
+		if resp.AdminPassword != nil && *resp.AdminPassword != "" {
 			decryptedPassword, err := decryptPasswordDataWithPrivateKey(
 				*resp.AdminPassword, privateKey)
 			if err != nil {

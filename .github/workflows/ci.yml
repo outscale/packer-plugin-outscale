@@ -10,77 +10,78 @@ on:
 
 jobs:
   check-code:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - uses: actions/setup-go@v2
-          with:
-            go-version: '1.19'
-        - name: Lint
-          uses: golangci/golangci-lint-action@v3.2.0
-          with:
-            version: latest
-            # skip cache because of flaky behaviors
-            skip-build-cache: true
-            skip-pkg-cache: true
-        - name: Fmt
-          run: |
-            go fmt ./...
-            echo "==> Checking that code complies with go fmt requirements..."
-            git diff --exit-code; if [ $? -eq 1 ]; then \
-            echo "Found files that are not fmt'ed."; \
-            echo "You can use the command: \`go fmt ./...\` to reformat code."; \
-            exit 1; \
-            fi
-        - name: Generation
-          run: |
-            make generate
-            echo "==> Checking that auto-generated code is not changed..."
-            git diff --exit-code; if [ $? -eq 1 ]; then \
-                echo "Found diffs in go generated code."; \
-                echo "You can use the command: \`make generate\` to reformat code."; \
-                exit 1; \
-            fi
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: 'stable'
+      - name: Lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          # skip cache because of flaky behaviors
+          skip-build-cache: true
+          skip-pkg-cache: true
+      - name: Fmt
+        run: |
+          go fmt ./...
+          echo "==> Checking that code complies with go fmt requirements..."
+          git diff --exit-code; if [ $? -eq 1 ]; then \
+          echo "Found files that are not fmt'ed."; \
+          echo "You can use the command: \`go fmt ./...\` to reformat code."; \
+          exit 1; \
+          fi
+      - name: Generation
+        run: |
+          make generate
+          echo "==> Checking that auto-generated code is not changed..."
+          git diff --exit-code; if [ $? -eq 1 ]; then \
+             echo "Found diffs in go generated code."; \
+             echo "You can use the command: \`make generate\` to reformat code."; \
+             exit 1; \
+          fi
   test:
-      strategy:
-        matrix:
-          go-version: [1.19]
-          platform: [ubuntu-latest, macos-latest, windows-latest]
-      runs-on: ${{ matrix.platform }}
-      steps:
-        - uses: outscale-dev/frieza-github-actions/frieza-clean@master
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        version: [12, 14, 16]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: outscale/frieza-github-actions/frieza-clean@master
         with:
           access_key: ${{ secrets.OSC_ACCESS_KEY }}
           secret_key: ${{ secrets.OSC_SECRET_KEY }}
           region: ${{ secrets.OSC_REGION }}
-        - name: Install Go
-          uses: actions/setup-go@v2
-          with:
-            go-version-file: 'go.mod'
-        - name: Checkout code
-          uses: actions/checkout@v2
-        - name: Test
-          env:
-            OSC_ACCESS_KEY: ${{secrets.OSC_ACCESS_KEY}}
-            OSC_SECRET_KEY: ${{secrets.OSC_SECRET_KEY}}
-            OSC_REGION: ${{secrets.OSC_REGION}}
-          run: go test -count 1 ./... -coverprofile=coverage.txt -covermode=atomic -timeout=3m
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Test
+        env:
+          OSC_ACCESS_KEY: ${{secrets.OSC_ACCESS_KEY}}
+          OSC_SECRET_KEY: ${{secrets.OSC_SECRET_KEY}}
+          OSC_REGION: ${{secrets.OSC_REGION}}
+        run: go test -count 1 ./... -coverprofile=coverage.txt -covermode=atomic -timeout=3m
   build:
     strategy:
       matrix:
         goos: ["linux", "darwin", "windows"]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v4
       with:
-        go-version: 1.19
+        go-version: 'stable'
     - name: Build
       run: GOOS=${{matrix.goos}} go build -v -o packer-plugin-outscale_${{matrix.goos}}
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.3.1
+      uses: actions/upload-artifact@v3
       with: 
         name: packer-plugin-outscale_${{matrix.goos}}
         path: ./packer-plugin-outscale_${{matrix.goos}}
@@ -91,7 +92,7 @@ jobs:
     steps:
       - name: Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v1.1.1
+        uses: dependabot/fetch-metadata@v1
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Auto-merge

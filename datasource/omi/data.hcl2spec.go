@@ -26,7 +26,6 @@ type FlatConfig struct {
 	ProfileName           *string                `mapstructure:"profile" cty:"profile" hcl:"profile"`
 	RawRegion             *string                `mapstructure:"region" cty:"region" hcl:"region"`
 	SecretKey             *string                `mapstructure:"secret_key" cty:"secret_key" hcl:"secret_key"`
-	SkipValidation        *bool                  `mapstructure:"skip_region_validation" cty:"skip_region_validation" hcl:"skip_region_validation"`
 	SkipMetadataApiCheck  *bool                  `mapstructure:"skip_metadata_api_check" cty:"skip_metadata_api_check" hcl:"skip_metadata_api_check"`
 	Token                 *string                `mapstructure:"token" cty:"token" hcl:"token"`
 	X509certPath          *string                `mapstructure:"x509_cert_path" cty:"x509_cert_path" hcl:"x509_cert_path"`
@@ -64,7 +63,6 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"profile":                    &hcldec.AttrSpec{Name: "profile", Type: cty.String, Required: false},
 		"region":                     &hcldec.AttrSpec{Name: "region", Type: cty.String, Required: false},
 		"secret_key":                 &hcldec.AttrSpec{Name: "secret_key", Type: cty.String, Required: false},
-		"skip_region_validation":     &hcldec.AttrSpec{Name: "skip_region_validation", Type: cty.Bool, Required: false},
 		"skip_metadata_api_check":    &hcldec.AttrSpec{Name: "skip_metadata_api_check", Type: cty.Bool, Required: false},
 		"token":                      &hcldec.AttrSpec{Name: "token", Type: cty.String, Required: false},
 		"x509_cert_path":             &hcldec.AttrSpec{Name: "x509_cert_path", Type: cty.String, Required: false},

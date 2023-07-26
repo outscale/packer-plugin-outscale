@@ -23,7 +23,6 @@ type AccessConfig struct {
 	ProfileName           string `mapstructure:"profile"`
 	RawRegion             string `mapstructure:"region"`
 	SecretKey             string `mapstructure:"secret_key"`
-	SkipValidation        bool   `mapstructure:"skip_region_validation"`
 	SkipMetadataApiCheck  bool   `mapstructure:"skip_metadata_api_check"`
 	Token                 string `mapstructure:"token"`
 	X509certPath          string `mapstructure:"x509_cert_path"`

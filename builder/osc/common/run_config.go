@@ -76,7 +76,6 @@ type RunConfig struct {
 	SourceOmiFilter             OmiFilterOptions           `mapstructure:"source_omi_filter"`
 	SubnetFilter                SubnetFilterOptions        `mapstructure:"subnet_filter"`
 	SubnetId                    string                     `mapstructure:"subnet_id"`
-	TemporaryKeyPairName        string                     `mapstructure:"temporary_key_pair_name"`
 	TemporarySGSourceCidr       string                     `mapstructure:"temporary_security_group_source_cidr"`
 	UserData                    string                     `mapstructure:"user_data"`
 	UserDataFile                string                     `mapstructure:"user_data_file"`

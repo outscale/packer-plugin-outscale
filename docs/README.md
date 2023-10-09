@@ -71,3 +71,9 @@ directory. Upon successful compilation, a `packer-plugin-outscale` plugin
 binary file can be found in the root directory.
 To install the compiled plugin, please follow the official Packer documentation
 on [installing a plugin](https://www.packer.io/docs/extending/plugins/#installing-plugins).
+
+##### TLDR for Dev:
+you can set environement variable PACKER_PLUGIN_PATH to outscale_packer_plugins directory.
+
+If you do that, you can remove `required_plugins` from packer file.
+

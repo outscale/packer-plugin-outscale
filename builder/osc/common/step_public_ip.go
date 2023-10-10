@@ -46,7 +46,7 @@ func (s *StepPublicIp) Run(_ context.Context, state multistep.StateBag) multiste
 
 	// Set some data for use in future steps
 	s.publicIpId = *resp.GetPublicIp().PublicIpId
-	state.Put("publicip_id", resp.PublicIp.PublicIpId)
+	state.Put("publicip_id", *resp.GetPublicIp().PublicIpId)
 
 	return multistep.ActionContinue
 }

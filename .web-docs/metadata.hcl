@@ -3,7 +3,7 @@
 integration {
   name = "Outscale"
   description = "TODO"
-  identifier = "packer/BrandonRomano/outscale"
+  identifier = "packer/outscale/outscale"
   component {
     type = "data-source"
     name = "Outscale OMI"

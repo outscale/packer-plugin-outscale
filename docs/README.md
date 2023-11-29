@@ -33,29 +33,25 @@ If you do that, you can remove `required_plugins` from packer file.
 
 #### Builders
 
-- [outscale-bsu](/packer/integrations/outscale/latest/components/builder/bsu) - Create BSU-backed OMIs by
+-> **Don't know which builder to use?** If in doubt, use the [osc-bsu builder](/packer/integrations/outscale/outscale/latest/components/builder/bsu). It is much easier to use and Outscale generally recommends BSU-backed images nowadays.
+
+- [outscale-bsu](/packer/integrations/outscale/outscale/latest/components/builder/bsu) - Create BSU-backed OMIs by
   launching a source OMI and re-packaging it into a new OMI after
   provisioning. If in doubt, use this builder, which is the easiest to get
   started with.
-
-- [outscale-chroot](/packer/integrations/outscale/latest/components/builder/chroot) - Create EBS-backed OMIs
+- [outscale-chroot](/packer/integrations/outscale/outscale/latest/components/builder/chroot) - Create EBS-backed OMIs
   from an existing OUTSCALE VM by mounting the root device and using a
   [Chroot](https://en.wikipedia.org/wiki/Chroot) environment to provision
   that device. This is an **advanced builder and should not be used by
   newcomers**. However, it is also the fastest way to build an EBS-backed OMI
   since no new OUTSCALE VM needs to be launched.
-
-- [outscale-bsusurrogate](/packer/integrations/outscale/latest/components/builder/bsusurrogate) - Create BSU-backed OMIs from scratch. Works similarly to the `chroot` builder but does
+- [outscale-bsusurrogate](/packer/integrations/outscale/outscale/latest/components/builder/bsusurrogate) - Create BSU-backed OMIs from scratch. Works similarly to the `chroot` builder but does
   not require running in Outscale VM. This is an **advanced builder and should not be
   used by newcomers**.
+- [outscale-bsuvolume](/packer/integrations/outscale/outscale/latest/components/builder/bsuvolume) - Create EBS volumes by launching a source OMI with block devices mapped. Provision the VM, then destroy it, retaining the EBS volumes.
 
--> **Don't know which builder to use?** If in doubt, use the [osc-bsu builder](/packer/integrations/outscale/latest/components/builder/bsu). It is much easier to use and Outscale generally recommends BSU-backed images nowadays.
-
-### Outscale BSU Volume Builder
-
-Packer is able to create Outscale BSU Volumes which are preinitialized with a filesystem and data.
-
-- [outscale-bsuvolume](/packer/integrations/outscale/latest/components/builder/bsuvolume) - Create EBS volumes by launching a source OMI with block devices mapped. Provision the VM, then destroy it, retaining the EBS volumes.
+#### Data Sources
+- [outscale-omi](/packer/integrations/outscale/outscale/latest/components/data-source/omi) - The Outscale OMI Data source will filter and fetch an Outscale OMI.
 
 
 ### Authentication

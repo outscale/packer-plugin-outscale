@@ -2,7 +2,7 @@
 # https://github.com/hashicorp/integration-template#metadata-configuration
 integration {
   name = "Outscale"
-  description = "TODO"
+  description = "Use Packer to create Outscale OMIs."
   identifier = "packer/outscale/outscale"
   component {
     type = "data-source"

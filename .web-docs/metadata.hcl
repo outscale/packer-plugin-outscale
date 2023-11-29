@@ -12,21 +12,21 @@ integration {
   component {
     type = "builder"
     name = "Outscale BSU Volume"
-    slug = "outscale-bsuvolume"
+    slug = "bsuvolume"
   }
   component {
     type = "builder"
     name = "Outscale chroot"
-    slug = "outscale-chroot"
+    slug = "chroot"
   }
   component {
     type = "builder"
     name = "Outscale BSU Surrogate"
-    slug = "outscale-bsusurrogate"
+    slug = "bsusurrogate"
   }
   component {
     type = "builder"
     name = "Outscale BSU"
-    slug = "outscale-bsu"
+    slug = "bsu"
   }
 }

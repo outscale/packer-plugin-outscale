@@ -74,7 +74,7 @@ These look like:
   "secret_key": "XXX_SECRET_KEY_XXX",
   "region": "us-east-1",
   "type": "outscale-bsu",
-  "oapi_custom_endpoint": "outscale.com/oapi/latest"
+  "custom_endpoint_oapi": "outscale.com/oapi/latest"
 }
 ```
 

@@ -1,3 +1,5 @@
+TEST CI, DO NOT MERGE THIS :) 
+
 [![Project Graduated](https://docs.outscale.com/fr/userguide/_images/Project-Graduated-green.svg)](https://docs.outscale.com/en/userguide/Open-Source-Projects.html)
 
 # Packer Plugin Outscale

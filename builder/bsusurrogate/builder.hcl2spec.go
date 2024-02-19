@@ -4,7 +4,7 @@ package bsusurrogate
 
 import (
 	"github.com/hashicorp/hcl/v2/hcldec"
-	"github.com/outscale/packer-plugin-outscale/builder/osc/common"
+	"github.com/outscale/packer-plugin-outscale/builder/common"
 	"github.com/zclconf/go-cty/cty"
 )
 

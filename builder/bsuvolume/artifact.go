@@ -9,7 +9,7 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
 	oscgo "github.com/outscale/osc-sdk-go/v2"
-	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
 // map of region to list of volume IDs

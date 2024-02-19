@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
-	"github.com/outscale/packer-plugin-outscale/builder/osc/common"
+	"github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
 func TestDatasourceConfigure_FilterBlank(t *testing.T) {

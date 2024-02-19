@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	oscgo "github.com/outscale/osc-sdk-go/v2"
-	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 	"github.com/zclconf/go-cty/cty"
 )
 

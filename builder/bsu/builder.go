@@ -1,12 +1,14 @@
-//go:generate packer-sdc mapstructure-to-hcl2 -type Config,RootBlockDevice
+//go:generate packer-sdc mapstructure-to-hcl2 -type Config
 
-// Package bsusurrogate contains a packersdk.Builder implementation that
-// builds a new EBS-backed OMI using an ephemeral instance.
-package bsusurrogate
+// Package bsu contains a packersdk.Builder implementation that
+// builds OMIs for Outscale OAPI.
+//
+// In general, there are two types of OMIs that can be created: ebs-backed or
+// instance-store. This builder _only_ builds ebs-backed images.
+package bsu
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
@@ -17,20 +19,19 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
-const BuilderId = "oapi.outscale.bsusurrogate"
+// The unique ID for this builder
+const BuilderId = "oapi.outscale.bsu"
 
 type Config struct {
 	common.PackerConfig    `mapstructure:",squash"`
 	osccommon.AccessConfig `mapstructure:",squash"`
-	osccommon.RunConfig    `mapstructure:",squash"`
-	osccommon.BlockDevices `mapstructure:",squash"`
 	osccommon.OMIConfig    `mapstructure:",squash"`
-
-	RootDevice    RootBlockDevice  `mapstructure:"omi_root_device"`
-	VolumeRunTags osccommon.TagMap `mapstructure:"run_volume_tags"`
+	osccommon.BlockDevices `mapstructure:",squash"`
+	osccommon.RunConfig    `mapstructure:",squash"`
+	VolumeRunTags          osccommon.TagMap `mapstructure:"run_volume_tags"`
 
 	ctx interpolate.Context
 }
@@ -43,9 +44,7 @@ type Builder struct {
 func (b *Builder) ConfigSpec() hcldec.ObjectSpec { return b.config.FlatMapstructure().HCL2Spec() }
 
 func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
-
 	b.config.ctx.Funcs = osccommon.TemplateFuncs
-
 	err := config.Decode(&b.config, &config.DecodeOpts{
 		PluginType:         BuilderId,
 		Interpolate:        true,
@@ -56,7 +55,6 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 				"run_tags",
 				"run_volume_tags",
 				"snapshot_tags",
-				"spot_tags",
 				"tags",
 			},
 		},
@@ -72,25 +70,10 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	// Accumulate any errors
 	var errs *packersdk.MultiError
 	errs = packersdk.MultiErrorAppend(errs, b.config.AccessConfig.Prepare(&b.config.ctx)...)
-	errs = packersdk.MultiErrorAppend(errs, b.config.RunConfig.Prepare(&b.config.ctx)...)
 	errs = packersdk.MultiErrorAppend(errs,
 		b.config.OMIConfig.Prepare(&b.config.AccessConfig, &b.config.ctx)...)
 	errs = packersdk.MultiErrorAppend(errs, b.config.BlockDevices.Prepare(&b.config.ctx)...)
-	errs = packersdk.MultiErrorAppend(errs, b.config.RootDevice.Prepare(&b.config.ctx)...)
-
-	foundRootVolume := false
-	for _, launchDevice := range b.config.BlockDevices.LaunchMappings {
-		if launchDevice.DeviceName == b.config.RootDevice.SourceDeviceName {
-			foundRootVolume = true
-			if launchDevice.DeleteOnVmDeletion && b.config.VmInitiatedShutdownBehavior == osccommon.TerminateShutdownBehavior {
-				errs = packersdk.MultiErrorAppend(errs, errors.New("Cannot delete the launch device with the VM if the shutdown behavior is set to terminate."))
-			}
-		}
-	}
-
-	if !foundRootVolume {
-		errs = packersdk.MultiErrorAppend(errs, fmt.Errorf("no volume with name '%s' is found", b.config.RootDevice.SourceDeviceName))
-	}
+	errs = packersdk.MultiErrorAppend(errs, b.config.RunConfig.Prepare(&b.config.ctx)...)
 
 	if errs != nil && len(errs.Errors) > 0 {
 		return nil, nil, errs
@@ -98,13 +81,11 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 
 	packersdk.LogSecretFilter.Set(b.config.AccessKey, b.config.SecretKey, b.config.Token)
 	return nil, nil, nil
-
 }
 
 func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook) (packersdk.Artifact, error) {
 	var oscConn *osccommon.OscClient
 	var err error
-
 	if oscConn, err = b.config.NewOSCClient(); err != nil {
 		return nil, err
 	}
@@ -116,11 +97,6 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	state.Put("accessConfig", &b.config.AccessConfig)
 	state.Put("hook", hook)
 	state.Put("ui", ui)
-
-	//VMStep
-
-	omiDevices := b.config.BuildOscOMIDevices()
-	launchOSCDevices := b.config.BuildOSCLaunchDevices()
 
 	steps := []multistep.Step{
 		&osccommon.StepPreValidate{
@@ -143,7 +119,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		&osccommon.StepKeyPair{
 			Debug:        b.config.PackerDebug,
 			Comm:         &b.config.RunConfig.Comm,
-			DebugKeyPath: fmt.Sprintf("oapi_%s", b.config.PackerBuildName),
+			DebugKeyPath: fmt.Sprintf("osc_%s", b.config.PackerBuildName),
 		},
 		&osccommon.StepPublicIp{
 			AssociatePublicIpAddress: b.config.AssociatePublicIpAddress,
@@ -175,6 +151,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			UserData:                    b.config.UserData,
 			UserDataFile:                b.config.UserDataFile,
 			VolumeTags:                  b.config.VolumeRunTags,
+			RawRegion:                   b.config.RawRegion,
 		},
 		&osccommon.StepGetPassword{
 			Debug:     b.config.PackerDebug,
@@ -197,9 +174,6 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			Skip:          false,
 			DisableStopVm: b.config.DisableStopVm,
 		},
-		&StepSnapshotVolumes{
-			LaunchDevices: launchOSCDevices,
-		},
 		&osccommon.StepDeregisterOMI{
 			AccessConfig:        &b.config.AccessConfig,
 			ForceDeregister:     b.config.OMIForceDeregister,
@@ -207,16 +181,14 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			OMIName:             b.config.OMIName,
 			Regions:             b.config.OMIRegions,
 		},
-		&StepRegisterOMI{
-			RootDevice:    b.config.RootDevice,
-			OMIDevices:    omiDevices,
-			LaunchDevices: launchOSCDevices,
-			RawRegion:     b.config.RawRegion,
-			ProductCodes:  b.config.ProductCodes,
+		&stepCreateOMI{
+			RawRegion:    b.config.RawRegion,
+			ProductCodes: b.config.ProductCodes,
 		},
 		&osccommon.StepUpdateOMIAttributes{
 			AccountIds:         b.config.OMIAccountIDs,
 			SnapshotAccountIds: b.config.SnapshotAccountIDs,
+			RawRegion:          b.config.RawRegion,
 			GlobalPermission:   b.config.GlobalPermission,
 			Ctx:                b.config.ctx,
 		},

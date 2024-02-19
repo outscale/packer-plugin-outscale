@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	oscgo "github.com/outscale/osc-sdk-go/v2"
-	osccommon "github.com/outscale/packer-plugin-outscale/builder/osc/common"
+	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
 // StepLinkVolume attaches the previously created volume to an

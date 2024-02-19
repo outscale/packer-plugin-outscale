@@ -9,7 +9,7 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	oscgo "github.com/outscale/osc-sdk-go/v2"
-	"github.com/outscale/packer-plugin-outscale/builder/osc/common/retry"
+	"github.com/outscale/packer-plugin-outscale/builder/common/retry"
 )
 
 type StepCreateTags struct {

@@ -6,10 +6,10 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/plugin"
 
-	"github.com/outscale/packer-plugin-outscale/builder/osc/bsu"
-	"github.com/outscale/packer-plugin-outscale/builder/osc/bsusurrogate"
-	"github.com/outscale/packer-plugin-outscale/builder/osc/bsuvolume"
-	"github.com/outscale/packer-plugin-outscale/builder/osc/chroot"
+	"github.com/outscale/packer-plugin-outscale/builder/bsu"
+	"github.com/outscale/packer-plugin-outscale/builder/bsusurrogate"
+	"github.com/outscale/packer-plugin-outscale/builder/bsuvolume"
+	"github.com/outscale/packer-plugin-outscale/builder/chroot"
 	"github.com/outscale/packer-plugin-outscale/datasource/omi"
 	"github.com/outscale/packer-plugin-outscale/version"
 )

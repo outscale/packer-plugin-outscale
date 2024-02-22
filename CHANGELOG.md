@@ -1,3 +1,11 @@
+## 1.1.4 (February 22, 2024)
+
+* Update go modules
+* Update documentation links for Packer integration
+* Update integration Organization name
+* Fix documentation on variable use inconsistent ([GH-168](https://github.com/outscale/packer-plugin-outscale/issues/168))
+* Fix Broken docs links ([GH-176](https://github.com/outscale/packer-plugin-outscale/issues/176))
+
 ## 1.1.3 (October 10, 2023)
 
 * Packer can't reach with ssh a temporary VM created in a VPC on it's public IP ([GH-159](https://github.com/outscale/packer-plugin-outscale/issues/159))

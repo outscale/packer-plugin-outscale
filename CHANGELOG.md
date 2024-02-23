@@ -1,5 +1,13 @@
+## 1.1.5 (February 23, 2024)
+
+release v1.1.4 fail because gorelease action brokend
+So v1.1.4 is a tag but manage to fix the documentation
+v1.1.5 fixed goreleser
+* Fix goreleaser gihub action
+
 ## 1.1.4 (February 22, 2024)
 
+v1.1.4 release deosn't exist
 * Update go modules
 * Update documentation links for Packer integration
 * Update integration Organization name

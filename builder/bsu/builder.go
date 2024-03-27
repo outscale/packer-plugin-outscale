@@ -32,6 +32,7 @@ type Config struct {
 	osccommon.BlockDevices `mapstructure:",squash"`
 	osccommon.RunConfig    `mapstructure:",squash"`
 	VolumeRunTags          osccommon.TagMap `mapstructure:"run_volume_tags"`
+	SkipSnapshot           bool             `mapstructure:"skip_snapshot"`
 
 	ctx interpolate.Context
 }
@@ -181,22 +182,26 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			OMIName:             b.config.OMIName,
 			Regions:             b.config.OMIRegions,
 		},
-		&stepCreateOMI{
-			RawRegion:    b.config.RawRegion,
-			ProductCodes: b.config.ProductCodes,
-		},
-		&osccommon.StepUpdateOMIAttributes{
-			AccountIds:         b.config.OMIAccountIDs,
-			SnapshotAccountIds: b.config.SnapshotAccountIDs,
-			RawRegion:          b.config.RawRegion,
-			GlobalPermission:   b.config.GlobalPermission,
-			Ctx:                b.config.ctx,
-		},
-		&osccommon.StepCreateTags{
-			Tags:         b.config.OMITags,
-			SnapshotTags: b.config.SnapshotTags,
-			Ctx:          b.config.ctx,
-		},
+	}
+
+	if !b.config.SkipSnapshot {
+		steps = append(steps,
+			&stepCreateOMI{
+				RawRegion:    b.config.RawRegion,
+				ProductCodes: b.config.ProductCodes,
+			},
+			&osccommon.StepUpdateOMIAttributes{
+				AccountIds:         b.config.OMIAccountIDs,
+				SnapshotAccountIds: b.config.SnapshotAccountIDs,
+				RawRegion:          b.config.RawRegion,
+				GlobalPermission:   b.config.GlobalPermission,
+				Ctx:                b.config.ctx,
+			},
+			&osccommon.StepCreateTags{
+				Tags:         b.config.OMITags,
+				SnapshotTags: b.config.SnapshotTags,
+				Ctx:          b.config.ctx,
+			})
 	}
 
 	b.runner = commonsteps.NewRunner(steps, b.config.PackerConfig, ui)

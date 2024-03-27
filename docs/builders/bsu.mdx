@@ -162,6 +162,9 @@ builder.
 - `skip_region_validation` (boolean) - Set to true if you want to skip
   validation of the region configuration option. Default `false`.
 
+- `skip_snapshot` (boolean) - Set to true if you want to skip snapshot creation.
+  No image will be created if set to true. Default `false`.
+
 - `snapshot_groups` (array of strings) - A list of groups that have access to
   create volumes from the snapshot(s). By default no groups have permission
   to create volumes from the snapshot(s). `all` will make the snapshot

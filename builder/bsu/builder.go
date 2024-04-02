@@ -32,7 +32,7 @@ type Config struct {
 	osccommon.BlockDevices `mapstructure:",squash"`
 	osccommon.RunConfig    `mapstructure:",squash"`
 	VolumeRunTags          osccommon.TagMap `mapstructure:"run_volume_tags"`
-	SkipSnapshot           bool             `mapstructure:"skip_snapshot"`
+	SkipCreateOmi          bool             `mapstructure:"skip_create_omi"`
 
 	ctx interpolate.Context
 }
@@ -184,7 +184,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		},
 	}
 
-	if !b.config.SkipSnapshot {
+	if !b.config.SkipCreateOmi {
 		steps = append(steps,
 			&stepCreateOMI{
 				RawRegion:    b.config.RawRegion,

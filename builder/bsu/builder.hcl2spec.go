@@ -120,7 +120,7 @@ type FlatConfig struct {
 	WinRMUseNTLM                *bool                                  `mapstructure:"winrm_use_ntlm" cty:"winrm_use_ntlm" hcl:"winrm_use_ntlm"`
 	SSHInterface                *string                                `mapstructure:"ssh_interface" cty:"ssh_interface" hcl:"ssh_interface"`
 	VolumeRunTags               common.TagMap                          `mapstructure:"run_volume_tags" cty:"run_volume_tags" hcl:"run_volume_tags"`
-	SkipSnapshot				*bool								   `mapstructure:"skip_snapshot" cty:"skip_snapshot" hcl:"skip_snapshot"`
+	SkipCreateOmi               *bool                                  `mapstructure:"skip_create_omi" cty:"skip_create_omi" hcl:"skip_create_omi"`
 }
 
 // FlatMapstructure returns a new FlatConfig.
@@ -244,7 +244,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"winrm_use_ntlm":                       &hcldec.AttrSpec{Name: "winrm_use_ntlm", Type: cty.Bool, Required: false},
 		"ssh_interface":                        &hcldec.AttrSpec{Name: "ssh_interface", Type: cty.String, Required: false},
 		"run_volume_tags":                      &hcldec.AttrSpec{Name: "run_volume_tags", Type: cty.Map(cty.String), Required: false},
-		"skip_snapshot": &hcldec.AttrSpec{			Name:     "skip_snapshot",			Type:     cty.Bool,			Required: false		},
+		"skip_create_omi":                      &hcldec.AttrSpec{Name: "skip_create_omi", Type: cty.Bool, Required: false},
 	}
 	return s
 }

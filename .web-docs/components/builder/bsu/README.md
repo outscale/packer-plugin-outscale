@@ -145,6 +145,9 @@ builder.
   shutdown in case Packer exits ungracefully. Possible values are "stop" and
   "terminate", default is `stop`.
 
+- `skip_create_omi` (boolean) - Set to true if you want to skip snapshot creation.
+  No image will be created if set to true. Default `false`.
+
 - `skip_region_validation` (boolean) - Set to true if you want to skip
   validation of the region configuration option. Default `false`.
 

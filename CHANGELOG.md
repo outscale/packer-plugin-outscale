@@ -1,3 +1,6 @@
+## 1.2.0 (April 8, 2024)
+* add `skip_create_omi` option
+
 ## 1.1.5 (February 23, 2024)
 
 release v1.1.4 fail because gorelease action brokend

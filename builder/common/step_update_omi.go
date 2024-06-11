@@ -34,8 +34,7 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 	valid := false
 	valid = valid || (s.AccountIds != nil && len(s.AccountIds) > 0)
 	valid = valid || (s.SnapshotAccountIds != nil && len(s.SnapshotAccountIds) > 0)
-	valid = valid || (s.GlobalPermission != false)
-
+	valid = valid || s.GlobalPermission == true
 	if !valid {
 		return multistep.ActionContinue
 	}
@@ -73,6 +72,10 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
+	}
+
+	if s.AccountIds == nil || len(s.AccountIds) == 0 {
+		return multistep.ActionContinue
 	}
 
 	// Updating snapshot attributes

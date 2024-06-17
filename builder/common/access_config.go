@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	oscgo "github.com/outscale/osc-sdk-go/v2"
@@ -136,9 +137,13 @@ func (c *AccessConfig) NewOSCClientByRegion(region string) *OscClient {
 		SecretKey: c.SecretKey,
 	})
 	config.HTTPClient = skipClient
+	url := fmt.Sprintf("https://api.%s.%s", region, c.CustomEndpointOAPI)
+	if strings.HasPrefix(c.CustomEndpointOAPI, "http://") || strings.HasPrefix(c.CustomEndpointOAPI, "https://") {
+		url = fmt.Sprintf("%s/api/v1", c.CustomEndpointOAPI)
+	}
 	config.Servers = oscgo.ServerConfigurations{
 		{
-			URL:         fmt.Sprintf("https://api.%s.%s", region, c.CustomEndpointOAPI),
+			URL:         url,
 			Description: "Loaded from profile",
 			Variables: map[string]oscgo.ServerVariable{
 				"region": {

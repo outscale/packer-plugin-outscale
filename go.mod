@@ -7,7 +7,7 @@ toolchain go1.22.0
 require (
 	github.com/aws/aws-sdk-go v1.50.21
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/hcl/v2 v2.20.0
+	github.com/hashicorp/hcl/v2 v2.21.0
 	github.com/hashicorp/packer-plugin-sdk v0.5.2
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/outscale/osc-sdk-go/v2 v2.18.0

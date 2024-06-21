@@ -3,7 +3,6 @@ package common
 
 import (
 	"fmt"
-	"log"
 
 	oscgo "github.com/outscale/osc-sdk-go/v2"
 )
@@ -41,23 +40,17 @@ func (d *OmiFilterOptions) GetFilteredImage(params oscgo.ReadImagesRequest, oscc
 		params.Filters.AccountAliases = &oali
 	}
 
-	log.Printf("filters to pass to API are %#v", params.GetFilters().ImageIds)
-	log.Printf("Using OMI Filters %#v", params)
-
 	imageResp, _, err := oscconn.Api.ImageApi.ReadImages(oscconn.Auth).ReadImagesRequest(params).Execute()
 	if err != nil {
-		err := fmt.Errorf("Error querying OMI: %s", err)
-		return nil, err
+		return nil, fmt.Errorf("Error querying OMI: %s", err)
 	}
 
 	if len(imageResp.GetImages()) == 0 {
-		err := fmt.Errorf("No OMI was found matching filters: %#v", params)
-		return nil, err
+		return nil, fmt.Errorf("No OMI was found matching filters: %v", params.Filters.GetImageNames())
 	}
 
 	if len(imageResp.GetImages()) > 1 && !d.MostRecent {
-		err := fmt.Errorf("your query returned more than one result. Please try a more specific search, or set most_recent to true")
-		return nil, err
+		return nil, fmt.Errorf("your query returned more than one result. Please try a more specific search, or set most_recent to true")
 	}
 
 	var image oscgo.Image

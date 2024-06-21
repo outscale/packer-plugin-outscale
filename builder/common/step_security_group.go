@@ -168,8 +168,6 @@ func buildSecurityGroupFilters(input map[string]string) oscgo.FiltersSecurityGro
 		filterValue := []string{v}
 
 		switch name := k; name {
-		case "account_ids":
-			filters.AccountIds = &filterValue
 		case "security_group_ids":
 			filters.SecurityGroupIds = &filterValue
 		case "security_group_names":

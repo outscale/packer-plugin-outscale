@@ -4,11 +4,22 @@ PLUGIN_FQN="$(shell grep -E '^module' <go.mod | sed -E 's/module *//')"
 
 COUNT?=1
 TEST?=$(shell go list ./...)
+CHECK_DIR?=./...
 HASHICORP_PACKER_PLUGIN_SDK_VERSION?=$(shell go list -m github.com/hashicorp/packer-plugin-sdk | cut -d " " -f2)
+
+.PHONY: fmt
 
 .PHONY: dev
 
-build:
+.PHONY: vet
+
+fmt:
+	gofmt -l -s -w .
+
+vet: fmt
+	go vet $(CHECK_DIR)
+
+build: fmt vet
 	go build -o ${BINARY}
 
 dev:

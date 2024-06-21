@@ -89,7 +89,7 @@ func (s *StepSourceOMIInfo) Run(_ context.Context, state multistep.StateBag) mul
 	}
 
 	if len(*imageResp.Images) == 0 {
-		err := fmt.Errorf("No OMI was found matching filters: %#v", params)
+		err := fmt.Errorf("No OMI was found matching filters: %v", params.Filters.GetImageNames())
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

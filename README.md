@@ -2,7 +2,7 @@
 
 # Packer Plugin Outscale
 The `Outscale` multi-component plugin can be used with HashiCorp [Packer](https://www.packer.io)
-to create custom images. For the full list of available features for this plugin see [docs](docs).
+to create custom images. For the full list of available features for this plugin see [docs](https://developer.hashicorp.com/packer/integrations/outscale/outscale/latest).
 
 ## Installation
 

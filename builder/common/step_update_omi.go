@@ -50,7 +50,7 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 	}
 
 	updateImageRequest := oscgo.UpdateImageRequest{
-		PermissionsToLaunch: oscgo.PermissionsOnResourceCreation{
+		PermissionsToLaunch: &oscgo.PermissionsOnResourceCreation{
 			Additions: &oscgo.PermissionsOnResource{
 				AccountIds:       &s.AccountIds,
 				GlobalPermission: &s.GlobalPermission,

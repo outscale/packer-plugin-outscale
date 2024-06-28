@@ -42,7 +42,7 @@ source "outscale-bsusurrogate" "centos8" {
         volume_size = "${var.volsize}"
         volume_type = "standard"
     }
-    source_omi = "${var.omi}"
+    source_omi = "${var.omi_name}"
     ssh_interface = "public_ip"
     ssh_username = "${var.username}"
     vm_type = "tinav4.c2r4p1"

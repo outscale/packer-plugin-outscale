@@ -5,13 +5,13 @@ go 1.21.0
 toolchain go1.22.0
 
 require (
-	github.com/aws/aws-sdk-go v1.54.6
+	github.com/aws/aws-sdk-go v1.55.5
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/hcl/v2 v2.21.0
 	github.com/hashicorp/packer-plugin-sdk v0.5.4
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/outscale/osc-sdk-go/v2 v2.21.0
-	github.com/zclconf/go-cty v1.14.4
+	github.com/outscale/osc-sdk-go/v2 v2.23.0
+	github.com/zclconf/go-cty v1.15.0
 	golang.org/x/sys v0.21.0
 )
 
@@ -53,7 +53,7 @@ require (
 	github.com/hashicorp/go-getter/v2 v2.2.2 // indirect
 	github.com/hashicorp/go-hclog v1.6.3 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.6 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-secure-stdlib/parseutil v0.1.8 // indirect
@@ -104,7 +104,7 @@ require (
 	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a // indirect
 	golang.org/x/mod v0.18.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
-	golang.org/x/oauth2 v0.21.0 // indirect
+	golang.org/x/oauth2 v0.22.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/term v0.21.0 // indirect
 	golang.org/x/text v0.16.0 // indirect

@@ -153,8 +153,7 @@ func (s *StepRegisterOMI) combineDevices(snapshotIDs map[string]string) []oscgo.
 func copyToDeviceMappingImage(device osc.BlockDeviceMappingVmCreation) oscgo.BlockDeviceMappingImage {
 	log.Printf("Copy device mapping image ")
 	deviceImage := oscgo.BlockDeviceMappingImage{
-		DeviceName:        device.DeviceName,
-		VirtualDeviceName: device.VirtualDeviceName,
+		DeviceName: device.DeviceName,
 		Bsu: &oscgo.BsuToCreate{
 			DeleteOnVmDeletion: device.Bsu.DeleteOnVmDeletion,
 			Iops:               device.Bsu.Iops,

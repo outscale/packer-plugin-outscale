@@ -29,15 +29,30 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	ui.Say(fmt.Sprintf("Creating OMI %s from vm %s", omiName, vm.GetVmId()))
 	blockDeviceMapping := config.BlockDevices.BuildOscOMIDevices()
 	createOpts := oscgo.CreateImageRequest{
-		VmId:                vm.VmId,
-		ImageName:           &omiName,
-		BlockDeviceMappings: &blockDeviceMapping,
+		ImageName: &omiName,
 	}
-	if config.OMIDescription != "" {
-		createOpts.Description = &config.OMIDescription
+	if len(blockDeviceMapping) == 0 {
+		createOpts.SetVmId(vm.GetVmId())
+	} else {
+		createOpts.SetBlockDeviceMappings(blockDeviceMapping)
+		if rootDName := config.RootDeviceName; rootDName != "" {
+			createOpts.SetRootDeviceName(rootDName)
+		} else {
+			err := fmt.Errorf("Error: MissingParameter: You must provide 'RootDeviceName' when creating omi with 'omi_block_device_mappings'.")
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
 	}
-	if config.ProductCodes != nil {
-		createOpts.ProductCodes = &config.ProductCodes
+	if prodCode := config.ProductCodes; prodCode != nil {
+		createOpts.SetProductCodes(prodCode)
+	}
+
+	if description := config.OMIDescription; description != "" {
+		createOpts.SetDescription(description)
+	}
+	if prodCode := config.ProductCodes; prodCode != nil {
+		createOpts.SetProductCodes(prodCode)
 	}
 
 	resp, _, err := oscconn.Api.ImageApi.CreateImage(oscconn.Auth).CreateImageRequest(createOpts).Execute()

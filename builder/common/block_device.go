@@ -15,7 +15,6 @@ type BlockDevice struct {
 	IOPS               int64  `mapstructure:"iops"`
 	NoDevice           bool   `mapstructure:"no_device"`
 	SnapshotId         string `mapstructure:"snapshot_id"`
-	VirtualName        string `mapstructure:"virtual_name"`
 	VolumeType         string `mapstructure:"volume_type"`
 	VolumeSize         int64  `mapstructure:"volume_size"`
 }
@@ -72,10 +71,7 @@ func buildOscBlockDevicesImage(b []BlockDevice) []oscgo.BlockDeviceMappingImage 
 }
 
 func buildOscBlockDevicesVmCreation(b []BlockDevice) []oscgo.BlockDeviceMappingVmCreation {
-	log.Printf("[DEBUG] Launch Block Device %#v", b)
-
 	var blockDevices []oscgo.BlockDeviceMappingVmCreation
-
 	for _, blockDevice := range b {
 		mapping := oscgo.BlockDeviceMappingVmCreation{}
 
@@ -88,9 +84,6 @@ func buildOscBlockDevicesVmCreation(b []BlockDevice) []oscgo.BlockDeviceMappingV
 		} else {
 			mapping.SetBsu(setBsuToCreate(blockDevice))
 		}
-
-		log.Printf("block device mapping")
-
 		blockDevices = append(blockDevices, mapping)
 	}
 	return blockDevices

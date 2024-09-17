@@ -113,28 +113,6 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 				},
 			},
 		},
-		{
-			Config: &BlockDevice{
-				DeviceName:  "/dev/sdb",
-				VirtualName: "ephemeral0",
-			},
-
-			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName:        oscgo.PtrString("/dev/sdb"),
-				VirtualDeviceName: oscgo.PtrString("ephemeral0"),
-			},
-		},
-		{
-			Config: &BlockDevice{
-				DeviceName: "/dev/sdb",
-				NoDevice:   true,
-			},
-
-			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
-				NoDevice:   oscgo.PtrString(""),
-			},
-		},
 	}
 
 	for _, tc := range cases {
@@ -258,17 +236,6 @@ func TestBlockDevice_OMI(t *testing.T) {
 					VolumeType:         oscgo.PtrString("standard"),
 					DeleteOnVmDeletion: oscgo.PtrBool(true),
 				},
-			},
-		},
-		{
-			Config: &BlockDevice{
-				DeviceName:  "/dev/sdb",
-				VirtualName: "ephemeral0",
-			},
-
-			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName:        oscgo.PtrString("/dev/sdb"),
-				VirtualDeviceName: oscgo.PtrString("ephemeral0"),
 			},
 		},
 	}

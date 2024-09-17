@@ -123,7 +123,7 @@ func (s *StepRegisterOMI) combineDevices(snapshotIDs map[string]string) []oscgo.
 
 	// Devices in launch_block_device_mappings override any with
 	// the same name in ami_block_device_mappings, except for the
-	// one designated as the root device in ami_root_device
+	// one designated as the root device in omi_root_device
 	for _, device := range s.LaunchDevices {
 		snapshotID, ok := snapshotIDs[device.GetDeviceName()]
 		if ok && snapshotID != "" {

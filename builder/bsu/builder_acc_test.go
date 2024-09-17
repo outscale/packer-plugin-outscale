@@ -65,7 +65,7 @@ const testBuilderAccWithGoodProductCode = `
 		"source_omi": "ami-68ed4301",
 		"ssh_username": "outscale",
 		"omi_name": "packer-test",
-		"product_codes": ["pty-2ffc33dc"],
+		"product_codes": ["0001"],
 		"associate_public_ip_address": true,
 		"force_deregister": true
 	}]

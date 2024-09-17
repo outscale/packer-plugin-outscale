@@ -62,8 +62,6 @@ builder.
 
   - `snapshot_id` (string) - The ID of the snapshot
 
-  - `virtual_name` (string) - The virtual device name. See the documentation on [Block Device Mapping](https://docs.outscale.com/en/userguide/Defining-Block-Device-Mappings.html) for more information.
-
   - `volume_size` (number) - The size of the volume, in GiB. Required if not specifying a `snapshot_id`
 
   - `volume_type` (string) - The volume type. `gp2` for General Purpose (SSD) volumes, `io1` for Provisioned IOPS (SSD) volumes, and `standard` for Magnetic volumes
@@ -182,18 +180,31 @@ builder.
 
     Example:
 
-    ```json
-    {
-      "source_omi_filter": {
-        "filters": {
-          "virtualization-type": "hvm",
-          "image-name": "image-name",
-          "root-device-type": "ebs"
-        },
-        "owners": ["099720109477"]
-      }
-    }
-    ```
+#### HCL
+```hcl
+source_omi_filter {
+  filters = {
+    image-name          = "image-name"
+    root-device-type    = "ebs"
+    virtualization-type = "hvm"
+  }
+  owners      = ["099720109477"]
+}
+```
+
+#### JSON
+```json
+{
+  "source_omi_filter": {
+    "filters": {
+      "virtualization-type": "hvm",
+      "image-name": "image-name",
+      "root-device-type": "ebs"
+    },
+    "owners": ["099720109477"]
+  }
+}
+```
 
     This selects an Ubuntu 16.04 HVM BSU OMIS from Canonical. NOTE:
     This will fail unless _exactly_ one OMIS is returned. In the above example,
@@ -245,6 +256,52 @@ builder.
 
 ## Basic Example
 
+#### HCL
+```hcl
+// export osc_access_key=$YOURKEY
+variable "osc_access_key" {
+  type = string
+  // default = "hardcoded_key"
+}
+
+// export osc_secret_key=$YOURSECRETKEY
+variable "osc_secret_key" {
+  type = string
+  // default = "hardcoded_secret_key"
+}
+
+source "outscale-bsusurrogate" "example-bsusurrogate" {
+  launch_block_device_mappings {
+    delete_on_vm_deletion = true
+    device_name           = "/dev/xvdf"
+    iops                  = 3000
+    volume_size           = 200
+    volume_type           = "io1"
+  }
+  source_omi_filter {
+    filters = {
+      image-name          = "image-name"
+      root-device-type    = "ebs"
+      virtualization-type = "hvm"
+    }
+    owners      = ["099720109477"]
+  }
+  omi_root_device {
+    delete_on_vm_deletion = true
+    device_name           = "/dev/sda1"
+    source_device_name    = "/dev/xvdf"
+    volume_size           = 50
+    volume_type           = "standard"
+  }
+  omi_name = "packer_osc_{{timestamp}}"
+  source_omi    = "ami-bcfc34e0"
+  ssh_interface = "public_ip"
+  ssh_username  = "outscale"
+  vm_type       = "t2.medium"
+  region        = "eu-west-2"
+}
+```
+#### JSON
 ```json
 {
   "type": "outscale-bsusurrogate",

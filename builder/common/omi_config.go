@@ -23,6 +23,7 @@ type OMIConfig struct {
 	SnapshotAccountIDs      []string `mapstructure:"snapshot_account_ids"`
 	GlobalPermission        bool     `mapstructure:"global_permission"`
 	ProductCodes            []string `mapstructure:"product_codes"`
+	RootDeviceName          string   `mapstructure:"root_device_name"`
 }
 
 func (c *OMIConfig) Prepare(accessConfig *AccessConfig, ctx *interpolate.Context) []error {

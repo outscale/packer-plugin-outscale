@@ -34,6 +34,7 @@ type FlatConfig struct {
 	SnapshotAccountIDs      []string                     `mapstructure:"snapshot_account_ids" cty:"snapshot_account_ids" hcl:"snapshot_account_ids"`
 	GlobalPermission        *bool                        `mapstructure:"global_permission" cty:"global_permission" hcl:"global_permission"`
 	ProductCodes            []string                     `mapstructure:"product_codes" cty:"product_codes" hcl:"product_codes"`
+	RootDeviceName          *string                      `mapstructure:"root_device_name" cty:"root_device_name" hcl:"root_device_name"`
 	AccessKey               *string                      `mapstructure:"access_key" cty:"access_key" hcl:"access_key"`
 	CustomEndpointOAPI      *string                      `mapstructure:"custom_endpoint_oapi" cty:"custom_endpoint_oapi" hcl:"custom_endpoint_oapi"`
 	InsecureSkipTLSVerify   *bool                        `mapstructure:"insecure_skip_tls_verify" cty:"insecure_skip_tls_verify" hcl:"insecure_skip_tls_verify"`
@@ -56,7 +57,6 @@ type FlatConfig struct {
 	MountPath               *string                      `mapstructure:"mount_path" cty:"mount_path" hcl:"mount_path"`
 	PostMountCommands       []string                     `mapstructure:"post_mount_commands" cty:"post_mount_commands" hcl:"post_mount_commands"`
 	PreMountCommands        []string                     `mapstructure:"pre_mount_commands" cty:"pre_mount_commands" hcl:"pre_mount_commands"`
-	RootDeviceName          *string                      `mapstructure:"root_device_name" cty:"root_device_name" hcl:"root_device_name"`
 	RootVolumeSize          *int64                       `mapstructure:"root_volume_size" cty:"root_volume_size" hcl:"root_volume_size"`
 	RootVolumeType          *string                      `mapstructure:"root_volume_type" cty:"root_volume_type" hcl:"root_volume_type"`
 	SourceOMI               *string                      `mapstructure:"source_omi" cty:"source_omi" hcl:"source_omi"`
@@ -99,6 +99,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"snapshot_account_ids":       &hcldec.AttrSpec{Name: "snapshot_account_ids", Type: cty.List(cty.String), Required: false},
 		"global_permission":          &hcldec.AttrSpec{Name: "global_permission", Type: cty.Bool, Required: false},
 		"product_codes":              &hcldec.AttrSpec{Name: "product_codes", Type: cty.List(cty.String), Required: false},
+		"root_device_name":           &hcldec.AttrSpec{Name: "root_device_name", Type: cty.String, Required: false},
 		"access_key":                 &hcldec.AttrSpec{Name: "access_key", Type: cty.String, Required: false},
 		"custom_endpoint_oapi":       &hcldec.AttrSpec{Name: "custom_endpoint_oapi", Type: cty.String, Required: false},
 		"insecure_skip_tls_verify":   &hcldec.AttrSpec{Name: "insecure_skip_tls_verify", Type: cty.Bool, Required: false},
@@ -121,7 +122,6 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"mount_path":                 &hcldec.AttrSpec{Name: "mount_path", Type: cty.String, Required: false},
 		"post_mount_commands":        &hcldec.AttrSpec{Name: "post_mount_commands", Type: cty.List(cty.String), Required: false},
 		"pre_mount_commands":         &hcldec.AttrSpec{Name: "pre_mount_commands", Type: cty.List(cty.String), Required: false},
-		"root_device_name":           &hcldec.AttrSpec{Name: "root_device_name", Type: cty.String, Required: false},
 		"root_volume_size":           &hcldec.AttrSpec{Name: "root_volume_size", Type: cty.Number, Required: false},
 		"root_volume_type":           &hcldec.AttrSpec{Name: "root_volume_type", Type: cty.String, Required: false},
 		"source_omi":                 &hcldec.AttrSpec{Name: "source_omi", Type: cty.String, Required: false},

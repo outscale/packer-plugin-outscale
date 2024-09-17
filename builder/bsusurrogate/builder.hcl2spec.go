@@ -119,6 +119,7 @@ type FlatConfig struct {
 	SnapshotAccountIDs          []string                               `mapstructure:"snapshot_account_ids" cty:"snapshot_account_ids" hcl:"snapshot_account_ids"`
 	GlobalPermission            *bool                                  `mapstructure:"global_permission" cty:"global_permission" hcl:"global_permission"`
 	ProductCodes                []string                               `mapstructure:"product_codes" cty:"product_codes" hcl:"product_codes"`
+	RootDeviceName              *string                                `mapstructure:"root_device_name" cty:"root_device_name" hcl:"root_device_name"`
 	RootDevice                  *FlatRootBlockDevice                   `mapstructure:"omi_root_device" cty:"omi_root_device" hcl:"omi_root_device"`
 	VolumeRunTags               common.TagMap                          `mapstructure:"run_volume_tags" cty:"run_volume_tags" hcl:"run_volume_tags"`
 }
@@ -243,6 +244,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"snapshot_account_ids":                 &hcldec.AttrSpec{Name: "snapshot_account_ids", Type: cty.List(cty.String), Required: false},
 		"global_permission":                    &hcldec.AttrSpec{Name: "global_permission", Type: cty.Bool, Required: false},
 		"product_codes":                        &hcldec.AttrSpec{Name: "product_codes", Type: cty.List(cty.String), Required: false},
+		"root_device_name":                     &hcldec.AttrSpec{Name: "root_device_name", Type: cty.String, Required: false},
 		"omi_root_device":                      &hcldec.BlockSpec{TypeName: "omi_root_device", Nested: hcldec.ObjectSpec((*FlatRootBlockDevice)(nil).HCL2Spec())},
 		"run_volume_tags":                      &hcldec.AttrSpec{Name: "run_volume_tags", Type: cty.Map(cty.String), Required: false},
 	}

@@ -32,8 +32,8 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 
 	// Determine if there is any work to do.
 	valid := false
-	valid = valid || (s.AccountIds != nil && len(s.AccountIds) > 0)
-	valid = valid || (s.SnapshotAccountIds != nil && len(s.SnapshotAccountIds) > 0)
+	valid = valid || (len(s.AccountIds) > 0)
+	valid = valid || (len(s.SnapshotAccountIds) > 0)
 	valid = valid || s.GlobalPermission == true
 	if !valid {
 		return multistep.ActionContinue
@@ -74,7 +74,7 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 		}
 	}
 
-	if s.AccountIds == nil || len(s.AccountIds) == 0 {
+	if len(s.AccountIds) == 0 {
 		return multistep.ActionContinue
 	}
 

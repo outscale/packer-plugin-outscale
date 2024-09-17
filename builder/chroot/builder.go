@@ -43,7 +43,6 @@ type Config struct {
 	MountPath         string                     `mapstructure:"mount_path"`
 	PostMountCommands []string                   `mapstructure:"post_mount_commands"`
 	PreMountCommands  []string                   `mapstructure:"pre_mount_commands"`
-	RootDeviceName    string                     `mapstructure:"root_device_name"`
 	RootVolumeSize    int64                      `mapstructure:"root_volume_size"`
 	RootVolumeType    string                     `mapstructure:"root_volume_type"`
 	SourceOMI         string                     `mapstructure:"source_omi"`

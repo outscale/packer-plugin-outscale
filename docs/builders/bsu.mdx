@@ -76,8 +76,6 @@ builder.
 
   - `snapshot_id` (string) - The ID of the snapshot
 
-  - `virtual_name` (string) - The virtual device name. See the documentation on [Block Device Mapping](https://docs.outscale.com/en/userguide/Defining-Block-Device-Mappings.html) for more information
-
   - `volume_size` (number) - The size of the volume, in GiB. Required if not specifying a `snapshot_id`
 
   - `volume_type` (string) - The volume type. `gp2` for General Purpose (SSD) volumes, `io1` for Provisioned IOPS (SSD) volumes, and `standard` for Magnetic volumes
@@ -181,7 +179,19 @@ builder.
   - `owners` (array of strings) - Filters the images by their owner. You may specify one or more Outscale account IDs, "self" (which will use the account whose credentials you are using to run Packer). This option is required for security reasons.
 
     Example:
+    #### HCL
+    ```hcl
+    source_omi_filter {
+      filters = {
+        image-name = "image-name-in-account"
+        root-device-type    = "ebs" # or "bsu"
+        virtualization-type = "hvm"
+      }
+      owners      = ["339215505907"]
+    }
+    ```
 
+    #### JSON
     ```json
     {
       "source_omi_filter": {
@@ -248,7 +258,19 @@ builder.
 ## Basic Example
 
 Here is a basic example. You will need to provide access keys, and may need to change the OMIS IDs according to what images exist at the time the template is run:
+#### HCL
+```hcl
+source "outscale-bsu" "basic-example" {
+   region             = "us-east-1"
+   vm_type            = "t2.micro"
+   source_omi         = "ami-abcfd0283"
+   omi_name           = "packer_osc_{{timestamp}}"
+   ssh_username       = "outscale"
+   ssh_interface      = "public_ip"
+}
 
+```
+#### JSON
 ```json
 {
   "variables": {
@@ -288,8 +310,90 @@ You can use this information to access the VM as it is running.
 Here is an example using the optional OMIS block device mappings. Our
 configuration of `launch_block_device_mappings` will expand the root volume
 (`/dev/sda`) to 40gb during the build (up from the default of 8gb). With
-`ami_block_device_mappings` Outscale will attach additional volumes `/dev/sdb` and
+`omi_block_device_mappings` Outscale will attach additional volumes `/dev/sdb` and
 `/dev/sdc` when we boot a new VM of our OMI.
+
+#### HCL
+##### with `launch_block_device_mappings`
+```hcl
+// export osc_access_key=$YOURKEY
+variable "osc_access_key" {
+  type = string
+  // default = "hardcoded_key"
+}
+
+// export osc_secret_key=$YOURSECRETKEY
+variable "osc_secret_key" {
+  type = string
+  // default = "hardcoded_secret_key"
+}
+
+source "outscale-bsu" "basic-example" {
+  region             = "us-east-1"
+  vm_type            = "t2.micro"
+  source_omi         = "ami-abcfd0283"
+  omi_name           = "packer_osc_{{timestamp}}"
+  ssh_username       = "outscale"
+  ssh_interface      = "public_ip"
+
+  launch_block_device_mappings {
+    delete_on_vm_deletion = false
+    device_name           = "/dev/sda1"
+    volume_size           = 40
+    volume_type           = "gp2"
+  }
+  launch_block_device_mappings {
+    device_name = "/dev/sdc"
+    volume_size = 50
+    volume_type = "gp2"
+  }
+  launch_block_device_mappings {
+    device_name = "/dev/sdc"
+    volume_size = 100
+    volume_type = "gp2"
+  }
+}
+
+```
+##### with `omi_block_device_mappings`
+```hcl
+// export osc_access_key=$YOURKEY
+variable "aws_access_key" {
+  type = string
+  // default = "hardcoded_key"
+}
+
+// export osc_secret_key=$YOURSECRETKEY
+variable "aws_secret_key" {
+  type = string
+  // default = "hardcoded_secret_key"
+}
+
+source "outscale-bsu" "basic-example" {
+  region             = "us-east-1"
+  vm_type            = "t2.micro"
+  source_omi         = "ami-abcfd0283"
+  omi_name           = "packer_osc_{{timestamp}}"
+  root_device_name   = "/dev/sda1"
+  ssh_username       = "outscale"
+  ssh_interface      = "public_ip"
+
+  omi_block_device_mappings {
+    delete_on_vm_deletion = false
+    device_name           = "/dev/sda1"
+    snapshot_id           = "snap-792fce69"
+    volume_size           = 40
+    volume_type           = "gp2"
+  }
+  omi_block_device_mappings {
+    device_name = "/dev/sdc"
+    snapshot_id = "snap-792fce69"
+    volume_size = 50
+    volume_type = "gp2"
+  }
+}
+
+```
 
 ```json
 {
@@ -309,14 +413,16 @@ configuration of `launch_block_device_mappings` will expand the root volume
       "delete_on_vm_deletion": true
     }
   ],
-  "omi_block_device_mappings": [
+  "launch_block_device_mappings": [
     {
       "device_name": "/dev/sdb",
-      "virtual_name": "ephemeral0"
+      "volume_size": 50,
+      "volume_type": "gp2"
     },
     {
       "device_name": "/dev/sdc",
-      "virtual_name": "ephemeral1"
+      "volume_size": 100,
+      "volume_type": "gp2"
     }
   ]
 }

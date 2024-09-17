@@ -1,7 +1,6 @@
 package common
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 )
@@ -66,7 +65,7 @@ func TestOMIConfigPrepare_regions(t *testing.T) {
 	c.OMIRegions = []string{"us-east-1", "us-east-2", "us-west-1"}
 
 	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
-		t.Fatalf(fmt.Sprintf("shouldn't have error: %s", errs[0]))
+		t.Fatalf("shouldn't have error: %s", errs[0])
 	}
 
 	c.OMIRegions = []string{"us-east-1", "us-east-2", "us-west-1"}

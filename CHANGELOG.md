@@ -1,3 +1,12 @@
+## 1.3.0 (September 19, 2024)
+
+* Fix bsu builder
+* Update documentation and add hcl examples
+* Fix security group filters
+* Update go modules
+* Improved endpoint management
+* Fix check call vailidy when global_permission is true
+
 ## 1.2.0 (April 8, 2024)
 * add `skip_create_omi` option
 

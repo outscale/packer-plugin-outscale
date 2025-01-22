@@ -33,9 +33,10 @@ func (s *StepPreValidate) Run(_ context.Context, state multistep.StateBag) multi
 
 	resp, _, err := conn.Api.ImageApi.ReadImages(conn.Auth).ReadImagesRequest(oscgo.ReadImagesRequest{
 		Filters: &oscgo.FiltersImage{
-			ImageIds: &[]string{s.DestOmiName},
+			ImageNames: &[]string{s.DestOmiName},
 		},
 	}).Execute()
+
 	if err != nil {
 		err := fmt.Errorf("Error querying OMI: %s", err)
 		state.Put("error", err)

@@ -61,7 +61,9 @@ func TestUpdateOmi(t *testing.T) {
 	if err != nil {
 		t.Fatalf("should not error, but: %v", err)
 	}
-
+	if len(readRet.GetVms()) == 0 {
+		t.Fatalf("cannot find Vm on region: %v", stepUpdateOMIAttributes.RawRegion)
+	}
 	vm := readRet.GetVms()[0]
 	vmId := vm.GetVmId()
 	volId := vm.GetBlockDeviceMappings()[0].GetBsu().VolumeId

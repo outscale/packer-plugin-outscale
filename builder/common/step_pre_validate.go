@@ -31,14 +31,23 @@ func (s *StepPreValidate) Run(_ context.Context, state multistep.StateBag) multi
 
 	ui.Say(fmt.Sprintf("Prevalidating OMI Name: %s", s.DestOmiName))
 
+	accountResp, _, err := conn.Api.AccountApi.ReadAccounts(conn.Auth).ReadAccountsRequest(oscgo.ReadAccountsRequest{}).Execute()
+	if err != nil || len(accountResp.GetAccounts()) == 0 {
+		err := fmt.Errorf("error querying outscale account: %s", err)
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
+
 	resp, _, err := conn.Api.ImageApi.ReadImages(conn.Auth).ReadImagesRequest(oscgo.ReadImagesRequest{
 		Filters: &oscgo.FiltersImage{
 			ImageNames: &[]string{s.DestOmiName},
+			AccountIds: &[]string{accountResp.GetAccounts()[0].GetAccountId()},
 		},
 	}).Execute()
 
 	if err != nil {
-		err := fmt.Errorf("Error querying OMI: %s", err)
+		err := fmt.Errorf("error querying OMI: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -51,7 +60,7 @@ func (s *StepPreValidate) Run(_ context.Context, state multistep.StateBag) multi
 	}
 
 	if len(images) > 0 {
-		err := fmt.Errorf("Error: name conflicts with an existing OMI: %s", s.DestOmiName)
+		err := fmt.Errorf("error: name conflicts with an existing OMI: %s", s.DestOmiName)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

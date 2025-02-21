@@ -12,10 +12,10 @@ jobs:
   check-code:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: 'stable'
+          go-version-file: 'go.mod'
       - name: Lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -49,18 +49,18 @@ jobs:
         version: [12, 14, 16]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: outscale/frieza-github-actions/frieza-clean@master
         with:
           access_key: ${{ secrets.OSC_ACCESS_KEY }}
           secret_key: ${{ secrets.OSC_SECRET_KEY }}
           region: ${{ secrets.OSC_REGION }}
       - name: Install Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Test
         env:
           OSC_ACCESS_KEY: ${{secrets.OSC_ACCESS_KEY}}
@@ -73,16 +73,16 @@ jobs:
         goos: ["linux", "darwin", "windows"]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Go
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@v5
       with:
-        go-version: 'stable'
+        go-version-file: 'go.mod'
     - name: Build
       run: GOOS=${{matrix.goos}} go build -v -o packer-plugin-outscale_${{matrix.goos}}
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with: 
         name: packer-plugin-outscale_${{matrix.goos}}
         path: ./packer-plugin-outscale_${{matrix.goos}}
@@ -93,7 +93,7 @@ jobs:
     steps:
       - name: Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v1
+        uses: dependabot/fetch-metadata@v2
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Auto-merge

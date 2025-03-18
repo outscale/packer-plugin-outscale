@@ -1,26 +1,50 @@
-# Outscale packer examples
+# **Outscale Packer Examples**
 
-This folder contains a number of examples to show how to use Outscale packer with bsu builder.
+This folder contains multiple examples demonstrating how to use **Packer with the Outscale BSU builder**.
 
-# How to test examples
+---
 
-First, make sure you have [installed packer](https://developer.hashicorp.com/packer/install).
+## **:pushpin: How to Test the Examples**
 
-Each folder is self-contained example.
-You will need to setup your credentials through environement variables:
+### **Install Packer**
+Before running any example, ensure you have **Packer installed**. Follow the official [Packer installation guide](https://developer.hashicorp.com/packer/install) if needed.
+
+### **Set Up Credentials**
+You need to configure your Outscale **access keys** and **region** as environment variables:
+
 ```bash
-export PKR_VAR_access_key="myaccesskey"
-export PKR_VAR_secret_key="mysecretkey"
-export PKR_VAR_region="eu-west-2"
+export OSC_ACCESS_KEY="myaccesskey"
+export OSC_SECRET_KEY="mysecretkey"
 ```
 
-If you want to write your credentials or some parameters in variables, just edit `variables.auto.pkrvars.hcl` file.
+Alternatively, you can store credentials in a **variables file**.
 
-Once your credentials are configured, you can go to any example folder and test them:
-```hcl
-packer init .
-# Check configuration before build
-packer validate .
-# Create your OMI
-packer build .
-```
+### **Using a Variables File**
+If you prefer, you can define credentials and other parameters in the `variables.auto.pkrvars.hcl` file instead of using environment variables. Simply **edit** the file and add your configuration.
+
+---
+
+## **:pushpin: Running an Example**
+Each example is contained in its own folder and can be tested individually.
+
+1. **Initialize the Packer environment** (downloads required plugins):
+   ```bash
+   packer init .
+   ```
+   
+2. **Validate the configuration** before building:
+   ```bash
+   packer validate .
+   ```
+   
+3. **Create the Outscale Machine Image (OMI):**
+   ```bash
+   packer build .
+   ```
+
+---
+
+## **:pushpin: Notes**
+- Make sure your **credentials are correctly set** before running any example.
+- Each folder contains **a separate example**, so navigate to the folder you want to test before running Packer.
+- Modify the **`variables.auto.pkrvars.hcl`** file if you need to customize region, instance type, or other parameters.

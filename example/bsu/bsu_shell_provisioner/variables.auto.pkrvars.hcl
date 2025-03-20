@@ -1,5 +1,7 @@
-# Name of the new Outscale Machine Image (OMI) to be created
+# Name of the new Outscale Machine Image (OMI) to be created.
 # This is the custom image that will be generated after the Packer build.
+# The builder will automatically append the current datetime to the OMI name.
+# You can modify this behavior directly in the builder configuration if needed.
 new_omi_name = "Ubuntu-24.04-OAPI"
 
 # SSH username used to connect to the instance

@@ -46,12 +46,13 @@ source "outscale-bsu" "create-omi" {
   region           = var.region
   vm_type          = var.vm_type
   source_omi       = var.osc_source_image_id
-  omi_name         = var.new_omi_name
+  omi_name         = "${var.new_omi_name}-${formatdate("YYYYMMDD-HHmmss", timestamp())}"  # Append timestamp to OMI name
   ssh_username     = var.ssh_username
   root_device_name = "/dev/sda1"
 
   ssh_interface               = "public_ip"  # Use the public IP for SSH connection
   associate_public_ip_address = true  # Ensures the instance gets a public IP
+  force_deregister            = false  # If set to true, Packer will first deregister any existing OMI with the same name before creating a new one.
 }
 
 # Define the Build Steps

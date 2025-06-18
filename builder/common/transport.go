@@ -1,7 +1,7 @@
 package common
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -33,7 +33,7 @@ func (t *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 		return nil, err
 	}
 
-	body, err := ioutil.ReadAll(copyBody)
+	body, err := io.ReadAll(copyBody)
 	if err != nil {
 		return nil, err
 	}

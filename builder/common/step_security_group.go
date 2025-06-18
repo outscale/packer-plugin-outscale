@@ -38,7 +38,7 @@ func (s *StepSecurityGroup) Run(_ context.Context, state multistep.StateBag) mul
 		resp, _, err := conn.Api.SecurityGroupApi.ReadSecurityGroups(conn.Auth).ReadSecurityGroupsRequest(req).Execute()
 
 		if err != nil || len(*resp.SecurityGroups) == 0 {
-			err := fmt.Errorf("Couldn't find specified security group: %s", err)
+			err := fmt.Errorf("couldn't find specified security group: %w", err)
 			log.Printf("[DEBUG] %s", err.Error())
 			state.Put("error", err)
 
@@ -60,7 +60,7 @@ func (s *StepSecurityGroup) Run(_ context.Context, state multistep.StateBag) mul
 		}
 		resp, _, err := conn.Api.SecurityGroupApi.ReadSecurityGroups(conn.Auth).ReadSecurityGroupsRequest(req).Execute()
 		if err != nil || len(*resp.SecurityGroups) == 0 {
-			err := fmt.Errorf("Couldn't find security groups for filter: %s", err)
+			err := fmt.Errorf("couldn't find security groups for filter: %w", err)
 			log.Printf("[DEBUG] %s", err.Error())
 			state.Put("error", err)
 
@@ -128,7 +128,7 @@ func (s *StepSecurityGroup) Run(_ context.Context, state multistep.StateBag) mul
 
 	_, _, err = conn.Api.SecurityGroupRuleApi.CreateSecurityGroupRule(conn.Auth).CreateSecurityGroupRuleRequest(createSGRReq).Execute()
 	if err != nil {
-		err := fmt.Errorf("Error authorizing temporary security group: %s", err)
+		err := fmt.Errorf("error authorizing temporary security group: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

@@ -48,7 +48,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 	if config.FromScratch {
 		rootVolumeType := osccommon.VolumeTypeGp2
 		if s.RootVolumeType == "io1" {
-			err := errors.New("Cannot use io1 volume when building from scratch")
+			err := errors.New("cannot use io1 volume when building from scratch")
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -87,7 +87,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 
 	createVolumeResp, _, err := oscconn.Api.VolumeApi.CreateVolume(oscconn.Auth).CreateVolumeRequest(*createVolume).Execute()
 	if err != nil {
-		err := fmt.Errorf("Error creating root volume: %s", err)
+		err := fmt.Errorf("error creating root volume: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -100,7 +100,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 	//Create tags for volume
 	if len(volTags) > 0 {
 		if err := osccommon.CreateOSCTags(oscconn, s.volumeId, ui, volTags); err != nil {
-			err := fmt.Errorf("Error creating tags for volume: %s", err)
+			err := fmt.Errorf("error creating tags for volume: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -110,7 +110,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 	// Wait for the volume to become ready
 	err = osccommon.WaitUntilOscVolumeAvailable(oscconn, s.volumeId)
 	if err != nil {
-		err := fmt.Errorf("Error waiting for volume: %s", err)
+		err := fmt.Errorf("error waiting for volume: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -137,7 +137,7 @@ func (s *StepCreateVolume) Cleanup(state multistep.StateBag) {
 
 func (s *StepCreateVolume) buildCreateVolumeInput(suregionName string, rootDevice *oscgo.BlockDeviceMappingImage) (*oscgo.CreateVolumeRequest, error) {
 	if rootDevice == nil {
-		return nil, fmt.Errorf("Couldn't find root device")
+		return nil, errors.New("couldn't find root device")
 	}
 
 	//FIX: Temporary fix
@@ -158,7 +158,7 @@ func (s *StepCreateVolume) buildCreateVolumeInput(suregionName string, rootDevic
 	}
 
 	if s.RootVolumeType == "io1" {
-		return nil, fmt.Errorf("Root volume type cannot be io1, because existing root volume type was %s", rootDevice.Bsu.GetVolumeType())
+		return nil, fmt.Errorf("root volume type cannot be io1, because existing root volume type was %s", rootDevice.Bsu.GetVolumeType())
 	}
 
 	createVolumeInput.VolumeType = &s.RootVolumeType

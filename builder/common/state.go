@@ -187,7 +187,7 @@ func waitUntilOscImageStateFunc(conn *OscClient, id string) stateRefreshFunc {
 		}
 
 		if *resp.GetImages()[0].State == "failed" {
-			return *resp.GetImages()[0].State, fmt.Errorf("Image (%s) creation is failed", id)
+			return *resp.GetImages()[0].State, fmt.Errorf("image (%s) creation is failed", id)
 		}
 
 		return resp.GetImages()[0].GetState(), nil
@@ -206,11 +206,11 @@ func waitUntilOscSnapshotDoneStateFunc(conn *OscClient, id string) stateRefreshF
 		}
 
 		if len(resp.GetSnapshots()) == 0 {
-			return "", fmt.Errorf("Snapshot with ID %s. Not Found", id)
+			return "", fmt.Errorf("snapshot with ID %s. Not Found", id)
 		}
 
 		if *resp.GetSnapshots()[0].State == "error" {
-			return *resp.GetSnapshots()[0].State, fmt.Errorf("Snapshot (%s) creation is failed", id)
+			return *resp.GetSnapshots()[0].State, fmt.Errorf("snapshot (%s) creation is failed", id)
 		}
 
 		return *resp.GetSnapshots()[0].State, nil
@@ -233,7 +233,7 @@ func volumeOscWaitFunc(conn *OscClient, id string) stateRefreshFunc {
 		}
 
 		if *resp.GetVolumes()[0].State == "error" {
-			return *resp.GetVolumes()[0].State, fmt.Errorf("Volume (%s) creation is failed", id)
+			return *resp.GetVolumes()[0].State, fmt.Errorf("volume (%s) creation is failed", id)
 		}
 
 		return *resp.GetVolumes()[0].State, nil

@@ -1,6 +1,7 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -34,7 +35,7 @@ type LaunchBlockDevices struct {
 
 func setBsuToCreate(blockDevice BlockDevice) oscgo.BsuToCreate {
 	bsu := oscgo.NewBsuToCreate()
-
+	bsu.SetDeleteOnVmDeletion(true)
 	if deleteOnVmDeletion := blockDevice.DeleteOnVmDeletion; !deleteOnVmDeletion {
 		bsu.SetDeleteOnVmDeletion(deleteOnVmDeletion)
 	}
@@ -91,8 +92,8 @@ func buildOscBlockDevicesVmCreation(b []BlockDevice) []oscgo.BlockDeviceMappingV
 
 func (b *BlockDevice) Prepare(ctx *interpolate.Context) error {
 	if b.DeviceName == "" {
-		return fmt.Errorf("The `device_name` must be specified " +
-			"for every device in the block device mapping.")
+		return errors.New("the `device_name` must be specified " +
+			"for every device in the block device mapping")
 	}
 	return nil
 }
@@ -100,12 +101,12 @@ func (b *BlockDevice) Prepare(ctx *interpolate.Context) error {
 func (b *BlockDevices) Prepare(ctx *interpolate.Context) (errs []error) {
 	for _, d := range b.OMIMappings {
 		if err := d.Prepare(ctx); err != nil {
-			errs = append(errs, fmt.Errorf("OMIMapping: %s", err.Error()))
+			errs = append(errs, fmt.Errorf("OMIMapping: %w", err))
 		}
 	}
 	for _, d := range b.LaunchMappings {
 		if err := d.Prepare(ctx); err != nil {
-			errs = append(errs, fmt.Errorf("LaunchMapping: %s", err.Error()))
+			errs = append(errs, fmt.Errorf("LaunchMapping: %w", err))
 		}
 	}
 	return errs

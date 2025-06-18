@@ -1,7 +1,7 @@
 package retry
 
 import (
-	"fmt"
+	"errors"
 	"testing"
 )
 
@@ -31,12 +31,12 @@ func TestRetry(t *testing.T) {
 		t.Fatalf("Retried function should have been tried twice. Tried %d times.", numTries)
 	}
 	if err != nil {
-		t.Fatalf("Successful retried function should not have returned a retry error. Error: %s", err)
+		t.Fatalf("Successful retried function should not have returned a retry error. Error: %s", err.Error())
 	}
 
 	// Test that a function error gets returned, and the function does not get called again.
 	numTries = 0
-	funcErr := fmt.Errorf("This function had an error!")
+	funcErr := errors.New("this function had an error!")
 	err = Run(0, 0, 0, func(i uint) (bool, error) {
 		numTries++
 		return false, funcErr
@@ -45,7 +45,7 @@ func TestRetry(t *testing.T) {
 		t.Fatal("Errant function should not have been retried.")
 	}
 	if err != funcErr {
-		t.Fatalf("Errant function did not return the right error %s. Error: %s", funcErr, err)
+		t.Fatalf("Errant function did not return the right error %s. Error: %s", funcErr, err.Error())
 	}
 
 	// Test when a function exhausts its retries.
@@ -58,7 +58,7 @@ func TestRetry(t *testing.T) {
 	if numTries != expectedTries {
 		t.Fatalf("Unsuccessful retry function should have been called %d times. Only called %d times.", expectedTries, numTries)
 	}
-	if err != RetryExhaustedError {
-		t.Fatalf("Unsuccessful retry function should have returned a retry exhausted error. Actual error: %s", err)
+	if err != ErrRetryExhausted {
+		t.Fatalf("Unsuccessful retry function should have returned a retry exhausted error. Actual error: %s", err.Error())
 	}
 }

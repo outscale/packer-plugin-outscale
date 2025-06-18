@@ -1,12 +1,13 @@
 package retry
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"time"
 )
 
-var RetryExhaustedError error = fmt.Errorf("Function never succeeded in Retry")
+var ErrRetryExhausted error = errors.New("function never succeeded in Retry")
 
 // RetryableFunc performs an action and returns a bool indicating whether the
 // function is done, or if it should keep retrying, and an error which will
@@ -28,7 +29,7 @@ func Run(initialInterval float64, maxInterval float64, numTries uint, function R
 	if maxInterval == 0 {
 		maxInterval = math.Inf(1)
 	} else if initialInterval < 0 || initialInterval > maxInterval {
-		return fmt.Errorf("Invalid retry intervals (negative or initial < max). Initial: %f, Max: %f.", initialInterval, maxInterval)
+		return fmt.Errorf("invalid retry intervals (negative or initial < max). Initial: %f, Max: %f. ", initialInterval, maxInterval)
 	}
 
 	var err error
@@ -48,7 +49,7 @@ func Run(initialInterval float64, maxInterval float64, numTries uint, function R
 	}
 
 	if !done {
-		return RetryExhaustedError
+		return ErrRetryExhausted
 	}
 	return nil
 }

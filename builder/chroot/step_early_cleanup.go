@@ -26,7 +26,7 @@ func (s *StepEarlyCleanup) Run(ctx context.Context, state multistep.StateBag) mu
 		c := state.Get(key).(Cleanup)
 		log.Printf("Running cleanup func: %s", key)
 		if err := c.CleanupFunc(state); err != nil {
-			err := fmt.Errorf("Error cleaning up: %s", err)
+			err := fmt.Errorf("error cleaning up: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt

@@ -136,7 +136,7 @@ func TestRunConfigPrepare_SSHPort(t *testing.T) {
 
 func TestRunConfigPrepare_UserData(t *testing.T) {
 	c := testConfig()
-	tf, err := ioutil.TempFile("", "packer")
+	tf, err := os.CreateTemp("", "packer")
 	if err != nil {
 		t.Fatalf("err: %s", err)
 	}

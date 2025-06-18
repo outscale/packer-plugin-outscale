@@ -51,21 +51,21 @@ func (c *AccessConfig) NewOSCClient() (*OscClient, error) {
 	if c.AccessKey == "" {
 		var ok bool
 		if c.AccessKey, ok = getValueFromEnvVariables([]string{"OSC_ACCESS_KEY", "OUTSCALE_ACCESSKEYID"}); !ok {
-			return nil, errors.New("No access key has been setted (configuration file, environment variable : OSC_ACCESS_KEY or OUTSCALE_ACCESSKEYID)")
+			return nil, errors.New("no access key has been setted (configuration file, environment variable : OSC_ACCESS_KEY or OUTSCALE_ACCESSKEYID)")
 		}
 	}
 
 	if c.SecretKey == "" {
 		var ok bool
 		if c.SecretKey, ok = getValueFromEnvVariables([]string{"OSC_SECRET_KEY", "OUTSCALE_SECRETKEYID"}); !ok {
-			return nil, errors.New("No secret key has been setted (configuration file, environment variable : OSC_SECRET_KEY or OUTSCALE_SECRETKEYID)")
+			return nil, errors.New("no secret key has been setted (configuration file, environment variable : OSC_SECRET_KEY or OUTSCALE_SECRETKEYID)")
 		}
 	}
 
 	if c.RawRegion == "" {
 		var ok bool
 		if c.RawRegion, ok = getValueFromEnvVariables([]string{"OSC_REGION", "OUTSCALE_REGION"}); !ok {
-			return nil, errors.New("No region has been setted (configuration file, environment variable : OSC_REGION or OUTSCALE_REGION)")
+			return nil, errors.New("no region has been setted (configuration file, environment variable : OSC_REGION or OUTSCALE_REGION)")
 		}
 	}
 
@@ -76,13 +76,8 @@ func (c *AccessConfig) NewOSCClient() (*OscClient, error) {
 		}
 	}
 
-	if c.CustomEndpointOAPI == "" {
-		c.CustomEndpointOAPI = "outscale.com/oapi/latest"
-
-		if c.RawRegion == "cn-southeast-1" {
-			c.CustomEndpointOAPI = "outscale.hk/oapi/latest"
-		}
-
+	if c.RawRegion == "cn-southeast-1" {
+		c.CustomEndpointOAPI = fmt.Sprintf("https://api.%s.outscale.hk/api/v1", c.RawRegion)
 	}
 
 	if c.X509certPath == "" {
@@ -137,9 +132,14 @@ func (c *AccessConfig) NewOSCClientByRegion(region string) *OscClient {
 		SecretKey: c.SecretKey,
 	})
 	config.HTTPClient = skipClient
-	url := fmt.Sprintf("https://api.%s.%s", region, c.CustomEndpointOAPI)
-	if strings.HasPrefix(c.CustomEndpointOAPI, "http://") || strings.HasPrefix(c.CustomEndpointOAPI, "https://") {
-		url = fmt.Sprintf("%s/api/v1", c.CustomEndpointOAPI)
+
+	url := fmt.Sprintf("https://api.%s.outscale.com/api/v1", region)
+	if c.CustomEndpointOAPI != "" {
+		if strings.HasPrefix(c.CustomEndpointOAPI, "http://") || strings.HasPrefix(c.CustomEndpointOAPI, "https://") {
+			url = fmt.Sprintf("%s/api/v1", c.CustomEndpointOAPI)
+		} else {
+			url = fmt.Sprintf("https://%s/api/v1", c.CustomEndpointOAPI)
+		}
 	}
 	config.Servers = oscgo.ServerConfigurations{
 		{
@@ -172,7 +172,7 @@ func (c *AccessConfig) Prepare(ctx *interpolate.Context) []error {
 	// be.
 	if (len(c.AccessKey) > 0) != (len(c.SecretKey) > 0) {
 		errs = append(errs,
-			fmt.Errorf("`access_key` and `secret_key` must both be either set or not set."))
+			errors.New("`access_key` and `secret_key` must both be either set or not set. "))
 	}
 
 	return errs

@@ -3,10 +3,12 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"os"
 	"regexp"
+	"slices"
 	"strings"
 	"time"
 
@@ -14,12 +16,15 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/hashicorp/packer-plugin-sdk/uuid"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 )
 
 // ShutDown behavior possible
-var StopShutdownBehavior string = "stop"
-var TerminateShutdownBehavior string = "terminate"
-var reShutdownBehavior = regexp.MustCompile("^(" + StopShutdownBehavior + "|" + TerminateShutdownBehavior + ")$")
+var (
+	StopShutdownBehavior      string = "stop"
+	TerminateShutdownBehavior string = "terminate"
+	reShutdownBehavior               = regexp.MustCompile("^(" + StopShutdownBehavior + "|" + TerminateShutdownBehavior + ")$")
+)
 
 // docs at
 // https://docs.outscale.com/en/userguide/Getting-Information-About-Your-OMIs.html
@@ -82,6 +87,7 @@ type RunConfig struct {
 	NetFilter                   NetFilterOptions           `mapstructure:"net_filter"`
 	NetId                       string                     `mapstructure:"net_id"`
 	WindowsPasswordTimeout      time.Duration              `mapstructure:"windows_password_timeout"`
+	BootMode                    string                     `mapstructure:"boot_mode"`
 	// Communicator settings
 	Comm         communicator.Config `mapstructure:",squash"`
 	SSHInterface string              `mapstructure:"ssh_interface"`
@@ -105,7 +111,6 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 	if c.RunTags == nil {
 		c.RunTags = make(map[string]string)
 	}
-
 	// Validation
 	errs := c.Comm.Prepare(ctx)
 
@@ -124,36 +129,41 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 		c.SSHInterface != "public_dns" &&
 		c.SSHInterface != "private_dns" &&
 		c.SSHInterface != "" {
-		errs = append(errs, fmt.Errorf("Unknown interface type: %s", c.SSHInterface))
+		errs = append(errs, fmt.Errorf("unknown interface type: %s", c.SSHInterface))
 	}
 
 	if c.Comm.SSHKeyPairName != "" {
 		if c.Comm.Type == "winrm" && c.Comm.WinRMPassword == "" && c.Comm.SSHPrivateKeyFile == "" {
-			errs = append(errs, fmt.Errorf("ssh_private_key_file must be provided to retrieve the winrm password when using ssh_keypair_name."))
+			errs = append(errs, errors.New("ssh_private_key_file must be provided to retrieve the winrm password when using ssh_keypair_name"))
 		} else if c.Comm.SSHPrivateKeyFile == "" && !c.Comm.SSHAgentAuth {
-			errs = append(errs, fmt.Errorf("ssh_private_key_file must be provided or ssh_agent_auth enabled when ssh_keypair_name is specified."))
+			errs = append(errs, errors.New("ssh_private_key_file must be provided or ssh_agent_auth enabled when ssh_keypair_name is specified"))
 		}
 	}
-
+	if c.BootMode != "" {
+		bootModesSupported := []oscgo.BootMode{"legacy", "uefi"}
+		if !slices.Contains(bootModesSupported, oscgo.BootMode(c.BootMode)) {
+			errs = append(errs, fmt.Errorf("the vm boot_Mode '%v' is not supported yet", c.BootMode))
+		}
+	}
 	if c.SourceOmi == "" && c.SourceOmiFilter.Empty() {
-		errs = append(errs, fmt.Errorf("A source_omi or source_omi_filter must be specified"))
+		errs = append(errs, errors.New("a source_omi or source_omi_filter must be specified"))
 	}
 
 	if c.SourceOmi == "" && c.SourceOmiFilter.NoOwner() {
-		errs = append(errs, fmt.Errorf("For security reasons, your source AMI filter must declare an owner."))
+		errs = append(errs, errors.New("for security reasons, your source AMI filter must declare an owner"))
 	}
 
 	if c.VmType == "" {
-		errs = append(errs, fmt.Errorf("An vm_type must be specified"))
+		errs = append(errs, errors.New("an vm_type must be specified"))
 	}
 
 	if c.BlockDurationMinutes%60 != 0 {
-		errs = append(errs, fmt.Errorf(
+		errs = append(errs, errors.New(
 			"block_duration_minutes must be multiple of 60"))
 	}
 
 	if c.UserData != "" && c.UserDataFile != "" {
-		errs = append(errs, fmt.Errorf("Only one of user_data or user_data_file can be specified."))
+		errs = append(errs, errors.New("only one of user_data or user_data_file can be specified"))
 	} else if c.UserDataFile != "" {
 		if _, err := os.Stat(c.UserDataFile); err != nil {
 			errs = append(errs, fmt.Errorf("user_data_file not found: %s", c.UserDataFile))
@@ -162,7 +172,7 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 
 	if c.SecurityGroupId != "" {
 		if len(c.SecurityGroupIds) > 0 {
-			errs = append(errs, fmt.Errorf("Only one of security_group_id or security_group_ids can be specified."))
+			errs = append(errs, errors.New("only one of security_group_id or security_group_ids can be specified"))
 		} else {
 			c.SecurityGroupIds = []string{c.SecurityGroupId}
 			c.SecurityGroupId = ""
@@ -173,22 +183,22 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 		c.TemporarySGSourceCidr = "0.0.0.0/0"
 	} else {
 		if _, _, err := net.ParseCIDR(c.TemporarySGSourceCidr); err != nil {
-			errs = append(errs, fmt.Errorf("Error parsing temporary_security_group_source_cidr: %s", err.Error()))
+			errs = append(errs, fmt.Errorf("error parsing temporary_security_group_source_cidr: %w", err))
 		}
 	}
 
 	if c.VmInitiatedShutdownBehavior == "" {
 		c.VmInitiatedShutdownBehavior = StopShutdownBehavior
 	} else if !reShutdownBehavior.MatchString(c.VmInitiatedShutdownBehavior) {
-		errs = append(errs, fmt.Errorf("shutdown_behavior only accepts 'stop' or 'terminate' values."))
+		errs = append(errs, errors.New("shutdown_behavior only accepts 'stop' or 'terminate' values"))
 	}
 
 	if c.EnableT2Unlimited {
 		firstDotIndex := strings.Index(c.VmType, ".")
 		if firstDotIndex == -1 {
-			errs = append(errs, fmt.Errorf("Error determining main Vm Type from: %s", c.VmType))
+			errs = append(errs, fmt.Errorf("error determining main Vm Type from: %s", c.VmType))
 		} else if c.VmType[0:firstDotIndex] != "t2" {
-			errs = append(errs, fmt.Errorf("Error: T2 Unlimited enabled with a non-T2 Vm Type: %s", c.VmType))
+			errs = append(errs, fmt.Errorf("error: T2 Unlimited enabled with a non-T2 Vm Type: %s", c.VmType))
 		}
 	}
 

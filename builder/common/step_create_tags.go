@@ -41,14 +41,14 @@ func (s *StepCreateTags) Run(_ context.Context, state multistep.StateBag) multis
 			},
 		}).Execute()
 		if err != nil {
-			err := fmt.Errorf("Error retrieving details for OMI (%s): %s", ami, err)
+			err := fmt.Errorf("error retrieving details for OMI (%s): %w", ami, err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
 
 		if len(imageResp.GetImages()) == 0 {
-			err := fmt.Errorf("Error retrieving details for OMI (%s), no images found", ami)
+			err := fmt.Errorf("error retrieving details for OMI (%s), no images found", ami)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -120,7 +120,7 @@ func (s *StepCreateTags) Run(_ context.Context, state multistep.StateBag) multis
 		})
 
 		if err != nil {
-			err := fmt.Errorf("Error adding tags to Resources (%#v): %s", resourceIds, err)
+			err := fmt.Errorf("error adding tags to Resources (%#v): %w", resourceIds, err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt

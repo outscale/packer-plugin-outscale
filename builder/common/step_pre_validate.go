@@ -33,7 +33,7 @@ func (s *StepPreValidate) Run(_ context.Context, state multistep.StateBag) multi
 
 	accountResp, _, err := conn.Api.AccountApi.ReadAccounts(conn.Auth).ReadAccountsRequest(oscgo.ReadAccountsRequest{}).Execute()
 	if err != nil || len(accountResp.GetAccounts()) == 0 {
-		err := fmt.Errorf("error querying outscale account: %s", err)
+		err := fmt.Errorf("error querying outscale account: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -47,7 +47,7 @@ func (s *StepPreValidate) Run(_ context.Context, state multistep.StateBag) multi
 	}).Execute()
 
 	if err != nil {
-		err := fmt.Errorf("error querying OMI: %s", err)
+		err := fmt.Errorf("error querying OMI: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

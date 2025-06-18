@@ -14,8 +14,9 @@ import (
 // Create statebag for running test
 func getState() (multistep.StateBag, error) {
 	state := new(multistep.BasicStateBag)
-	accessConfig := &AccessConfig{}
-	accessConfig.RawRegion = "eu-west-2"
+	accessConfig := &AccessConfig{
+		RawRegion: "eu-west-2",
+	}
 	oscConn, err := accessConfig.NewOSCClient()
 	if err != nil {
 		return nil, err
@@ -31,7 +32,7 @@ func getState() (multistep.StateBag, error) {
 
 func TestMostRecentOmiFilter(t *testing.T) {
 	stepSourceOMIInfo := StepSourceOMIInfo{
-		SourceOmi: "ami-68ed4301",
+		SourceOmi: "ami-e02893d7",
 		OmiFilters: OmiFilterOptions{
 			MostRecent: true,
 		},

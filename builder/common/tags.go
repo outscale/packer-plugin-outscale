@@ -30,11 +30,11 @@ func (t TagMap) OSCTags(ctx interpolate.Context, region string, state multistep.
 	for key, value := range t {
 		interpolatedKey, err := interpolate.Render(key, &ctx)
 		if err != nil {
-			return nil, fmt.Errorf("Error processing tag: %s:%s - %s", key, value, err)
+			return nil, fmt.Errorf("error processing tag: %s:%s - %w", key, value, err)
 		}
 		interpolatedValue, err := interpolate.Render(value, &ctx)
 		if err != nil {
-			return nil, fmt.Errorf("Error processing tag: %s:%s - %s", key, value, err)
+			return nil, fmt.Errorf("error processing tag: %s:%s - %w", key, value, err)
 		}
 		oscTags = append(oscTags, oscgo.ResourceTag{
 			Key:   interpolatedKey,

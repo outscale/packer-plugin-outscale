@@ -3,14 +3,14 @@ module github.com/outscale/packer-plugin-outscale
 go 1.23.5
 
 require (
-	github.com/aws/aws-sdk-go v1.55.6
+	github.com/aws/aws-sdk-go v1.55.7
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/hcl/v2 v2.23.0
-	github.com/hashicorp/packer-plugin-sdk v0.6.0
+	github.com/hashicorp/packer-plugin-sdk v0.6.1
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/outscale/osc-sdk-go/v2 v2.25.0
-	github.com/zclconf/go-cty v1.16.2
-	golang.org/x/sys v0.30.0
+	github.com/outscale/osc-sdk-go/v2 v2.27.0
+	github.com/zclconf/go-cty v1.16.3
+	golang.org/x/sys v0.33.0
 )
 
 require (
@@ -100,16 +100,16 @@ require (
 	go.opentelemetry.io/otel v1.23.1 // indirect
 	go.opentelemetry.io/otel/metric v1.23.1 // indirect
 	go.opentelemetry.io/otel/trace v1.23.1 // indirect
-	golang.org/x/crypto v0.35.0 // indirect
+	golang.org/x/crypto v0.39.0 // indirect
 	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a // indirect
-	golang.org/x/mod v0.23.0 // indirect
-	golang.org/x/net v0.35.0 // indirect
-	golang.org/x/oauth2 v0.25.0 // indirect
-	golang.org/x/sync v0.11.0 // indirect
-	golang.org/x/term v0.29.0 // indirect
-	golang.org/x/text v0.22.0 // indirect
-	golang.org/x/time v0.5.0 // indirect
-	golang.org/x/tools v0.30.0 // indirect
+	golang.org/x/mod v0.25.0 // indirect
+	golang.org/x/net v0.41.0 // indirect
+	golang.org/x/oauth2 v0.30.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
+	golang.org/x/term v0.32.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/time v0.11.0 // indirect
+	golang.org/x/tools v0.34.0 // indirect
 	google.golang.org/api v0.165.0 // indirect
 	google.golang.org/genproto v0.0.0-20240213162025-012b6fc9bca9 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240213162025-012b6fc9bca9 // indirect

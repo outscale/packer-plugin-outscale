@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/outscale/osc-sdk-go/v2"
 	oscgo "github.com/outscale/osc-sdk-go/v2"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
@@ -20,6 +19,7 @@ type StepRegisterOMI struct {
 	image         *oscgo.Image
 	RawRegion     string
 	ProductCodes  []string
+	BootModes     []oscgo.BootMode
 }
 
 func (s *StepRegisterOMI) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -45,9 +45,12 @@ func (s *StepRegisterOMI) Run(ctx context.Context, state multistep.StateBag) mul
 	if config.ProductCodes != nil {
 		registerOpts.ProductCodes = &config.ProductCodes
 	}
+	if len(config.OMIBootModes) > 0 {
+		registerOpts.SetBootModes(config.GetBootModes())
+	}
 	registerResp, _, err := oscconn.Api.ImageApi.CreateImage(oscconn.Auth).CreateImageRequest(registerOpts).Execute()
 	if err != nil {
-		state.Put("error", fmt.Errorf("Error registering OMI: %s", err))
+		state.Put("error", fmt.Errorf("error registering OMI: %w", err))
 		ui.Error(state.Get("error").(error).Error())
 		return multistep.ActionHalt
 	}
@@ -61,7 +64,7 @@ func (s *StepRegisterOMI) Run(ctx context.Context, state multistep.StateBag) mul
 	// Wait for the image to become ready
 	ui.Say("Waiting for OMI to become ready...")
 	if err := osccommon.WaitUntilOscImageAvailable(oscconn, *registerResp.GetImage().ImageId); err != nil {
-		err := fmt.Errorf("Error waiting for OMI: %s", err)
+		err := fmt.Errorf("error waiting for OMI: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -72,7 +75,7 @@ func (s *StepRegisterOMI) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 	imagesResp, _, err := oscconn.Api.ImageApi.ReadImages(oscconn.Auth).ReadImagesRequest(filterReq).Execute()
 	if err != nil {
-		err := fmt.Errorf("Error searching for OMI: %s", err)
+		err := fmt.Errorf("error searching for OMI: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -109,7 +112,7 @@ func (s *StepRegisterOMI) Cleanup(state multistep.StateBag) {
 	deregisterOpts := oscgo.DeleteImageRequest{ImageId: *s.image.ImageId}
 	_, _, err := oscconn.Api.ImageApi.DeleteImage(oscconn.Auth).DeleteImageRequest(deregisterOpts).Execute()
 	if err != nil {
-		ui.Error(fmt.Sprintf("Error deregistering OMI, may still be around: %s", err))
+		ui.Error(fmt.Sprintf("error deregistering OMI, may still be around: %s", err.Error()))
 		return
 	}
 }
@@ -150,7 +153,7 @@ func (s *StepRegisterOMI) combineDevices(snapshotIDs map[string]string) []oscgo.
 	return blockDevices
 }
 
-func copyToDeviceMappingImage(device osc.BlockDeviceMappingVmCreation) oscgo.BlockDeviceMappingImage {
+func copyToDeviceMappingImage(device oscgo.BlockDeviceMappingVmCreation) oscgo.BlockDeviceMappingImage {
 	log.Printf("Copy device mapping image ")
 	deviceImage := oscgo.BlockDeviceMappingImage{
 		DeviceName: device.DeviceName,

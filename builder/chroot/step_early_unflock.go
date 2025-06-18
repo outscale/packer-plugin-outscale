@@ -18,7 +18,7 @@ func (s *StepEarlyUnflock) Run(ctx context.Context, state multistep.StateBag) mu
 
 	log.Println("Unlocking file lock...")
 	if err := cleanup.CleanupFunc(state); err != nil {
-		err := fmt.Errorf("Error unlocking file lock: %s", err)
+		err := fmt.Errorf("error unlocking file lock: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

@@ -47,7 +47,7 @@ func (s *StepMountDevice) Run(_ context.Context, state multistep.StateBag) multi
 	mountPath, err := interpolate.Render(config.MountPath, &ctx)
 
 	if err != nil {
-		err := fmt.Errorf("Error preparing mount directory: %s", err)
+		err := fmt.Errorf("error preparing mount directory: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -55,7 +55,7 @@ func (s *StepMountDevice) Run(_ context.Context, state multistep.StateBag) multi
 
 	mountPath, err = filepath.Abs(mountPath)
 	if err != nil {
-		err := fmt.Errorf("Error preparing mount directory: %s", err)
+		err := fmt.Errorf("error preparing mount directory: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -65,7 +65,7 @@ func (s *StepMountDevice) Run(_ context.Context, state multistep.StateBag) multi
 	log.Printf("[DEBUG] Mount path: %s", mountPath)
 
 	if err := os.MkdirAll(mountPath, 0755); err != nil {
-		err := fmt.Errorf("Error creating mount directory: %s", err)
+		err := fmt.Errorf("error creating mount directory: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -76,8 +76,7 @@ func (s *StepMountDevice) Run(_ context.Context, state multistep.StateBag) multi
 
 	realDeviceName, err := cmd.Output()
 	if err != nil {
-		err := fmt.Errorf(
-			"Error retrieving the symlink of the device %s.\n", device)
+		err := fmt.Errorf("error retrieving the symlink of the device %s", device)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -115,7 +114,7 @@ func (s *StepMountDevice) Run(_ context.Context, state multistep.StateBag) multi
 	mountCommand, err := wrappedCommand(
 		fmt.Sprintf("mount %s %s %s", opts, deviceMount, mountPath))
 	if err != nil {
-		err := fmt.Errorf("Error creating mount command: %s", err)
+		err := fmt.Errorf("error creating mount command: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -125,7 +124,7 @@ func (s *StepMountDevice) Run(_ context.Context, state multistep.StateBag) multi
 	cmd.Stderr = stderr
 	if err := cmd.Run(); err != nil {
 		err := fmt.Errorf(
-			"Error mounting root volume: %s\nStderr: %s", err, stderr.String())
+			"error mounting root volume: %w\nStderr: %s", err, stderr.String())
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -157,12 +156,12 @@ func (s *StepMountDevice) CleanupFunc(state multistep.StateBag) error {
 	ui.Say("Unmounting the root device...")
 	unmountCommand, err := wrappedCommand(fmt.Sprintf("umount %s", s.mountPath))
 	if err != nil {
-		return fmt.Errorf("Error creating unmount command: %s", err)
+		return fmt.Errorf("error creating unmount command: %w", err)
 	}
 
 	cmd := ShellCommand(unmountCommand)
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("Error unmounting root device: %s", err)
+		return fmt.Errorf("error unmounting root device: %w", err)
 	}
 
 	s.mountPath = ""

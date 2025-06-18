@@ -67,7 +67,7 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 		updateImageRequest.ImageId = omi
 		_, _, err := regionconn.Api.ImageApi.UpdateImage(regionconn.Auth).UpdateImageRequest(updateImageRequest).Execute()
 		if err != nil {
-			err := fmt.Errorf("Error updating OMI: %s", err)
+			err := fmt.Errorf("error updating OMI: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -88,7 +88,7 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 			updateSnapshoptRequest.SnapshotId = snapshot
 			_, _, err := regionconn.Api.SnapshotApi.UpdateSnapshot(regionconn.Auth).UpdateSnapshotRequest(updateSnapshoptRequest).Execute()
 			if err != nil {
-				err := fmt.Errorf("Error updating snapshot: %s", err)
+				err := fmt.Errorf("error updating snapshot: %w", err)
 				state.Put("error", err)
 				ui.Error(err.Error())
 				return multistep.ActionHalt

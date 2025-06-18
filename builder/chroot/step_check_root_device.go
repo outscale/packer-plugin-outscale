@@ -2,7 +2,7 @@ package chroot
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
@@ -20,7 +20,7 @@ func (s *StepCheckRootDevice) Run(_ context.Context, state multistep.StateBag) m
 
 	// It must be BSU-backed otherwise the build won't work
 	if image.GetRootDeviceType() != "ebs" {
-		err := fmt.Errorf("The root device of the source OMI must be BSU-backed.")
+		err := errors.New("the root device of the source OMI must be BSU-backed. ")
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

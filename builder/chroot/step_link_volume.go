@@ -41,7 +41,7 @@ func (s *StepLinkVolume) Run(ctx context.Context, state multistep.StateBag) mult
 	}
 	_, _, err := oscconn.Api.VolumeApi.LinkVolume(oscconn.Auth).LinkVolumeRequest(opts).Execute()
 	if err != nil {
-		err := fmt.Errorf("Error attaching volume: %s", err)
+		err := fmt.Errorf("error attaching volume: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -54,7 +54,7 @@ func (s *StepLinkVolume) Run(ctx context.Context, state multistep.StateBag) mult
 	// Wait for the volume to become attached
 	err = osccommon.WaitUntilOscVolumeIsLinked(oscconn, s.volumeId)
 	if err != nil {
-		err := fmt.Errorf("Error waiting for volume: %s", err)
+		err := fmt.Errorf("error waiting for volume: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -85,7 +85,7 @@ func (s *StepLinkVolume) CleanupFunc(state multistep.StateBag) error {
 	}
 	_, _, err := oscconn.Api.VolumeApi.UnlinkVolume(oscconn.Auth).UnlinkVolumeRequest(opts).Execute()
 	if err != nil {
-		return fmt.Errorf("Error detaching BSU volume: %s", err)
+		return fmt.Errorf("error detaching BSU volume: %w", err)
 	}
 
 	s.attached = false
@@ -93,7 +93,7 @@ func (s *StepLinkVolume) CleanupFunc(state multistep.StateBag) error {
 	// Wait for the volume to detach
 	err = osccommon.WaitUntilOscVolumeIsUnlinked(oscconn, s.volumeId)
 	if err != nil {
-		return fmt.Errorf("Error waiting for volume: %s", err)
+		return fmt.Errorf("error waiting for volume: %w", err)
 	}
 
 	return nil

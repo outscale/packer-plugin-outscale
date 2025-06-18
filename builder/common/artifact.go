@@ -1,6 +1,7 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"sort"
@@ -89,7 +90,7 @@ func (a *Artifact) Destroy() error {
 			errors = append(errors, err)
 		}
 		if len(imageResp.GetImages()) == 0 {
-			err := fmt.Errorf("Error retrieving details for OMI (%s), no images found", imageId)
+			err := fmt.Errorf("error retrieving details for OMI (%s), no images found", imageId)
 			errors = append(errors, err)
 		}
 
@@ -134,11 +135,11 @@ func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
 
 		region, ok := k.(string)
 		if !ok {
-			return nil, fmt.Errorf("unexpected type of key in OMIs map")
+			return nil, errors.New("unexpected type of key in OMIs map")
 		}
 		imageId, ok := v.(string)
 		if !ok {
-			return nil, fmt.Errorf("unexpected type for value in OMIs map")
+			return nil, errors.New("unexpected type for value in OMIs map")
 		}
 		image := registryimage.Image{
 			ImageID:        imageId,

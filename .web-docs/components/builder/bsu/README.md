@@ -37,7 +37,7 @@ builder.
 
 - `omi_name` (string) - The name of the resulting OMIS that will appear when managing OMIs in the Outscale console or via APIs. This must be unique. To help make this unique, use a function like `timestamp` (see [template engine](/docs/templates/legacy_json_templates/engine) for more info).
 
-- `vm_type` (string) - The Outscale VM type to use while building the OMI, such as `t2.small`.
+- `vm_type` (string) - The Outscale VM type to use while building the OMI, such as `tinav6.c4r8p2`.
 
 - `region` (string) - The name of the region, such as `us-east-1`, in which to launch the Outscale VM to create the OMI.
 
@@ -70,6 +70,10 @@ builder.
   data](#build-template-data) for more information.
 
 - `omi_account_ids` (array of strings) - A list of account IDs that have access to launch the resulting OMI(s). By default no additional users other than the user creating the OMIS has permissions to launch it.
+
+- `omi_boot_modes` (array of strings) - A list of boot modes (`legacy` and/or `uefi`) to enable on the resulting OMI.
+
+- `boot_mode` (strings) - The boot mode (`legacy` or `uefi`) on the VM to use while building the OMI. (It must be active on the `source_omi`).
 
 - `product_codes` ([]string) - A list of product codes to associate with the OMI. By default no product codes are associated with the OMI.
 
@@ -264,9 +268,10 @@ Here is a basic example. You will need to provide access keys, and may need to c
 ```hcl
 source "outscale-bsu" "basic-example" {
    region             = "us-east-1"
-   vm_type            = "t2.micro"
+   vm_type            = "tinav6.c4r8p2"
    source_omi         = "ami-abcfd0283"
    omi_name           = "packer_osc_{{timestamp}}"
+   omi_boot_modes     = ["uefi"]
    ssh_username       = "outscale"
    ssh_interface      = "public_ip"
 }
@@ -286,7 +291,7 @@ source "outscale-bsu" "basic-example" {
       "secret_key": "{{user `secret_key`}}",
       "region": "us-east-1",
       "source_omi": "ami-abcfd0283",
-      "vm_type": "t2.micro",
+      "vm_type": "tinav6.c4r8p2",
       "ssh_username": "outscale",
       "omi_name": "packer_osc {{timestamp}}"
     }
@@ -332,11 +337,13 @@ variable "osc_secret_key" {
 
 source "outscale-bsu" "basic-example" {
   region             = "us-east-1"
-  vm_type            = "t2.micro"
+  vm_type            = "tinav6.c4r8p2"
   source_omi         = "ami-abcfd0283"
   omi_name           = "packer_osc_{{timestamp}}"
   ssh_username       = "outscale"
   ssh_interface      = "public_ip"
+  omi_boot_modes     = ["legacy","uefi"]
+  boot_mode          = "legacy"
 
   launch_block_device_mappings {
     delete_on_vm_deletion = false
@@ -373,7 +380,7 @@ variable "aws_secret_key" {
 
 source "outscale-bsu" "basic-example" {
   region             = "us-east-1"
-  vm_type            = "t2.micro"
+  vm_type            = "tinav6.c4r8p2"
   source_omi         = "ami-abcfd0283"
   omi_name           = "packer_osc_{{timestamp}}"
   root_device_name   = "/dev/sda1"
@@ -404,7 +411,7 @@ source "outscale-bsu" "basic-example" {
   "secret_key": "YOUR SECRET KEY HERE",
   "region": "us-east-1",
   "source_omi": "ami-fce3c696",
-  "vm_type": "t2.micro",
+  "vm_type": "tinav6.c4r8p2",
   "ssh_username": "ubuntu",
   "omi_name": "packer-quick-start {{timestamp}}",
   "launch_block_device_mappings": [
@@ -450,7 +457,7 @@ Here is an example using the optional OMIS tags. This will add the tags `OS_Vers
   "secret_key": "YOUR SECRET KEY HERE",
   "region": "us-east-1",
   "source_omi": "ami-fce3c696",
-  "vm_type": "t2.micro",
+  "vm_type": "tinav6.c4r8p2",
   "ssh_username": "ubuntu",
   "omi_name": "packer-quick-start {{timestamp}}",
   "tags": {

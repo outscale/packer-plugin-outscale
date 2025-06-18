@@ -24,7 +24,7 @@ func (s *StepPrepareDevice) Run(_ context.Context, state multistep.StateBag) mul
 		log.Println("Device path not specified, searching for available device...")
 		device, err = AvailableDevice()
 		if err != nil {
-			err := fmt.Errorf("Error finding available device: %s", err)
+			err := fmt.Errorf("error finding available device: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -32,7 +32,7 @@ func (s *StepPrepareDevice) Run(_ context.Context, state multistep.StateBag) mul
 	}
 
 	if _, err := os.Stat(device); err == nil {
-		err := fmt.Errorf("Device is in use: %s", device)
+		err := fmt.Errorf("device is in use: %s", device)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

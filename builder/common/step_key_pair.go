@@ -62,7 +62,7 @@ func (s *StepKeyPair) Run(_ context.Context, state multistep.StateBag) multistep
 	resp, _, err := conn.Api.KeypairApi.CreateKeypair(conn.Auth).CreateKeypairRequest(req).Execute()
 
 	if err != nil {
-		state.Put("error", fmt.Errorf("error creating temporary keypair: %s", err))
+		state.Put("error", fmt.Errorf("error creating temporary keypair: %w", err))
 		return multistep.ActionHalt
 	}
 
@@ -78,21 +78,21 @@ func (s *StepKeyPair) Run(_ context.Context, state multistep.StateBag) multistep
 		ui.Message(fmt.Sprintf("Saving key for debug purposes: %s", s.DebugKeyPath))
 		f, err := os.Create(s.DebugKeyPath)
 		if err != nil {
-			state.Put("error", fmt.Errorf("error saving debug key: %s", err))
+			state.Put("error", fmt.Errorf("error saving debug key: %w", err))
 			return multistep.ActionHalt
 		}
 		defer f.Close()
 
 		// Write the key out
 		if _, err := f.Write([]byte(*resp.GetKeypair().PrivateKey)); err != nil {
-			state.Put("error", fmt.Errorf("error saving debug key: %s", err))
+			state.Put("error", fmt.Errorf("error saving debug key: %w", err))
 			return multistep.ActionHalt
 		}
 
 		// Chmod it so that it is SSH ready
 		if runtime.GOOS != "windows" {
 			if err := f.Chmod(0600); err != nil {
-				state.Put("error", fmt.Errorf("error setting permissions of debug key: %s", err))
+				state.Put("error", fmt.Errorf("error setting permissions of debug key: %w", err))
 				return multistep.ActionHalt
 			}
 		}
@@ -127,7 +127,7 @@ func (s *StepKeyPair) Cleanup(state multistep.StateBag) {
 	if s.Debug {
 		if err := os.Remove(s.DebugKeyPath); err != nil {
 			ui.Error(fmt.Sprintf(
-				"Error removing debug key '%s': %s", s.DebugKeyPath, err))
+				"Error removing debug key '%s': %s", s.DebugKeyPath, err.Error()))
 		}
 	}
 }

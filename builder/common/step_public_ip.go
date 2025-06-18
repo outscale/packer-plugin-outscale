@@ -37,7 +37,7 @@ func (s *StepPublicIp) Run(_ context.Context, state multistep.StateBag) multiste
 	resp, _, err := conn.Api.PublicIpApi.CreatePublicIp(conn.Auth).CreatePublicIpRequest(allocOpts).Execute()
 
 	if err != nil {
-		state.Put("error", fmt.Errorf("Error creating temporary PublicIp: %s", err))
+		state.Put("error", fmt.Errorf("error creating temporary PublicIp: %w", err))
 		return multistep.ActionHalt
 	}
 

@@ -1,10 +1,13 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"log"
+	"slices"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	oscgo "github.com/outscale/osc-sdk-go/v2"
 )
 
 // OMIConfig is for common configuration related to creating OMIs.
@@ -15,6 +18,7 @@ type OMIConfig struct {
 	OMIGroups               []string `mapstructure:"omi_groups"`
 	OMIProductCodes         []string `mapstructure:"omi_product_codes"`
 	OMIRegions              []string `mapstructure:"omi_regions"`
+	OMIBootModes            []string `mapstructure:"omi_boot_modes"`
 	OMISkipRegionValidation bool     `mapstructure:"skip_region_validation"`
 	OMITags                 TagMap   `mapstructure:"tags"`
 	OMIForceDeregister      bool     `mapstructure:"force_deregister"`
@@ -30,21 +34,30 @@ func (c *OMIConfig) Prepare(accessConfig *AccessConfig, ctx *interpolate.Context
 	var errs []error
 
 	if c.OMIName == "" {
-		errs = append(errs, fmt.Errorf("omi_name must be specified"))
+		errs = append(errs, errors.New("omi_name must be specified"))
 	}
 
 	errs = append(errs, c.prepareRegions(accessConfig)...)
 
 	if len(c.OMIName) < 3 || len(c.OMIName) > 128 {
-		errs = append(errs, fmt.Errorf("omi_name must be between 3 and 128 characters long"))
+		errs = append(errs, errors.New("omi_name must be between 3 and 128 characters long"))
+	}
+	if len(c.OMIBootModes) > 0 {
+		bootModesSupported := []oscgo.BootMode{"legacy", "uefi"}
+		for _, booModeValue := range c.OMIBootModes {
+			var bootMode oscgo.BootMode = (oscgo.BootMode)(booModeValue)
+			if !slices.Contains(bootModesSupported, bootMode) {
+				errs = append(errs, fmt.Errorf("the omi_boot_Modes ['%v'] is not supported yet", bootMode))
+			}
+		}
 	}
 
 	if c.OMIName != templateCleanResourceName(c.OMIName) {
-		errs = append(errs, fmt.Errorf("OMIName should only contain "+
-			"alphanumeric characters, parentheses (()), square brackets ([]), spaces "+
+		errs = append(errs, errors.New("the parameter 'OMIName' should only contain"+
+			" alphanumeric characters, parentheses (()), square brackets ([]), spaces "+
 			"( ), periods (.), slashes (/), dashes (-), single quotes ('), at-signs "+
 			"(@), or underscores(_). You can use the `clean_omi_name` template "+
-			"filter to automatically clean your omi name."))
+			"filter to automatically clean your omi name. "))
 	}
 
 	if len(errs) > 0 {
@@ -80,4 +93,12 @@ func (c *OMIConfig) prepareRegions(accessConfig *AccessConfig) (errs []error) {
 		c.OMIRegions = regions
 	}
 	return errs
+}
+func (c *OMIConfig) GetBootModes() (bootModes []oscgo.BootMode) {
+	if len(c.OMIBootModes) > 0 {
+		for _, bootModeValue := range c.OMIBootModes {
+			bootModes = append(bootModes, (oscgo.BootMode)(bootModeValue))
+		}
+	}
+	return
 }

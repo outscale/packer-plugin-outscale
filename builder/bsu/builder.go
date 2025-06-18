@@ -33,8 +33,7 @@ type Config struct {
 	osccommon.RunConfig    `mapstructure:",squash"`
 	VolumeRunTags          osccommon.TagMap `mapstructure:"run_volume_tags"`
 	SkipCreateOmi          bool             `mapstructure:"skip_create_omi"`
-
-	ctx interpolate.Context
+	ctx                    interpolate.Context
 }
 
 type Builder struct {
@@ -153,6 +152,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			UserDataFile:                b.config.UserDataFile,
 			VolumeTags:                  b.config.VolumeRunTags,
 			RawRegion:                   b.config.RawRegion,
+			BootMode:                    b.config.BootMode,
 		},
 		&osccommon.StepGetPassword{
 			Debug:     b.config.PackerDebug,
@@ -189,6 +189,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			&stepCreateOMI{
 				RawRegion:    b.config.RawRegion,
 				ProductCodes: b.config.ProductCodes,
+				BootModes:    b.config.GetBootModes(),
 			},
 			&osccommon.StepUpdateOMIAttributes{
 				AccountIds:         b.config.OMIAccountIDs,

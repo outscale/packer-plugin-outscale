@@ -15,6 +15,7 @@ type StepCreateOMI struct {
 	RootVolumeSize int64
 	RawRegion      string
 	ProductCodes   []string
+	BootModes      []oscgo.BootMode
 }
 
 func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -83,10 +84,12 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	if config.ProductCodes != nil {
 		registerOpts.ProductCodes = &config.ProductCodes
 	}
-
+	if len(config.OMIBootModes) > 0 {
+		registerOpts.SetBootModes(config.GetBootModes())
+	}
 	registerResp, _, err := osconn.Api.ImageApi.CreateImage(osconn.Auth).CreateImageRequest(registerOpts).Execute()
 	if err != nil {
-		state.Put("error", fmt.Errorf("Error registering OMI: %s", err))
+		state.Put("error", fmt.Errorf("error registering OMI: %w", err))
 		ui.Error(state.Get("error").(error).Error())
 		return multistep.ActionHalt
 	}
@@ -101,7 +104,7 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 
 	ui.Say("Waiting for OMI to become ready...")
 	if err := osccommon.WaitUntilOscImageAvailable(osconn, imageID); err != nil {
-		err := fmt.Errorf("Error waiting for OMI: %s", err)
+		err := fmt.Errorf("error waiting for OMI: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

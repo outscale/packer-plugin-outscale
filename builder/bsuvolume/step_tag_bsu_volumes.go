@@ -46,7 +46,7 @@ func (s *stepTagBSUVolumes) Run(_ context.Context, state multistep.StateBag) mul
 
 			tags, err := mapping.Tags.OSCTags(s.Ctx, s.RawRegion, state)
 			if err != nil {
-				err := fmt.Errorf("Error tagging device %s with %s", mapping.DeviceName, err)
+				err := fmt.Errorf("error tagging device %s with %w", mapping.DeviceName, err)
 				state.Put("error", err)
 				ui.Error(err.Error())
 				return multistep.ActionHalt
@@ -67,7 +67,7 @@ func (s *stepTagBSUVolumes) Run(_ context.Context, state multistep.StateBag) mul
 			}
 			_, _, err := oscconn.Api.TagApi.CreateTags(oscconn.Auth).CreateTagsRequest(request).Execute()
 			if err != nil {
-				err := fmt.Errorf("Error tagging BSU Volume %s on %s: %s", volumeId, vm.GetVmId(), err)
+				err := fmt.Errorf("error tagging BSU Volume %s on %s: %w", volumeId, vm.GetVmId(), err)
 				state.Put("error", err)
 				ui.Error(err.Error())
 				return multistep.ActionHalt

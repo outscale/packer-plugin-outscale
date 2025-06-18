@@ -26,6 +26,7 @@ type FlatConfig struct {
 	OMIGroups               []string                     `mapstructure:"omi_groups" cty:"omi_groups" hcl:"omi_groups"`
 	OMIProductCodes         []string                     `mapstructure:"omi_product_codes" cty:"omi_product_codes" hcl:"omi_product_codes"`
 	OMIRegions              []string                     `mapstructure:"omi_regions" cty:"omi_regions" hcl:"omi_regions"`
+	OMIBootModes            []string                     `mapstructure:"omi_boot_modes" cty:"omi_boot_modes" hcl:"omi_boot_modes"`
 	OMISkipRegionValidation *bool                        `mapstructure:"skip_region_validation" cty:"skip_region_validation" hcl:"skip_region_validation"`
 	OMITags                 common.TagMap                `mapstructure:"tags" cty:"tags" hcl:"tags"`
 	OMIForceDeregister      *bool                        `mapstructure:"force_deregister" cty:"force_deregister" hcl:"force_deregister"`
@@ -91,6 +92,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"omi_groups":                 &hcldec.AttrSpec{Name: "omi_groups", Type: cty.List(cty.String), Required: false},
 		"omi_product_codes":          &hcldec.AttrSpec{Name: "omi_product_codes", Type: cty.List(cty.String), Required: false},
 		"omi_regions":                &hcldec.AttrSpec{Name: "omi_regions", Type: cty.List(cty.String), Required: false},
+		"omi_boot_modes":             &hcldec.AttrSpec{Name: "omi_boot_modes", Type: cty.List(cty.String), Required: false},
 		"skip_region_validation":     &hcldec.AttrSpec{Name: "skip_region_validation", Type: cty.Bool, Required: false},
 		"tags":                       &hcldec.AttrSpec{Name: "tags", Type: cty.Map(cty.String), Required: false},
 		"force_deregister":           &hcldec.AttrSpec{Name: "force_deregister", Type: cty.Bool, Required: false},

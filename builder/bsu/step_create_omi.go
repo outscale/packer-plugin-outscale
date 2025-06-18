@@ -2,6 +2,7 @@ package bsu
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -15,6 +16,7 @@ type stepCreateOMI struct {
 	image        *oscgo.Image
 	RawRegion    string
 	ProductCodes []string
+	BootModes    []oscgo.BootMode
 }
 
 func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -38,7 +40,7 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 		if rootDName := config.RootDeviceName; rootDName != "" {
 			createOpts.SetRootDeviceName(rootDName)
 		} else {
-			err := fmt.Errorf("Error: MissingParameter: You must provide 'RootDeviceName' when creating omi with 'omi_block_device_mappings'.")
+			err := errors.New("error: MissingParameter: You must provide 'RootDeviceName' when creating omi with 'omi_block_device_mappings'")
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -46,6 +48,9 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	}
 	if prodCode := config.ProductCodes; prodCode != nil {
 		createOpts.SetProductCodes(prodCode)
+	}
+	if len(config.OMIBootModes) > 0 {
+		createOpts.SetBootModes(config.GetBootModes())
 	}
 
 	if description := config.OMIDescription; description != "" {
@@ -57,7 +62,7 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 
 	resp, _, err := oscconn.Api.ImageApi.CreateImage(oscconn.Auth).CreateImageRequest(createOpts).Execute()
 	if err != nil || resp.GetImage().ImageId == nil {
-		err := fmt.Errorf("Error creating OMI: %s", err)
+		err := fmt.Errorf("error creating OMI: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -81,10 +86,10 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 		imagesResp, _, err := oscconn.Api.ImageApi.ReadImages(oscconn.Auth).ReadImagesRequest(req).Execute()
 		if err != nil {
 			log.Printf("Unable to determine reason waiting for OMI failed: %s", err)
-			err = fmt.Errorf("Unknown error waiting for OMI")
+			err = errors.New("unknown error waiting for OMI")
 		} else {
 			stateReason := imagesResp.GetImages()[0].GetStateComment()
-			err = fmt.Errorf("Error waiting for OMI. Reason: %s", stateReason.GetStateMessage())
+			err = fmt.Errorf("error waiting for OMI. Reason: %s", stateReason.GetStateMessage())
 		}
 
 		state.Put("error", err)
@@ -97,20 +102,20 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	}
 	imagesResp, _, err := oscconn.Api.ImageApi.ReadImages(oscconn.Auth).ReadImagesRequest(req).Execute()
 	if err != nil {
-		err := fmt.Errorf("Error searching for OMI: %s", err)
+		err := fmt.Errorf("error searching for OMI: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 	if len(imagesResp.GetImages()) <= 0 {
-		err := fmt.Errorf("Error while reading the image': %s", err)
+		err := fmt.Errorf("error while reading the image': %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 	s.image = &imagesResp.GetImages()[0]
 	if s.image == nil {
-		err := fmt.Errorf("Error while reading an empty image id': %s", err)
+		err := fmt.Errorf("error while reading an empty image id': %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -146,7 +151,7 @@ func (s *stepCreateOMI) Cleanup(state multistep.StateBag) {
 	deleteOpts := oscgo.DeleteImageRequest{ImageId: s.image.GetImageId()}
 	_, _, err := oscconn.Api.ImageApi.DeleteImage(oscconn.Auth).DeleteImageRequest(deleteOpts).Execute()
 	if err != nil {
-		ui.Error(fmt.Sprintf("Error Deleting OMI, may still be around: %s", err))
+		ui.Error(fmt.Sprintf("error Deleting OMI, may still be around:': %v", err))
 		return
 	}
 }

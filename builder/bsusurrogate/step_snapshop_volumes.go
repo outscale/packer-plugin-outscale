@@ -35,7 +35,7 @@ func (s *StepSnapshotVolumes) snapshotVolume(ctx context.Context, deviceName str
 		}
 	}
 	if volumeId == "" {
-		return fmt.Errorf("Volume ID for device %s not found", deviceName)
+		return fmt.Errorf("volume ID for device %s not found", deviceName)
 	}
 
 	ui.Say(fmt.Sprintf("Creating snapshot of EBS Volume %s...", volumeId))

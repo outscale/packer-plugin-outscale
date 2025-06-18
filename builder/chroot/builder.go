@@ -136,7 +136,7 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	for _, mounts := range b.config.ChrootMounts {
 		if len(mounts) != 3 {
 			errs = packersdk.MultiErrorAppend(
-				errs, errors.New("Each chroot_mounts entry should be three elements."))
+				errs, errors.New("each chroot_mounts entry should be three elements"))
 			break
 		}
 	}
@@ -147,24 +147,24 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 		}
 		if b.config.RootVolumeSize == 0 {
 			errs = packersdk.MultiErrorAppend(
-				errs, errors.New("root_volume_size is required with from_scratch."))
+				errs, errors.New("root_volume_size is required with from_scratch"))
 		}
 		if len(b.config.PreMountCommands) == 0 {
 			errs = packersdk.MultiErrorAppend(
-				errs, errors.New("pre_mount_commands is required with from_scratch."))
+				errs, errors.New("pre_mount_commands is required with from_scratch"))
 		}
 		if b.config.RootDeviceName == "" {
 			errs = packersdk.MultiErrorAppend(
-				errs, errors.New("root_device_name is required with from_scratch."))
+				errs, errors.New("root_device_name is required with from_scratch"))
 		}
 		if len(b.config.OMIMappings) == 0 {
 			errs = packersdk.MultiErrorAppend(
-				errs, errors.New("omi_block_device_mappings is required with from_scratch."))
+				errs, errors.New("omi_block_device_mappings is required with from_scratch"))
 		}
 	} else {
 		if b.config.SourceOMI == "" && b.config.SourceOMIFilter.Empty() {
 			errs = packersdk.MultiErrorAppend(
-				errs, errors.New("source_omi or source_omi_filter is required."))
+				errs, errors.New("source_omi or source_omi_filter is required"))
 		}
 		if len(b.config.OMIMappings) != 0 {
 			warns = append(warns, "omi_block_device_mappings are unused when from_scratch is false")
@@ -173,7 +173,6 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 			warns = append(warns, "root_device_name is unused when from_scratch is false")
 		}
 	}
-
 	if errs != nil && len(errs.Errors) > 0 {
 		return nil, warns, errs
 	}
@@ -184,7 +183,7 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 
 func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook) (packersdk.Artifact, error) {
 	if runtime.GOOS != "linux" {
-		return nil, errors.New("The outscale-chroot builder only works on Linux environments.")
+		return nil, errors.New("the outscale-chroot builder only works on Linux environments")
 	}
 
 	var oscConn *osccommon.OscClient
@@ -265,6 +264,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			RootVolumeSize: b.config.RootVolumeSize,
 			RawRegion:      b.config.RawRegion,
 			ProductCodes:   b.config.ProductCodes,
+			BootModes:      b.config.GetBootModes(),
 		},
 		&osccommon.StepUpdateOMIAttributes{
 			AccountIds:         b.config.OMIAccountIDs,

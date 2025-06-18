@@ -35,7 +35,7 @@ func (s *StepSnapshot) Run(ctx context.Context, state multistep.StateBag) multis
 	}
 	createSnapResp, _, err := oscconn.Api.SnapshotApi.CreateSnapshot(oscconn.Auth).CreateSnapshotRequest(request).Execute()
 	if err != nil {
-		err := fmt.Errorf("Error creating snapshot: %s", err)
+		err := fmt.Errorf("error creating snapshot: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -48,7 +48,7 @@ func (s *StepSnapshot) Run(ctx context.Context, state multistep.StateBag) multis
 	// Wait for the snapshot to be ready
 	err = osccommon.WaitUntilOscSnapshotDone(oscconn, s.snapshotId)
 	if err != nil {
-		err := fmt.Errorf("Error waiting for snapshot: %s", err)
+		err := fmt.Errorf("error waiting for snapshot: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -79,7 +79,7 @@ func (s *StepSnapshot) Cleanup(state multistep.StateBag) {
 		request := oscgo.DeleteSnapshotRequest{SnapshotId: s.snapshotId}
 		_, _, err := oscconn.Api.SnapshotApi.DeleteSnapshot(oscconn.Auth).DeleteSnapshotRequest(request).Execute()
 		if err != nil {
-			ui.Error(fmt.Sprintf("Error: %s", err))
+			ui.Error(fmt.Sprintf("Error: %s", err.Error()))
 		}
 	}
 }

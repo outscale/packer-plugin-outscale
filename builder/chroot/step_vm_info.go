@@ -2,6 +2,7 @@ package chroot
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -27,8 +28,8 @@ func (s *StepVmInfo) Run(_ context.Context, state multistep.StateBag) multistep.
 	vmID, err := cmd.Output()
 	if err != nil {
 		err := fmt.Errorf(
-			"Error retrieving the ID of the vm Packer is running on.\n" +
-				"Please verify Packer is running on a proper Outscale vm.")
+			"error retrieving the ID of the vm Packer is running on.\n" +
+				"Please verify Packer is running on a proper Outscale vm")
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -44,7 +45,7 @@ func (s *StepVmInfo) Run(_ context.Context, state multistep.StateBag) multistep.
 		},
 	}).Execute()
 	if err != nil {
-		err := fmt.Errorf("Error getting vm data: %s", err)
+		err := fmt.Errorf("error getting vm data: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -53,7 +54,7 @@ func (s *StepVmInfo) Run(_ context.Context, state multistep.StateBag) multistep.
 	vmsResp := resp.GetVms()
 
 	if len(vmsResp) == 0 {
-		err := fmt.Errorf("Error getting vm data: no vm found")
+		err := errors.New("error getting vm data: no vm found")
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

@@ -25,7 +25,7 @@ func (s *StepFlock) Run(ctx context.Context, state multistep.StateBag) multistep
 
 	lockfile := "/var/lock/packer-chroot/lock"
 	if err := os.MkdirAll(filepath.Dir(lockfile), 0755); err != nil {
-		err := fmt.Errorf("Error creating lock: %s", err)
+		err := fmt.Errorf("error creating lock: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -34,7 +34,7 @@ func (s *StepFlock) Run(ctx context.Context, state multistep.StateBag) multistep
 	log.Printf("Obtaining lock: %s", lockfile)
 	f, err := os.Create(lockfile)
 	if err != nil {
-		err := fmt.Errorf("Error creating lock: %s", err)
+		err := fmt.Errorf("error creating lock: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -42,7 +42,7 @@ func (s *StepFlock) Run(ctx context.Context, state multistep.StateBag) multistep
 
 	// LOCK!
 	if err := lockFile(f); err != nil {
-		err := fmt.Errorf("Error obtaining lock: %s", err)
+		err := fmt.Errorf("error obtaining lock: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

@@ -2,6 +2,7 @@ package common
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"sort"
@@ -82,21 +83,21 @@ func (s *StepSourceOMIInfo) Run(_ context.Context, state multistep.StateBag) mul
 
 	imageResp, _, err := oscconn.Api.ImageApi.ReadImages(oscconn.Auth).ReadImagesRequest(params).Execute()
 	if err != nil {
-		err := fmt.Errorf("Error querying OMI: %s", err)
+		err := fmt.Errorf("error querying OMI: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 
 	if len(*imageResp.Images) == 0 {
-		err := fmt.Errorf("No OMI was found matching filters: %v", params.Filters.GetImageNames())
+		err := fmt.Errorf("no OMI was found matching filters: %v", params.Filters.GetImageNames())
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 
 	if len(*imageResp.Images) > 1 && !s.OmiFilters.MostRecent {
-		err := fmt.Errorf("your query returned more than one result. Please try a more specific search, or set most_recent to true")
+		err := errors.New("your query returned more than one result. Please try a more specific search, or set most_recent to true")
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

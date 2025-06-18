@@ -36,6 +36,7 @@ type FlatConfig struct {
 	OMIGroups                   []string                               `mapstructure:"omi_groups" cty:"omi_groups" hcl:"omi_groups"`
 	OMIProductCodes             []string                               `mapstructure:"omi_product_codes" cty:"omi_product_codes" hcl:"omi_product_codes"`
 	OMIRegions                  []string                               `mapstructure:"omi_regions" cty:"omi_regions" hcl:"omi_regions"`
+	OMIBootModes                []string                               `mapstructure:"omi_boot_modes" cty:"omi_boot_modes" hcl:"omi_boot_modes"`
 	OMISkipRegionValidation     *bool                                  `mapstructure:"skip_region_validation" cty:"skip_region_validation" hcl:"skip_region_validation"`
 	OMITags                     common.TagMap                          `mapstructure:"tags" cty:"tags" hcl:"tags"`
 	OMIForceDeregister          *bool                                  `mapstructure:"force_deregister" cty:"force_deregister" hcl:"force_deregister"`
@@ -70,6 +71,7 @@ type FlatConfig struct {
 	NetFilter                   *common.FlatNetFilterOptions           `mapstructure:"net_filter" cty:"net_filter" hcl:"net_filter"`
 	NetId                       *string                                `mapstructure:"net_id" cty:"net_id" hcl:"net_id"`
 	WindowsPasswordTimeout      *string                                `mapstructure:"windows_password_timeout" cty:"windows_password_timeout" hcl:"windows_password_timeout"`
+	BootMode                    *string                                `mapstructure:"boot_mode" cty:"boot_mode" hcl:"boot_mode"`
 	Type                        *string                                `mapstructure:"communicator" cty:"communicator" hcl:"communicator"`
 	PauseBeforeConnect          *string                                `mapstructure:"pause_before_connecting" cty:"pause_before_connecting" hcl:"pause_before_connecting"`
 	SSHHost                     *string                                `mapstructure:"ssh_host" cty:"ssh_host" hcl:"ssh_host"`
@@ -161,6 +163,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"omi_groups":                           &hcldec.AttrSpec{Name: "omi_groups", Type: cty.List(cty.String), Required: false},
 		"omi_product_codes":                    &hcldec.AttrSpec{Name: "omi_product_codes", Type: cty.List(cty.String), Required: false},
 		"omi_regions":                          &hcldec.AttrSpec{Name: "omi_regions", Type: cty.List(cty.String), Required: false},
+		"omi_boot_modes":                       &hcldec.AttrSpec{Name: "omi_boot_modes", Type: cty.List(cty.String), Required: false},
 		"skip_region_validation":               &hcldec.AttrSpec{Name: "skip_region_validation", Type: cty.Bool, Required: false},
 		"tags":                                 &hcldec.AttrSpec{Name: "tags", Type: cty.Map(cty.String), Required: false},
 		"force_deregister":                     &hcldec.AttrSpec{Name: "force_deregister", Type: cty.Bool, Required: false},
@@ -195,6 +198,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"net_filter":                           &hcldec.BlockSpec{TypeName: "net_filter", Nested: hcldec.ObjectSpec((*common.FlatNetFilterOptions)(nil).HCL2Spec())},
 		"net_id":                               &hcldec.AttrSpec{Name: "net_id", Type: cty.String, Required: false},
 		"windows_password_timeout":             &hcldec.AttrSpec{Name: "windows_password_timeout", Type: cty.String, Required: false},
+		"boot_mode":                            &hcldec.AttrSpec{Name: "boot_mode", Type: cty.String, Required: false},
 		"communicator":                         &hcldec.AttrSpec{Name: "communicator", Type: cty.String, Required: false},
 		"pause_before_connecting":              &hcldec.AttrSpec{Name: "pause_before_connecting", Type: cty.String, Required: false},
 		"ssh_host":                             &hcldec.AttrSpec{Name: "ssh_host", Type: cty.String, Required: false},

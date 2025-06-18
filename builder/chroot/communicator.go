@@ -3,6 +3,7 @@ package chroot
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -70,7 +71,7 @@ func (c *Communicator) Upload(dst string, r io.Reader, fi *os.FileInfo) error {
 	log.Printf("Uploading to chroot dir: %s", dst)
 	tf, err := tmp.File("packer-outscale-chroot")
 	if err != nil {
-		return fmt.Errorf("Error preparing shell script: %s", err)
+		return fmt.Errorf("error preparing shell script: %w", err)
 	}
 	defer os.Remove(tf.Name())
 
@@ -123,7 +124,7 @@ func (c *Communicator) UploadDir(dst string, src string, exclude []string) error
 }
 
 func (c *Communicator) DownloadDir(src string, dst string, exclude []string) error {
-	return fmt.Errorf("DownloadDir is not implemented for outscale-chroot")
+	return errors.New("downloadDir is not implemented for outscale-chroot")
 }
 
 func (c *Communicator) Download(src string, w io.Writer) error {

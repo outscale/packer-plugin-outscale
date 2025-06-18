@@ -34,7 +34,7 @@ func (s *StepMountExtra) Run(ctx context.Context, state multistep.StateBag) mult
 		innerPath := mountPath + mountInfo[2]
 
 		if err := os.MkdirAll(innerPath, 0755); err != nil {
-			err := fmt.Errorf("Error creating mount directory: %s", err)
+			err := fmt.Errorf("error creating mount directory: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -53,7 +53,7 @@ func (s *StepMountExtra) Run(ctx context.Context, state multistep.StateBag) mult
 			mountInfo[1],
 			innerPath))
 		if err != nil {
-			err := fmt.Errorf("Error creating mount command: %s", err)
+			err := fmt.Errorf("error creating mount command: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -63,7 +63,7 @@ func (s *StepMountExtra) Run(ctx context.Context, state multistep.StateBag) mult
 		cmd.Stderr = stderr
 		if err := cmd.Run(); err != nil {
 			err := fmt.Errorf(
-				"Error mounting: %s\nStderr: %s", err, stderr.String())
+				"error mounting: %w\nStderr: %s", err, stderr.String())
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -98,7 +98,7 @@ func (s *StepMountExtra) CleanupFunc(state multistep.StateBag) error {
 
 		grepCommand, err := wrappedCommand(fmt.Sprintf("grep %s /proc/mounts", path))
 		if err != nil {
-			return fmt.Errorf("Error creating grep command: %s", err)
+			return fmt.Errorf("error creating grep command: %w", err)
 		}
 
 		// Before attempting to unmount,
@@ -121,7 +121,7 @@ func (s *StepMountExtra) CleanupFunc(state multistep.StateBag) error {
 
 		unmountCommand, err := wrappedCommand(fmt.Sprintf("umount %s", path))
 		if err != nil {
-			return fmt.Errorf("Error creating unmount command: %s", err)
+			return fmt.Errorf("error creating unmount command: %w", err)
 		}
 
 		stderr = new(bytes.Buffer)
@@ -129,7 +129,7 @@ func (s *StepMountExtra) CleanupFunc(state multistep.StateBag) error {
 		cmd.Stderr = stderr
 		if err := cmd.Run(); err != nil {
 			return fmt.Errorf(
-				"Error unmounting device: %s\nStderr: %s", err, stderr.String())
+				"error unmounting device: %w\nStderr: %s", err, stderr.String())
 		}
 	}
 

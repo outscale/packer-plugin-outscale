@@ -71,6 +71,10 @@ builder.
 
 - `omi_account_ids` (array of strings) - A list of account IDs that have access to launch the resulting OMI(s). By default no additional users other than the user creating the OMIS has permissions to launch it.
 
+- `omi_boot_modes` (array of strings) - A list of boot modes (`legacy` and/or `uefi`) to enable on the resulting OMI.
+
+- `boot_mode` (strings) - The boot mode (`legacy` or `uefi`) on the VM to use while building the OMI. (It must be active on the `source_omi`).
+
 - `product_codes` ([]string) - A list of product codes to associate with the OMI. By default no product codes are associated with the OMI.
 
 - `global_permission` (boolean) - This option is useful to make the OMI publicly accessible.
@@ -294,11 +298,13 @@ source "outscale-bsusurrogate" "example-bsusurrogate" {
     volume_type           = "standard"
   }
   omi_name = "packer_osc_{{timestamp}}"
-  source_omi    = "ami-bcfc34e0"
-  ssh_interface = "public_ip"
-  ssh_username  = "outscale"
-  vm_type       = "t2.medium"
-  region        = "eu-west-2"
+  source_omi      = "ami-bcfc34e0"
+  ssh_interface   = "public_ip"
+  ssh_username    = "outscale"
+  vm_type         = "tinav6.c4r8p2"
+  region          = "eu-west-2"
+  omi_boot_modes  = ["legacy","uefi"]
+  boot_mode       = "legacy"
 }
 ```
 #### JSON
@@ -309,7 +315,7 @@ source "outscale-bsusurrogate" "example-bsusurrogate" {
   "access_key": "YOUR KEY HERE",
   "region": "eu-west-2",
   "ssh_username": "outscale",
-  "vm_type": "t2.medium",
+  "vm_type": "tinav6.c4r8p2",
   "source_omi": "ami-bcfc34e0",
   "subregion_name": "eu-west-2a",
   "launch_block_device_mappings": [

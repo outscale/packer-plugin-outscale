@@ -72,7 +72,7 @@ WaitLoop:
 			s.Comm.WinRMPassword = password
 			break WaitLoop
 		case <-timeout:
-			err := fmt.Errorf("Timeout waiting for password.")
+			err := errors.New("timeout waiting for password")
 			state.Put("error", err)
 			ui.Error(err.Error())
 			close(cancel)
@@ -110,13 +110,13 @@ func (s *StepGetPassword) waitForPassword(state multistep.StateBag, cancel <-cha
 		select {
 		case <-cancel:
 			log.Println("[INFO] Retrieve password wait cancelled. Exiting loop.")
-			return "", errors.New("Retrieve password wait cancelled")
+			return "", errors.New("retrieve password wait cancelled")
 		case <-time.After(15 * time.Second):
 		}
 
 		resp, _, err := oscconn.Api.VmApi.ReadAdminPassword(oscconn.Auth).ReadAdminPasswordRequest(oscgo.ReadAdminPasswordRequest{VmId: vm.GetVmId()}).Execute()
 		if err != nil {
-			err := fmt.Errorf("Error retrieving auto-generated vm password: %s", err)
+			err := fmt.Errorf("error retrieving auto-generated vm password: %w", err)
 			return "", err
 		}
 
@@ -124,7 +124,7 @@ func (s *StepGetPassword) waitForPassword(state multistep.StateBag, cancel <-cha
 			decryptedPassword, err := decryptPasswordDataWithPrivateKey(
 				*resp.AdminPassword, privateKey)
 			if err != nil {
-				err := fmt.Errorf("Error decrypting auto-generated vm password: %s", err)
+				err := fmt.Errorf("error decrypting auto-generated vm password: %w", err)
 				return "", err
 			}
 

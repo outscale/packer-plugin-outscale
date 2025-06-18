@@ -14,25 +14,25 @@ func RunLocalCommands(commands []string, wrappedCommand CommandWrapper, ictx int
 	for _, rawCmd := range commands {
 		intCmd, err := interpolate.Render(rawCmd, &ictx)
 		if err != nil {
-			return fmt.Errorf("Error interpolating: %s", err)
+			return fmt.Errorf("error interpolating: %w", err)
 		}
 
 		command, err := wrappedCommand(intCmd)
 		if err != nil {
-			return fmt.Errorf("Error wrapping command: %s", err)
+			return fmt.Errorf("error wrapping command: %w", err)
 		}
 
-		ui.Say(fmt.Sprintf("Executing command: %s", command))
+		ui.Say(fmt.Sprintf("executing command: %s", command))
 		comm := &sl.Communicator{
 			ExecuteCommand: []string{"sh", "-c", command},
 		}
 		cmd := &packersdk.RemoteCmd{Command: command}
 		if err := cmd.RunWithUi(ctx, comm, ui); err != nil {
-			return fmt.Errorf("Error executing command: %s", err)
+			return fmt.Errorf("error executing command: %w", err)
 		}
 		if cmd.ExitStatus() != 0 {
 			return fmt.Errorf(
-				"Received non-zero exit code %d from command: %s",
+				"received non-zero exit code %d from command: %s",
 				cmd.ExitStatus(),
 				command)
 		}

@@ -2,6 +2,7 @@ package common
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -65,7 +66,7 @@ func (s *StepStopBSUBackedVm) Run(ctx context.Context, state multistep.StateBag)
 		})
 
 		if err != nil {
-			err := fmt.Errorf("Error stopping vm: %s", err)
+			err := fmt.Errorf("error stopping vm: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -83,7 +84,7 @@ func (s *StepStopBSUBackedVm) Run(ctx context.Context, state multistep.StateBag)
 	case TerminateShutdownBehavior:
 		err = waitUntilOscVmDeleted(oscconn, *vm.VmId)
 	default:
-		err := fmt.Errorf("Wrong value for the shutdown behavior")
+		err := errors.New("wrong value for the shutdown behavior")
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -91,7 +92,7 @@ func (s *StepStopBSUBackedVm) Run(ctx context.Context, state multistep.StateBag)
 	}
 
 	if err != nil {
-		err := fmt.Errorf("Error waiting for vm to stop: %s", err)
+		err := fmt.Errorf("error waiting for vm to stop: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

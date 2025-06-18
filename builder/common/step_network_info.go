@@ -63,14 +63,14 @@ func (s *StepNetworkInfo) Run(_ context.Context, state multistep.StateBag) multi
 
 		vpcResp, _, err := oscconn.Api.NetApi.ReadNets(oscconn.Auth).ReadNetsRequest(params).Execute()
 		if err != nil {
-			err := fmt.Errorf("Error querying NETs: %s", err)
+			err := fmt.Errorf("error querying NETs: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
 
 		if len(*vpcResp.Nets) != 1 {
-			err := fmt.Errorf("Exactly one NET should match the filter, but %d NET's was found matching filters: %v", len(*vpcResp.Nets), params)
+			err := fmt.Errorf("exactly one NET should match the filter, but %d NET's was found matching filters: %v", len(*vpcResp.Nets), params)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -97,14 +97,14 @@ func (s *StepNetworkInfo) Run(_ context.Context, state multistep.StateBag) multi
 
 		subnetsResp, _, err := oscconn.Api.SubnetApi.ReadSubnets(oscconn.Auth).ReadSubnetsRequest(params).Execute()
 		if err != nil {
-			err := fmt.Errorf("error querying Subnets: %s", err)
+			err := fmt.Errorf("error querying Subnets: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
 
 		if len(*subnetsResp.Subnets) == 0 {
-			err := fmt.Errorf("No Subnets was found matching filters: %v", params)
+			err := fmt.Errorf("no Subnets was found matching filters: %v", params)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -139,7 +139,7 @@ func (s *StepNetworkInfo) Run(_ context.Context, state multistep.StateBag) multi
 			},
 		}).Execute()
 		if err != nil {
-			err := fmt.Errorf("describing the subnet: %s returned error: %s", s.SubnetId, err)
+			err := fmt.Errorf("describing the subnet: %s returned error: %w", s.SubnetId, err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt

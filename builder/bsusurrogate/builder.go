@@ -83,7 +83,7 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 		if launchDevice.DeviceName == b.config.RootDevice.SourceDeviceName {
 			foundRootVolume = true
 			if launchDevice.DeleteOnVmDeletion && b.config.VmInitiatedShutdownBehavior == osccommon.TerminateShutdownBehavior {
-				errs = packersdk.MultiErrorAppend(errs, errors.New("Cannot delete the launch device with the VM if the shutdown behavior is set to terminate."))
+				errs = packersdk.MultiErrorAppend(errs, errors.New("cannot delete the launch device with the VM if the shutdown behavior is set to terminate. "))
 			}
 		}
 	}
@@ -118,7 +118,6 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	state.Put("ui", ui)
 
 	//VMStep
-
 	omiDevices := b.config.BuildOscOMIDevices()
 	launchOSCDevices := b.config.BuildOSCLaunchDevices()
 
@@ -213,6 +212,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			LaunchDevices: launchOSCDevices,
 			RawRegion:     b.config.RawRegion,
 			ProductCodes:  b.config.ProductCodes,
+			BootModes:     b.config.GetBootModes(),
 		},
 		&osccommon.StepUpdateOMIAttributes{
 			AccountIds:         b.config.OMIAccountIDs,

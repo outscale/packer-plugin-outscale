@@ -6,13 +6,13 @@
 
   tasks:
     - name: Install Apache  # Task to install Apache
-      apt:
+      ansible.builtin.apt:
         name: apache2  # The correct package name for Apache on Ubuntu
         state: present  # Ensures Apache is installed (installs if not already present)
-        update_cache: yes  # Runs 'apt update' before installation to get the latest package information
+        update_cache: true  # Runs 'apt update' before installation to get the latest package information
 
     - name: Ensure Apache is started and enabled on boot  # Task to manage Apache service
-      systemd:
+      ansible.builtin.systemd:
         name: apache2  # Specifies the Apache service name
         state: started  # Ensures the service is running (starts it if it's stopped)
-        enabled: yes  # Ensures Apache starts automatically on system boot
+        enabled: true  # Ensures Apache starts automatically on system boot

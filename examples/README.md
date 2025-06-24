@@ -15,6 +15,8 @@ You need to configure your Outscale **access keys** and **region** as environmen
 ```bash
 export OSC_ACCESS_KEY="myaccesskey"
 export OSC_SECRET_KEY="mysecretkey"
+export OSC_REGION="eu-west-2" # Outscale Region
+export OMI_NAME="OMI_NAME"    # Name of the new Outscale Machine Image (OMI) to be created
 ```
 
 Alternatively, you can store credentials in a **variables file**.
@@ -31,12 +33,12 @@ Each example is contained in its own folder and can be tested individually.
    ```bash
    packer init .
    ```
-   
+
 2. **Validate the configuration** before building:
    ```bash
    packer validate .
    ```
-   
+
 3. **Create the Outscale Machine Image (OMI):**
    ```bash
    packer build .

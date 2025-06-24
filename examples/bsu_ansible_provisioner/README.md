@@ -15,25 +15,24 @@ This setup performs the following actions:
 ## **Project Structure**
 ```
 /bsu_ansible_provisioner
-│── packer/
-│   ├── ubuntu-apache.pkr.hcl             # Packer template using Ansible
-│   ├── variables.auto.pkvars.hcl         # Variables file for Packer
+├── ubuntu-apache.pkr.hcl             # Packer template using Ansible
+├── variables.auto.pkvars.hcl         # Variables file for Packer
 │── ansible/
-│   ├── playbook.yml                      # Ansible playbook (Installs Apache)
+│   ├── playbook.yml                  # Ansible playbook (Installs Apache)
 │── logs/
-│   ├── packer_build.log                   # Log file created after build
-│── README.md                              # Documentation
+│   ├── packer_build.log              # Log file created after build
+│── README.md                         # Documentation
 ```
 
 ---
 
 ## **:pushpin: Prerequisites**
 Ensure the following tools are installed:
-1. **Packer**  
+1. **Packer**
    ```bash
    packer --version
    ```
-2. **Ansible** (Required for local execution)  
+2. **Ansible** (Required for local execution)
    ```bash
    sudo apt update && sudo apt install -y ansible
    ```

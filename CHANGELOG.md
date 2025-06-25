@@ -1,3 +1,16 @@
+## [1.5.0] - 2025-06-25
+
+* **Feature:** Add new parameters `omi_boot_modes`  and ` boot_mode` in `CreateImage`
+* **Docs:** Add documentation for new parameters `omi_boot_modes`  and ` boot_mode`
+
+### :recycle: Refactored
+- **Refactor:** Various code improvements
+
+### :arrow_up: Updated
+- **Update:** Go modules
+
+---
+
 ## [1.4.0] - 2025-01-30
 
 ### :bug: Fixed

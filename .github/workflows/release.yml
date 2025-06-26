@@ -16,6 +16,7 @@ on:
       - 'v*'
 jobs:
   goreleaser:
+    environment: release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -44,6 +45,3 @@ jobs:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           API_VERSION: ${{ steps.plugin_describe.outputs.api_version }}
-          OSC_ACCESS_KEY: ${{secrets.OSC_ACCESS_KEY}}
-          OSC_SECRET_KEY: ${{secrets.OSC_SECRET_KEY}}
-          OSC_REGION: ${{secrets.OSC_REGION}}

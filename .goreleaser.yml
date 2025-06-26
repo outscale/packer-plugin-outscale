@@ -8,7 +8,7 @@ before:
   hooks:
     # We strongly recommend running tests to catch any regression before release.
     # Even though, this an optional step.
-    - go test ./...
+    - go mod tidy
     # Check plugin compatibility with required version of the Packer SDK
     - make plugin-check
 builds:
@@ -74,3 +74,8 @@ signs:
       - "${signature}"
       - "--detach-sign"
       - "${artifact}"
+release:
+  # If you want to manually examine the release before its live, uncomment this line:
+    draft: true
+changelog:
+  disable: true

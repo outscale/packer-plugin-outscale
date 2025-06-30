@@ -1,21 +1,61 @@
-[![Project Graduated](https://docs.outscale.com/fr/userguide/_images/Project-Graduated-green.svg)](https://docs.outscale.com/en/userguide/Open-Source-Projects.html)
-
 # Packer Plugin Outscale
-The `Outscale` multi-component plugin can be used with HashiCorp [Packer](https://www.packer.io)
-to create custom images. For the full list of available features for this plugin see [docs](https://developer.hashicorp.com/packer/integrations/outscale/outscale/latest).
 
-## Installation
+[![Project Graduated](https://docs.outscale.com/fr/userguide/_images/Project-Graduated-green.svg)](https://docs.outscale.com/en/userguide/Open-Source-Projects.html)
+[![](https://dcbadge.limes.pink/api/server/HUVtY5gT6s?style=flat&theme=default-inverted)](https://discord.gg/HUVtY5gT6s)
 
-### Using pre-built releases
+<p align="center">
+  <img alt="Packer" src="https://github.com/hashicorp/packer/raw/main/website/public/img/logo-packer-padded.svg" width="120px">
+</p>
 
-#### Using the `packer init` command
+---
 
-Starting from version 1.7, Packer supports a new `packer init` command allowing
-automatic installation of Packer plugins. Read the
-[Packer documentation](https://www.packer.io/docs/commands/init) for more information.
+## 🌐 Links
 
-To install this plugin, copy and paste this code into your Packer configuration .
-Then, run [`packer init`](https://www.packer.io/docs/commands/init).
+* 📘 Plugin Documentation: [Packer Plugin Registry](https://developer.hashicorp.com/packer/integrations/outscale/outscale/latest)
+* 📬 Packer official site: [https://www.packer.io](https://www.packer.io)
+* 🤝 Contribution Guide: [CONTRIBUTING.md](./CONTRIBUTING.md)
+
+---
+
+## 📄 Table of Contents
+
+* [Overview](#-overview)
+* [Requirements](#-requirements)
+* [Installation](#-installation)
+
+  * [Using `packer init`](#-using-packer-init)
+  * [Manual Installation](#-manual-installation)
+  * [From Source](#-from-source)
+* [Configuration](#-configuration)
+* [Contributing](#-contributing)
+
+---
+
+## 🧭 Overview
+
+The **Outscale Packer Plugin** is a multi-component plugin for [HashiCorp Packer](https://www.packer.io) that enables users to build custom machine images on the [OUTSCALE](https://www.outscale.com) cloud platform.
+
+It supports all standard Packer workflows and integrates seamlessly with the Packer CLI to provision images using your Outscale credentials and regions.
+
+For a full list of features, refer to the [official plugin documentation](https://developer.hashicorp.com/packer/integrations/outscale/outscale/latest).
+
+---
+
+## ✅ Requirements
+
+* [Packer 1.7+](https://www.packer.io/downloads)
+* An active OUTSCALE account with access/secret keys
+* Go 1.20+ (only if building from source)
+
+---
+
+## 🔨 Installation
+
+### 🧪 Using `packer init`
+
+Packer 1.7+ supports plugin installation via `packer init`.
+
+Add the plugin declaration to your Packer configuration file:
 
 ```hcl
 packer {
@@ -28,38 +68,51 @@ packer {
 }
 ```
 
+Then initialize:
 
-#### Manual installation
+```bash
+packer init .
+```
 
-You can find pre-built binary releases of the plugin [here](https://github.com/outscale/packer-plugin-outscale/releases).
-Once you have downloaded the latest archive corresponding to your target OS,
-uncompress it to retrieve the plugin binary file corresponding to your platform.
-To install the plugin, please follow the Packer documentation on
-[installing a plugin](https://www.packer.io/docs/extending/plugins/#installing-plugins).
+📘 See [Packer plugin installation docs](https://www.packer.io/docs/commands/init) for more details.
 
+---
 
-### From Sources
+### 🛠 Manual Installation
 
-If you prefer to build the plugin from sources, clone the GitHub repository
-locally and run the command `go build` from the root
-directory. Upon successful compilation, a `packer-plugin-outscale` plugin
-binary file can be found in the root directory.
-To install the compiled plugin, please follow the official Packer documentation
-on [installing a plugin](https://www.packer.io/docs/extending/plugins/#installing-plugins).
+1. Download the appropriate binary from the [Releases page](https://github.com/outscale/packer-plugin-outscale/releases).
+2. Uncompress the archive to retrieve the `packer-plugin-outscale` binary.
+3. Follow the [Packer plugin installation guide](https://www.packer.io/docs/extending/plugins#installing-plugins) to move the binary to the appropriate plugin directory.
 
+---
 
-### Configuration
+### 🧬 From Source
 
-For more information on how to configure the plugin, please read the
-documentation located in the [`docs/`](docs) directory.
+To build the plugin from source:
 
+```bash
+git clone https://github.com/outscale/packer-plugin-outscale.git
+cd packer-plugin-outscale
+go build
+```
 
-## Contributing
+The resulting binary `packer-plugin-outscale` will be available in the root directory.
 
-* If you think you've found a bug in the code or you have a question regarding
-  the usage of this software, please reach out to us by opening an issue in
-  this GitHub repository.
-* Contributions to this project are welcome: if you want to add a feature or a
-  fix a bug, please do so by opening a Pull Request in this GitHub repository.
-  In case of feature contribution, we kindly ask you to open an issue to
-  discuss it beforehand.
+Follow the [manual plugin installation guide](https://www.packer.io/docs/extending/plugins#installing-plugins) to install the plugin into your environment.
+
+---
+
+## 🔧 Configuration
+
+Configuration options and usage examples are documented in the [`docs/`](./docs) directory and on the [official registry page](https://developer.hashicorp.com/packer/integrations/outscale/outscale/latest).
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions!
+
+* Found a bug or issue? Please [open an issue](https://github.com/outscale/packer-plugin-outscale/issues).
+* Want to propose a new feature or fix? Start by opening an issue for discussion, then submit a [Pull Request](https://github.com/outscale/packer-plugin-outscale/pulls).
+
+Please read our [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for guidelines.

@@ -9,6 +9,7 @@ on:
       - 'examples/**.yml'
       - 'scripts/run-examples.sh'
       - 'GNUmakefile'
+      - '.github/workflows/packer-examples.yaml'
   schedule:
     - cron: '30 02 * * *'
   workflow_dispatch:
@@ -35,6 +36,11 @@ jobs:
 
       - name: Build packer-plugin-outscale
         run: make build
+
+      - name: "Install Ansible"
+        uses: alex-oleshkevich/setup-ansible@v1.0.1
+        with:
+          version: "latest"
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main

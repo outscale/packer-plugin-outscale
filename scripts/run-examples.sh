@@ -16,6 +16,7 @@ do
     then
         cp packer-plugin-outscale $f/
         cd $f
+        packer init .
         packer plugins install --path ./packer-plugin-outscale github.com/outscale/outscale
         packer fmt .
         packer validate .

@@ -37,10 +37,16 @@ jobs:
       - name: Build packer-plugin-outscale
         run: make build
 
-      - name: "Install Ansible"
-        uses: alex-oleshkevich/setup-ansible@v1.0.1
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          version: "latest"
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: "Install Ansible"
+        run: python3 -m pip install --upgrade --user ansible
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main

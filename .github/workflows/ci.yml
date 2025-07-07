@@ -7,7 +7,15 @@ on:
   pull_request:
     branches:
       - main
-
+    paths:
+      - '**.go'
+      - '**.sum'
+      - '**.mod'
+      - 'builder/**.go'
+      - 'datasource/**.sh'
+      - 'examples/**'
+      - 'scripts/run-examples.sh'
+      - 'GNUmakefile'
 jobs:
   check-code:
     runs-on: ubuntu-latest

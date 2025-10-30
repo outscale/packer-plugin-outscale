@@ -11,7 +11,7 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -45,7 +45,10 @@ func (d *Datasource) Configure(raws ...interface{}) error {
 		errs = packersdk.MultiErrorAppend(errs, fmt.Errorf("The `filters` must be specified"))
 	}
 	if len(d.config.Owners) == 0 {
-		errs = packersdk.MultiErrorAppend(errs, fmt.Errorf("For security reasons, you must declare an owner."))
+		errs = packersdk.MultiErrorAppend(
+			errs,
+			fmt.Errorf("For security reasons, you must declare an owner."),
+		)
 	}
 
 	if errs != nil && len(errs.Errors) > 0 {
@@ -84,17 +87,17 @@ func (d *Datasource) Execute() (cty.Value, error) {
 		return cty.NullVal(cty.EmptyObject), err
 	}
 
-	imageTags := make(map[string]string, len(image.GetTags()))
-	for _, tag := range image.GetTags() {
-		imageTags[tag.GetKey()] = tag.GetValue()
+	imageTags := make(map[string]string, len(*image.Tags))
+	for _, tag := range *image.Tags {
+		imageTags[tag.Key] = tag.Value
 	}
 
 	output := DatasourceOutput{
-		ID:           image.GetImageId(),
-		Name:         image.GetImageName(),
-		CreationDate: image.GetCreationDate(),
-		Owner:        image.GetAccountId(),
-		OwnerName:    image.GetAccountAlias(),
+		ID:           image.ImageId,
+		Name:         *image.ImageName,
+		CreationDate: image.CreationDate.String(),
+		Owner:        image.AccountId,
+		OwnerName:    *image.AccountAlias,
 		Tags:         imageTags,
 	}
 	return hcl2helper.HCL2ValueFromConfig(output, d.OutputSpec()), nil

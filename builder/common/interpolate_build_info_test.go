@@ -5,14 +5,14 @@ import (
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 func testImage() oscgo.Image {
 	imageId := "ami-abcd1234"
 	imageName := "ami_test_name"
 	return oscgo.Image{
-		ImageId:   &imageId,
+		ImageId:   imageId,
 		ImageName: &imageName,
 		Tags: &[]oscgo.ResourceTag{
 			{

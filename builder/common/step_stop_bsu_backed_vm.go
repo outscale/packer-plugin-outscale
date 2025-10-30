@@ -5,10 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	"github.com/outscale/packer-plugin-outscale/builder/common/retry"
 )
 
@@ -17,7 +16,10 @@ type StepStopBSUBackedVm struct {
 	DisableStopVm bool
 }
 
-func (s *StepStopBSUBackedVm) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *StepStopBSUBackedVm) Run(
+	ctx context.Context,
+	state multistep.StateBag,
+) multistep.StepAction {
 	oscconn := state.Get("osc").(*OscClient)
 	vm := state.Get("vm").(oscgo.Vm)
 	ui := state.Get("ui").(packersdk.Ui)
@@ -44,27 +46,19 @@ func (s *StepStopBSUBackedVm) Run(ctx context.Context, state multistep.StateBag)
 		err := retry.Run(10, 60, 6, func(i uint) (bool, error) {
 			ui.Message(fmt.Sprintf("Stopping vm, attempt %d", i+1))
 
-			_, _, err = oscconn.Api.VmApi.StopVms(oscconn.Auth).StopVmsRequest(oscgo.StopVmsRequest{
-				VmIds: []string{*vm.VmId},
-			}).Execute()
+			_, err = oscconn.StopVms(ctx, oscgo.StopVmsRequest{
+				VmIds: []string{vm.VmId},
+			})
 			if err == nil {
 				// success
 				return true, nil
 			}
 
-			if awsErr, ok := err.(awserr.Error); ok {
-				if awsErr.Code() == "InvalidVmID.NotFound" {
-					ui.Message(fmt.Sprintf(
-						"Error stopping vm; will retry ..."+
-							"Error: %s", err))
-					// retry
-					return false, nil
-				}
-			}
+			// TODO: manager errors
+
 			// errored, but not in expected way. Don't want to retry
 			return true, err
 		})
-
 		if err != nil {
 			err := fmt.Errorf("error stopping vm: %w", err)
 			state.Put("error", err)
@@ -78,11 +72,11 @@ func (s *StepStopBSUBackedVm) Run(ctx context.Context, state multistep.StateBag)
 
 	// Wait for the vm to actually stop
 	ui.Say("Waiting for the vm to stop...")
-	switch vm.GetVmInitiatedShutdownBehavior() {
+	switch vm.VmInitiatedShutdownBehavior {
 	case StopShutdownBehavior:
-		err = waitUntilOscVmStopped(oscconn, *vm.VmId)
+		err = waitUntilOscVmStopped(oscconn, vm.VmId)
 	case TerminateShutdownBehavior:
-		err = waitUntilOscVmDeleted(oscconn, *vm.VmId)
+		err = waitUntilOscVmDeleted(oscconn, vm.VmId)
 	default:
 		err := errors.New("wrong value for the shutdown behavior")
 		state.Put("error", err)

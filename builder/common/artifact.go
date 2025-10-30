@@ -1,6 +1,7 @@
 package common
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -9,7 +10,7 @@ import (
 
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 // Artifact is an artifact implementation that contains built OMIs.
@@ -74,22 +75,28 @@ func (a *Artifact) Destroy() error {
 	errors := make([]error, 0)
 
 	config := a.State("accessConfig").(*AccessConfig)
+	ctx := context.Background()
 
 	for region, imageId := range a.Omis {
 		log.Printf("Deregistering image ID (%s) from region (%s)", imageId, region)
 
-		regionConn := config.NewOSCClientByRegion(region)
+		regionConn, err := config.NewOSCClientByRegion(region)
+		if err != nil {
+			errors = append(errors, err)
+			continue
+		}
 
 		// Get image metadata
-		imageResp, _, err := regionConn.Api.ImageApi.ReadImages(regionConn.Auth).ReadImagesRequest(oscgo.ReadImagesRequest{
-			Filters: &oscgo.FiltersImage{
-				ImageIds: &[]string{imageId},
-			},
-		}).Execute()
+		imageResp, err := regionConn.ReadImages(ctx,
+			oscgo.ReadImagesRequest{
+				Filters: &oscgo.FiltersImage{
+					ImageIds: &[]string{imageId},
+				},
+			})
 		if err != nil {
 			errors = append(errors, err)
 		}
-		if len(imageResp.GetImages()) == 0 {
+		if len(*imageResp.Images) == 0 {
 			err := fmt.Errorf("error retrieving details for OMI (%s), no images found", imageId)
 			errors = append(errors, err)
 		}
@@ -98,7 +105,7 @@ func (a *Artifact) Destroy() error {
 		input := oscgo.DeleteImageRequest{
 			ImageId: imageId,
 		}
-		_, _, err = regionConn.Api.ImageApi.DeleteImage(regionConn.Auth).DeleteImageRequest(input).Execute()
+		_, err = regionConn.DeleteImage(ctx, input)
 		if err != nil {
 			errors = append(errors, err)
 		}
@@ -130,9 +137,7 @@ func (a *Artifact) stateAtlasMetadata() interface{} {
 // stateHCPPackerRegistryMetadata will write the metadata as an hcpRegistryImage for each of the OMIs
 // present in this artifact.
 func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
-
 	f := func(k, v interface{}) (*registryimage.Image, error) {
-
 		region, ok := k.(string)
 		if !ok {
 			return nil, errors.New("unexpected type of key in OMIs map")
@@ -148,12 +153,14 @@ func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
 		}
 
 		return &image, nil
-
 	}
 
 	images, err := registryimage.FromMappedData(a.Omis, f)
 	if err != nil {
-		log.Printf("[TRACE] error encountered when creating HCP Packer registry image for artifact.Omis: %s", err)
+		log.Printf(
+			"[TRACE] error encountered when creating HCP Packer registry image for artifact.Omis: %s",
+			err,
+		)
 		return nil
 	}
 

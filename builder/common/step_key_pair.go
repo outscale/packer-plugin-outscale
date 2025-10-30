@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 type StepKeyPair struct {
@@ -20,7 +20,7 @@ type StepKeyPair struct {
 	doCleanup bool
 }
 
-func (s *StepKeyPair) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *StepKeyPair) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packersdk.Ui)
 
 	if s.Comm.SSHPrivateKeyFile != "" {
@@ -59,8 +59,7 @@ func (s *StepKeyPair) Run(_ context.Context, state multistep.StateBag) multistep
 	req := oscgo.CreateKeypairRequest{
 		KeypairName: s.Comm.SSHTemporaryKeyPairName,
 	}
-	resp, _, err := conn.Api.KeypairApi.CreateKeypair(conn.Auth).CreateKeypairRequest(req).Execute()
-
+	resp, err := conn.CreateKeypair(ctx, req)
 	if err != nil {
 		state.Put("error", fmt.Errorf("error creating temporary keypair: %w", err))
 		return multistep.ActionHalt
@@ -70,7 +69,7 @@ func (s *StepKeyPair) Run(_ context.Context, state multistep.StateBag) multistep
 
 	// Set some data for use in future steps
 	s.Comm.SSHKeyPairName = s.Comm.SSHTemporaryKeyPairName
-	s.Comm.SSHPrivateKey = []byte(*resp.GetKeypair().PrivateKey)
+	s.Comm.SSHPrivateKey = []byte(*resp.Keypair.PrivateKey)
 
 	// If we're in debug mode, output the private key to the working
 	// directory.
@@ -84,14 +83,14 @@ func (s *StepKeyPair) Run(_ context.Context, state multistep.StateBag) multistep
 		defer f.Close()
 
 		// Write the key out
-		if _, err := f.Write([]byte(*resp.GetKeypair().PrivateKey)); err != nil {
+		if _, err := f.Write([]byte(*resp.Keypair.PrivateKey)); err != nil {
 			state.Put("error", fmt.Errorf("error saving debug key: %w", err))
 			return multistep.ActionHalt
 		}
 
 		// Chmod it so that it is SSH ready
 		if runtime.GOOS != "windows" {
-			if err := f.Chmod(0600); err != nil {
+			if err := f.Chmod(0o600); err != nil {
 				state.Put("error", fmt.Errorf("error setting permissions of debug key: %w", err))
 				return multistep.ActionHalt
 			}
@@ -117,10 +116,12 @@ func (s *StepKeyPair) Cleanup(state multistep.StateBag) {
 	request := oscgo.DeleteKeypairRequest{
 		KeypairName: &s.Comm.SSHTemporaryKeyPairName,
 	}
-	_, _, err := conn.Api.KeypairApi.DeleteKeypair(conn.Auth).DeleteKeypairRequest(request).Execute()
+	_, err := conn.DeleteKeypair(context.Background(), request)
 	if err != nil {
 		ui.Error(fmt.Sprintf(
-			"Error cleaning up keypair. Please delete the key manually: %s", s.Comm.SSHTemporaryKeyPairName))
+			"Error cleaning up keypair. Please delete the key manually: %s",
+			s.Comm.SSHTemporaryKeyPairName,
+		))
 	}
 
 	// Also remove the physical key if we're debugging.

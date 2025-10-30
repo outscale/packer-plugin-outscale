@@ -143,7 +143,10 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 
 	if b.config.FromScratch {
 		if b.config.SourceOMI != "" || !b.config.SourceOMIFilter.Empty() {
-			warns = append(warns, "source_omi and source_omi_filter are unused when from_scratch is true")
+			warns = append(
+				warns,
+				"source_omi and source_omi_filter are unused when from_scratch is true",
+			)
 		}
 		if b.config.RootVolumeSize == 0 {
 			errs = packersdk.MultiErrorAppend(
@@ -181,13 +184,17 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	return nil, warns, nil
 }
 
-func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook) (packersdk.Artifact, error) {
+func (b *Builder) Run(
+	ctx context.Context,
+	ui packersdk.Ui,
+	hook packersdk.Hook,
+) (packersdk.Artifact, error) {
 	if runtime.GOOS != "linux" {
 		return nil, errors.New("the outscale-chroot builder only works on Linux environments")
 	}
 
 	var oscConn *osccommon.OscClient
-	//var oscConn *oscgo.APIClient
+	// var oscConn *oscgo.APIClient
 	var err error
 	if oscConn, err = b.config.NewOSCClient(); err != nil {
 		return nil, err
@@ -264,7 +271,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			RootVolumeSize: b.config.RootVolumeSize,
 			RawRegion:      b.config.RawRegion,
 			ProductCodes:   b.config.ProductCodes,
-			BootModes:      b.config.GetBootModes(),
+			BootModes:      *b.config.GetBootModes(),
 		},
 		&osccommon.StepUpdateOMIAttributes{
 			AccountIds:         b.config.OMIAccountIDs,

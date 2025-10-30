@@ -1,10 +1,11 @@
 package common
 
 import (
+	"context"
 	"fmt"
 	"log"
 
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	"github.com/outscale/packer-plugin-outscale/builder/common/retry"
 )
 
@@ -80,72 +81,75 @@ func waitForState(errCh chan<- error, target string, refresh stateRefreshFunc) {
 
 func waitUntilOscVmStateFunc(conn *OscClient, id string) stateRefreshFunc {
 	return func() (string, error) {
+		ctx := context.Background()
+
 		log.Printf("[Debug] Retrieving state for VM with id %s", id)
-		resp, _, err := conn.Api.VmApi.ReadVms(conn.Auth).ReadVmsRequest(oscgo.ReadVmsRequest{
+		resp, err := conn.ReadVms(ctx, oscgo.ReadVmsRequest{
 			Filters: &oscgo.FiltersVm{
 				VmIds: &[]string{id},
 			},
-		}).Execute()
-
+		})
 		if err != nil {
 			return "", err
 		}
 
-		//TODO: check if needed
+		// TODO: check if needed
 		// if resp == nil {
 		// 	return "", fmt.Errorf("Vm with ID %s not Found", id)
 		// }
 
-		if len(resp.GetVms()) == 0 {
+		if len(*resp.Vms) == 0 {
 			return "pending", nil
 		}
 
-		return *resp.GetVms()[0].State, nil
+		return (*resp.Vms)[0].State, nil
 	}
 }
 
 func waitUntilOscVolumeLinkedStateFunc(conn *OscClient, id string) stateRefreshFunc {
 	return func() (string, error) {
+		ctx := context.Background()
+
 		log.Printf("[Debug] Check if volume with id %s exists", id)
-		resp, _, err := conn.Api.VolumeApi.ReadVolumes(conn.Auth).ReadVolumesRequest(oscgo.ReadVolumesRequest{
+		resp, err := conn.ReadVolumes(ctx, oscgo.ReadVolumesRequest{
 			Filters: &oscgo.FiltersVolume{
 				VolumeIds: &[]string{id},
 			},
-		}).Execute()
-
+		})
 		if err != nil {
 			return "", err
 		}
 
-		if len(resp.GetVolumes()) == 0 {
+		if len(*resp.Volumes) == 0 {
 			return "pending", nil
 		}
 
-		if len(*resp.GetVolumes()[0].LinkedVolumes) == 0 {
+		if len(*(*resp.Volumes)[0].LinkedVolumes) == 0 {
 			return "pending", nil
 		}
-		volume := resp.GetVolumes()[0]
-		return volume.GetState(), nil
+		volume := (*resp.Volumes)[0]
+		return *volume.State, nil
 	}
 }
 
 func waitUntilOscVolumeUnLinkedStateFunc(conn *OscClient, id string) stateRefreshFunc {
 	return func() (string, error) {
+		ctx := context.Background()
 		log.Printf("[Debug] Check if volume with id %s exists", id)
 		request := oscgo.ReadVolumesRequest{
 			Filters: &oscgo.FiltersVolume{VolumeIds: &[]string{id}},
 		}
-		resp, _, err := conn.Api.VolumeApi.ReadVolumes(conn.Auth).ReadVolumesRequest(request).Execute()
+		resp, err := conn.ReadVolumes(ctx, request)
 		if err != nil {
 			return "", err
 		}
 
-		if len(resp.GetVolumes()) == 0 {
+		if len(*resp.Volumes) == 0 {
 			return "pending", nil
 		}
 
-		if len(*resp.GetVolumes()[0].LinkedVolumes) == 0 {
-			return "dettached", nil
+		if len(*(*resp.Volumes)[0].LinkedVolumes) == 0 {
+			return "pending", nil
 		}
 
 		return "failed", nil
@@ -154,88 +158,90 @@ func waitUntilOscVolumeUnLinkedStateFunc(conn *OscClient, id string) stateRefres
 
 func waitUntilOscSnapshotStateFunc(conn *OscClient, id string) stateRefreshFunc {
 	return func() (string, error) {
-		log.Printf("[Debug] Check if Snapshot with id %s exists", id)
-		resp, _, err := conn.Api.SnapshotApi.ReadSnapshots(conn.Auth).ReadSnapshotsRequest(oscgo.ReadSnapshotsRequest{
-			Filters: &oscgo.FiltersSnapshot{SnapshotIds: &[]string{id}},
-		}).Execute()
+		ctx := context.Background()
 
+		log.Printf("[Debug] Check if Snapshot with id %s exists", id)
+		resp, err := conn.ReadSnapshots(ctx, oscgo.ReadSnapshotsRequest{
+			Filters: &oscgo.FiltersSnapshot{SnapshotIds: &[]string{id}},
+		})
 		if err != nil {
 			return "", err
 		}
 
-		if len(resp.GetSnapshots()) == 0 {
+		if len(*resp.Snapshots) == 0 {
 			return "pending", nil
 		}
 
-		return *resp.GetSnapshots()[0].State, nil
+		return (*resp.Snapshots)[0].State, nil
 	}
 }
 
 func waitUntilOscImageStateFunc(conn *OscClient, id string) stateRefreshFunc {
 	return func() (string, error) {
+		ctx := context.Background()
 		log.Printf("[Debug] Check if Image with id %s exists", id)
 		filterReq := oscgo.ReadImagesRequest{
 			Filters: &oscgo.FiltersImage{ImageIds: &[]string{id}},
 		}
-		resp, _, err := conn.Api.ImageApi.ReadImages(conn.Auth).ReadImagesRequest(filterReq).Execute()
+		resp, err := conn.ReadImages(ctx, filterReq)
 		if err != nil {
 			return "", err
 		}
 
-		if len(resp.GetImages()) == 0 {
+		if len(*resp.Images) == 0 {
 			return "pending", nil
 		}
 
-		if *resp.GetImages()[0].State == "failed" {
-			return *resp.GetImages()[0].State, fmt.Errorf("image (%s) creation is failed", id)
+		if (*resp.Images)[0].State == "failed" {
+			return (*resp.Images)[0].State, fmt.Errorf("image (%s) creation is failed", id)
 		}
 
-		return resp.GetImages()[0].GetState(), nil
+		return (*resp.Images)[0].State, nil
 	}
 }
 
 func waitUntilOscSnapshotDoneStateFunc(conn *OscClient, id string) stateRefreshFunc {
 	return func() (string, error) {
+		ctx := context.Background()
 		log.Printf("[Debug] Check if Snapshot with id %s exists", id)
-		resp, _, err := conn.Api.SnapshotApi.ReadSnapshots(conn.Auth).ReadSnapshotsRequest(oscgo.ReadSnapshotsRequest{
+		resp, err := conn.ReadSnapshots(ctx, oscgo.ReadSnapshotsRequest{
 			Filters: &oscgo.FiltersSnapshot{SnapshotIds: &[]string{id}},
-		}).Execute()
-
+		})
 		if err != nil {
 			return "", err
 		}
 
-		if len(resp.GetSnapshots()) == 0 {
+		if len(*resp.Snapshots) == 0 {
 			return "", fmt.Errorf("snapshot with ID %s. Not Found", id)
 		}
 
-		if *resp.GetSnapshots()[0].State == "error" {
-			return *resp.GetSnapshots()[0].State, fmt.Errorf("snapshot (%s) creation is failed", id)
+		if (*resp.Snapshots)[0].State == "error" {
+			return (*resp.Snapshots)[0].State, fmt.Errorf("snapshot (%s) creation is failed", id)
 		}
 
-		return *resp.GetSnapshots()[0].State, nil
+		return (*resp.Snapshots)[0].State, nil
 	}
 }
 
 func volumeOscWaitFunc(conn *OscClient, id string) stateRefreshFunc {
 	return func() (string, error) {
+		ctx := context.Background()
 		log.Printf("[Debug] Check if SvolumeG with id %s exists", id)
-		resp, _, err := conn.Api.VolumeApi.ReadVolumes(conn.Auth).ReadVolumesRequest(oscgo.ReadVolumesRequest{
+		resp, err := conn.ReadVolumes(ctx, oscgo.ReadVolumesRequest{
 			Filters: &oscgo.FiltersVolume{VolumeIds: &[]string{id}},
-		}).Execute()
-
+		})
 		if err != nil {
 			return "", err
 		}
 
-		if len(resp.GetVolumes()) == 0 {
+		if len(*resp.Volumes) == 0 {
 			return "waiting", nil
 		}
 
-		if *resp.GetVolumes()[0].State == "error" {
-			return *resp.GetVolumes()[0].State, fmt.Errorf("volume (%s) creation is failed", id)
+		if *(*resp.Volumes)[0].State == "error" {
+			return *(*resp.Volumes)[0].State, fmt.Errorf("volume (%s) creation is failed", id)
 		}
 
-		return *resp.GetVolumes()[0].State, nil
+		return *(*resp.Volumes)[0].State, nil
 	}
 }

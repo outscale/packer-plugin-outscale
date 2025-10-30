@@ -7,7 +7,7 @@ import (
 	"slices"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 // OMIConfig is for common configuration related to creating OMIs.
@@ -47,7 +47,10 @@ func (c *OMIConfig) Prepare(accessConfig *AccessConfig, ctx *interpolate.Context
 		for _, booModeValue := range c.OMIBootModes {
 			var bootMode oscgo.BootMode = (oscgo.BootMode)(booModeValue)
 			if !slices.Contains(bootModesSupported, bootMode) {
-				errs = append(errs, fmt.Errorf("the omi_boot_Modes ['%v'] is not supported yet", bootMode))
+				errs = append(
+					errs,
+					fmt.Errorf("the omi_boot_Modes ['%v'] is not supported yet", bootMode),
+				)
 			}
 		}
 	}
@@ -84,7 +87,10 @@ func (c *OMIConfig) prepareRegions(accessConfig *AccessConfig) (errs []error) {
 			if (accessConfig != nil) && (region == accessConfig.RawRegion) {
 				// make sure we don't try to copy to the region we originally
 				// create the OMI in.
-				log.Printf("Cannot copy OMI to OUTSCALE session region '%s', deleting it from `omi_regions`.", region)
+				log.Printf(
+					"Cannot copy OMI to OUTSCALE session region '%s', deleting it from `omi_regions`.",
+					region,
+				)
 				continue
 			}
 			regions = append(regions, region)
@@ -94,11 +100,13 @@ func (c *OMIConfig) prepareRegions(accessConfig *AccessConfig) (errs []error) {
 	}
 	return errs
 }
-func (c *OMIConfig) GetBootModes() (bootModes []oscgo.BootMode) {
+
+func (c *OMIConfig) GetBootModes() *[]oscgo.BootMode {
+	bootModes := make([]oscgo.BootMode, 0)
 	if len(c.OMIBootModes) > 0 {
 		for _, bootModeValue := range c.OMIBootModes {
 			bootModes = append(bootModes, (oscgo.BootMode)(bootModeValue))
 		}
 	}
-	return
+	return &bootModes
 }

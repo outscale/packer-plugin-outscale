@@ -4,8 +4,20 @@ import (
 	"reflect"
 	"testing"
 
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
+
+func PtrBool(boolVal bool) *bool {
+	return &boolVal
+}
+
+func PtrString(strVal string) *string {
+	return &strVal
+}
+
+func PtrInt(intVal int) *int {
+	return &intVal
+}
 
 func TestBlockDevice_LaunchDevices(t *testing.T) {
 	cases := []struct {
@@ -22,12 +34,12 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					SnapshotId:         oscgo.PtrString("snap-1234"),
-					VolumeType:         oscgo.PtrString("standard"),
-					VolumeSize:         oscgo.PtrInt32(8),
-					DeleteOnVmDeletion: oscgo.PtrBool(true),
+					SnapshotId:         PtrString("snap-1234"),
+					VolumeType:         PtrString("standard"),
+					VolumeSize:         PtrInt(8),
+					DeleteOnVmDeletion: PtrBool(true),
 				},
 			},
 		},
@@ -38,10 +50,10 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeSize:         oscgo.PtrInt32(8),
-					DeleteOnVmDeletion: oscgo.PtrBool(false),
+					VolumeSize:         PtrInt(8),
+					DeleteOnVmDeletion: PtrBool(false),
 				},
 			},
 		},
@@ -55,12 +67,12 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         oscgo.PtrString("io1"),
-					VolumeSize:         oscgo.PtrInt32(8),
-					DeleteOnVmDeletion: oscgo.PtrBool(true),
-					Iops:               oscgo.PtrInt32(1000),
+					VolumeType:         PtrString("io1"),
+					VolumeSize:         PtrInt(8),
+					DeleteOnVmDeletion: PtrBool(true),
+					Iops:               PtrInt(1000),
 				},
 			},
 		},
@@ -73,11 +85,11 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         oscgo.PtrString("gp2"),
-					VolumeSize:         oscgo.PtrInt32(8),
-					DeleteOnVmDeletion: oscgo.PtrBool(true),
+					VolumeType:         PtrString("gp2"),
+					VolumeSize:         PtrInt(8),
+					DeleteOnVmDeletion: PtrBool(true),
 				},
 			},
 		},
@@ -90,11 +102,11 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         oscgo.PtrString("gp2"),
-					VolumeSize:         oscgo.PtrInt32(8),
-					DeleteOnVmDeletion: oscgo.PtrBool(true),
+					VolumeType:         PtrString("gp2"),
+					VolumeSize:         PtrInt(8),
+					DeleteOnVmDeletion: PtrBool(true),
 				},
 			},
 		},
@@ -106,10 +118,10 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         oscgo.PtrString("standard"),
-					DeleteOnVmDeletion: oscgo.PtrBool(true),
+					VolumeType:         PtrString("standard"),
+					DeleteOnVmDeletion: PtrBool(true),
 				},
 			},
 		},
@@ -146,12 +158,12 @@ func TestBlockDevice_OMI(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					SnapshotId:         oscgo.PtrString("snap-1234"),
-					VolumeType:         oscgo.PtrString("standard"),
-					VolumeSize:         oscgo.PtrInt32(8),
-					DeleteOnVmDeletion: oscgo.PtrBool(true),
+					SnapshotId:         PtrString("snap-1234"),
+					VolumeType:         PtrString("standard"),
+					VolumeSize:         PtrInt(8),
+					DeleteOnVmDeletion: PtrBool(true),
 				},
 			},
 		},
@@ -163,10 +175,10 @@ func TestBlockDevice_OMI(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeSize:         oscgo.PtrInt32(8),
-					DeleteOnVmDeletion: oscgo.PtrBool(true),
+					VolumeSize:         PtrInt(8),
+					DeleteOnVmDeletion: PtrBool(true),
 				},
 			},
 		},
@@ -180,12 +192,12 @@ func TestBlockDevice_OMI(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         oscgo.PtrString("io1"),
-					VolumeSize:         oscgo.PtrInt32(8),
-					DeleteOnVmDeletion: oscgo.PtrBool(true),
-					Iops:               oscgo.PtrInt32(1000),
+					VolumeType:         PtrString("io1"),
+					VolumeSize:         PtrInt(8),
+					DeleteOnVmDeletion: PtrBool(true),
+					Iops:               PtrInt(1000),
 				},
 			},
 		},
@@ -198,11 +210,11 @@ func TestBlockDevice_OMI(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         oscgo.PtrString("gp2"),
-					VolumeSize:         oscgo.PtrInt32(8),
-					DeleteOnVmDeletion: oscgo.PtrBool(true),
+					VolumeType:         PtrString("gp2"),
+					VolumeSize:         PtrInt(8),
+					DeleteOnVmDeletion: PtrBool(true),
 				},
 			},
 		},
@@ -215,11 +227,11 @@ func TestBlockDevice_OMI(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         oscgo.PtrString("gp2"),
-					VolumeSize:         oscgo.PtrInt32(8),
-					DeleteOnVmDeletion: oscgo.PtrBool(true),
+					VolumeType:         PtrString("gp2"),
+					VolumeSize:         PtrInt(8),
+					DeleteOnVmDeletion: PtrBool(true),
 				},
 			},
 		},
@@ -231,10 +243,10 @@ func TestBlockDevice_OMI(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: oscgo.PtrString("/dev/sdb"),
+				DeviceName: PtrString("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         oscgo.PtrString("standard"),
-					DeleteOnVmDeletion: oscgo.PtrBool(true),
+					VolumeType:         PtrString("standard"),
+					DeleteOnVmDeletion: PtrBool(true),
 				},
 			},
 		},

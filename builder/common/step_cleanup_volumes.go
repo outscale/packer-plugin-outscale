@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 // StepCleanupVolumes cleans up any orphaned volumes that were not designated to
@@ -24,6 +24,7 @@ func (s *StepCleanupVolumes) Run(_ context.Context, state multistep.StateBag) mu
 
 // Cleanup ...
 func (s *StepCleanupVolumes) Cleanup(state multistep.StateBag) {
+	ctx := context.Background()
 	oscconn := state.Get("osc").(*OscClient)
 	vmRaw := state.Get("vm")
 	var vm oscgo.Vm
@@ -31,10 +32,6 @@ func (s *StepCleanupVolumes) Cleanup(state multistep.StateBag) {
 		vm = vmRaw.(oscgo.Vm)
 	}
 	ui := state.Get("ui").(packersdk.Ui)
-	if vm.VmId == nil {
-		ui.Say("No volumes to clean up, skipping")
-		return
-	}
 
 	ui.Say("Cleaning up any extra volumes...")
 
@@ -42,18 +39,16 @@ func (s *StepCleanupVolumes) Cleanup(state multistep.StateBag) {
 	// to device name, to compare with save list below
 	var vl []string
 	volList := make(map[string]string)
-	for _, bdm := range *vm.BlockDeviceMappings {
-		if bdm.Bsu != nil {
-			vl = append(vl, *bdm.GetBsu().VolumeId)
-			volList[bdm.Bsu.GetVolumeId()] = bdm.GetDeviceName()
-		}
+	for _, bdm := range vm.BlockDeviceMappings {
+		vl = append(vl, bdm.Bsu.VolumeId)
+		volList[bdm.Bsu.VolumeId] = bdm.DeviceName
 	}
 
 	// Using the volume list from the cached Vm, check with Outscale for up to
 	// date information on them
-	resp, _, err := oscconn.Api.VolumeApi.ReadVolumes(oscconn.Auth).ReadVolumesRequest(oscgo.ReadVolumesRequest{
-		Filters: &oscgo.FiltersVolume{VolumeIds: &vl}}).Execute()
-
+	resp, err := oscconn.ReadVolumes(ctx, oscgo.ReadVolumesRequest{
+		Filters: &oscgo.FiltersVolume{VolumeIds: &vl},
+	})
 	if err != nil {
 		ui.Say(fmt.Sprintf("Error describing volumes: %s", err))
 		return
@@ -61,13 +56,13 @@ func (s *StepCleanupVolumes) Cleanup(state multistep.StateBag) {
 
 	// If any of the returned volumes are in a "deleting" stage or otherwise not
 	// available, remove them from the list of volumes
-	for _, v := range resp.GetVolumes() {
+	for _, v := range *resp.Volumes {
 		if v.State != nil && *v.State != "available" {
 			delete(volList, *v.VolumeId)
 		}
 	}
 
-	if len(resp.GetVolumes()) == 0 {
+	if len(*resp.Volumes) == 0 {
 		ui.Say("No volumes to clean up, skipping")
 		return
 	}
@@ -88,7 +83,7 @@ func (s *StepCleanupVolumes) Cleanup(state multistep.StateBag) {
 		request := oscgo.DeleteVolumeRequest{
 			VolumeId: k,
 		}
-		_, _, err := oscconn.Api.VolumeApi.DeleteVolume(oscconn.Auth).DeleteVolumeRequest(request).Execute()
+		_, err := oscconn.DeleteVolume(ctx, request)
 		if err != nil {
 			ui.Say(fmt.Sprintf("Error deleting volume: %s", err))
 		}

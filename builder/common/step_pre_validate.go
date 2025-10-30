@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 // StepPreValidate provides an opportunity to pre-validate any configuration for
@@ -17,7 +17,7 @@ type StepPreValidate struct {
 	API             string
 }
 
-func (s *StepPreValidate) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *StepPreValidate) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packersdk.Ui)
 	if s.ForceDeregister {
 		ui.Say("Force Deregister flag found, skipping prevalidating OMI Name")
@@ -31,21 +31,20 @@ func (s *StepPreValidate) Run(_ context.Context, state multistep.StateBag) multi
 
 	ui.Say(fmt.Sprintf("Prevalidating OMI Name: %s", s.DestOmiName))
 
-	accountResp, _, err := conn.Api.AccountApi.ReadAccounts(conn.Auth).ReadAccountsRequest(oscgo.ReadAccountsRequest{}).Execute()
-	if err != nil || len(accountResp.GetAccounts()) == 0 {
+	accountResp, err := conn.ReadAccounts(ctx, oscgo.ReadAccountsRequest{})
+	if err != nil || len(*accountResp.Accounts) == 0 {
 		err := fmt.Errorf("error querying outscale account: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 
-	resp, _, err := conn.Api.ImageApi.ReadImages(conn.Auth).ReadImagesRequest(oscgo.ReadImagesRequest{
+	resp, err := conn.ReadImages(ctx, oscgo.ReadImagesRequest{
 		Filters: &oscgo.FiltersImage{
 			ImageNames: &[]string{s.DestOmiName},
-			AccountIds: &[]string{accountResp.GetAccounts()[0].GetAccountId()},
+			AccountIds: &[]string{*(*accountResp.Accounts)[0].AccountId},
 		},
-	}).Execute()
-
+	})
 	if err != nil {
 		err := fmt.Errorf("error querying OMI: %w", err)
 		state.Put("error", err)
@@ -53,8 +52,8 @@ func (s *StepPreValidate) Run(_ context.Context, state multistep.StateBag) multi
 		return multistep.ActionHalt
 	}
 
-	for _, omi := range resp.GetImages() {
-		if omi.GetImageName() == s.DestOmiName {
+	for _, omi := range *resp.Images {
+		if *omi.ImageName == s.DestOmiName {
 			images = append(images, omi)
 		}
 	}

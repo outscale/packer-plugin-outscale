@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 type StepUpdateOMIAttributes struct {
@@ -18,7 +18,10 @@ type StepUpdateOMIAttributes struct {
 	Ctx                interpolate.Context
 }
 
-func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *StepUpdateOMIAttributes) Run(
+	ctx context.Context,
+	state multistep.StateBag,
+) multistep.StepAction {
 	ui, ok := state.Get("ui").(packersdk.Ui)
 	if !ok {
 		return multistep.ActionContinue
@@ -61,11 +64,17 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 	// Updating image attributes
 	for region, omi := range omis {
 		ui.Say(fmt.Sprintf("Updating attributes on OMI (%s)...", omi))
-		regionconn := config.NewOSCClientByRegion(region)
+		regionconn, err := config.NewOSCClientByRegion(region)
+		if err != nil {
+			err := fmt.Errorf("error updating OMI: %w", err)
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
 
 		ui.Message(fmt.Sprintf("Updating: %s", omi))
 		updateImageRequest.ImageId = omi
-		_, _, err := regionconn.Api.ImageApi.UpdateImage(regionconn.Auth).UpdateImageRequest(updateImageRequest).Execute()
+		_, err = regionconn.UpdateImage(ctx, updateImageRequest)
 		if err != nil {
 			err := fmt.Errorf("error updating OMI: %w", err)
 			state.Put("error", err)
@@ -82,11 +91,17 @@ func (s *StepUpdateOMIAttributes) Run(_ context.Context, state multistep.StateBa
 	for region, region_snapshots := range snapshots {
 		for _, snapshot := range region_snapshots {
 			ui.Say(fmt.Sprintf("Updating attributes on snapshot (%s)...", snapshot))
-			regionconn := config.NewOSCClientByRegion(region)
+			regionconn, err := config.NewOSCClientByRegion(region)
+			if err != nil {
+				err := fmt.Errorf("error updating snapshot: %w", err)
+				state.Put("error", err)
+				ui.Error(err.Error())
+				return multistep.ActionHalt
+			}
 
 			ui.Message(fmt.Sprintf("Updating: %s", snapshot))
 			updateSnapshoptRequest.SnapshotId = snapshot
-			_, _, err := regionconn.Api.SnapshotApi.UpdateSnapshot(regionconn.Auth).UpdateSnapshotRequest(updateSnapshoptRequest).Execute()
+			_, err = regionconn.UpdateSnapshot(ctx, updateSnapshoptRequest)
 			if err != nil {
 				err := fmt.Errorf("error updating snapshot: %w", err)
 				state.Put("error", err)

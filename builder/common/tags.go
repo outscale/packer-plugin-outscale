@@ -1,16 +1,19 @@
 package common
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
-type TagMap map[string]string
-type OSCTags []oscgo.ResourceTag
+type (
+	TagMap  map[string]string
+	OSCTags []oscgo.ResourceTag
+)
 
 func (t OSCTags) Report(ui packersdk.Ui) {
 	for _, tag := range t {
@@ -23,7 +26,11 @@ func (t TagMap) IsSet() bool {
 	return len(t) > 0
 }
 
-func (t TagMap) OSCTags(ctx interpolate.Context, region string, state multistep.StateBag) (OSCTags, error) {
+func (t TagMap) OSCTags(
+	ctx interpolate.Context,
+	region string,
+	state multistep.StateBag,
+) (OSCTags, error) {
 	var oscTags []oscgo.ResourceTag
 	ctx.Data = extractBuildInfo(region, state)
 
@@ -50,6 +57,6 @@ func CreateOSCTags(conn *OscClient, resourceID string, ui packersdk.Ui, tags OSC
 		ResourceIds: []string{resourceID},
 		Tags:        tags,
 	}
-	_, _, err := conn.Api.TagApi.CreateTags(conn.Auth).CreateTagsRequest(request).Execute()
+	_, err := conn.CreateTags(context.Background(), request)
 	return err
 }

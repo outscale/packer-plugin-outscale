@@ -2,10 +2,11 @@
 package common
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 func (d *OmiFilterOptions) GetOwners() []*string {
@@ -17,7 +18,11 @@ func (d *OmiFilterOptions) GetOwners() []*string {
 	return res
 }
 
-func (d *OmiFilterOptions) GetFilteredImage(params oscgo.ReadImagesRequest, oscconn *OscClient) (*oscgo.Image, error) {
+func (d *OmiFilterOptions) GetFilteredImage(
+	params oscgo.ReadImagesRequest,
+	oscconn *OscClient,
+) (*oscgo.Image, error) {
+	ctx := context.Background()
 
 	// We have filters to apply
 	if len(d.Filters) > 0 {
@@ -25,7 +30,7 @@ func (d *OmiFilterOptions) GetFilteredImage(params oscgo.ReadImagesRequest, oscc
 		// chack if we can parse omi filters
 		params.Filters = &omiFilters
 	}
-	//TODO:Check if AccountIds correspond to Owners.
+	// TODO:Check if AccountIds correspond to Owners.
 	if len(d.Owners) > 0 {
 		var oid []string
 		var oali []string
@@ -41,24 +46,29 @@ func (d *OmiFilterOptions) GetFilteredImage(params oscgo.ReadImagesRequest, oscc
 		params.Filters.AccountAliases = &oali
 	}
 
-	imageResp, _, err := oscconn.Api.ImageApi.ReadImages(oscconn.Auth).ReadImagesRequest(params).Execute()
+	imageResp, err := oscconn.ReadImages(ctx, params)
 	if err != nil {
 		return nil, fmt.Errorf("error querying OMI: %w", err)
 	}
 
-	if len(imageResp.GetImages()) == 0 {
-		return nil, fmt.Errorf("no OMI was found matching filters: %v", params.Filters.GetImageNames())
+	if len(*imageResp.Images) == 0 {
+		return nil, fmt.Errorf(
+			"no OMI was found matching filters: %v",
+			*params.Filters.ImageNames,
+		)
 	}
 
-	if len(imageResp.GetImages()) > 1 && !d.MostRecent {
-		return nil, errors.New("your query returned more than one result. Please try a more specific search, or set most_recent to true")
+	if len(*imageResp.Images) > 1 && !d.MostRecent {
+		return nil, errors.New(
+			"your query returned more than one result. Please try a more specific search, or set most_recent to true",
+		)
 	}
 
 	var image oscgo.Image
 	if d.MostRecent {
-		image = mostRecentOscOmi(imageResp.GetImages())
+		image = mostRecentOscOmi(*imageResp.Images)
 	} else {
-		image = imageResp.GetImages()[0]
+		image = (*imageResp.Images)[0]
 	}
 	return &image, nil
 }

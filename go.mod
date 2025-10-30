@@ -1,6 +1,6 @@
 module github.com/outscale/packer-plugin-outscale
 
-go 1.23.5
+go 1.24
 
 require (
 	github.com/aws/aws-sdk-go v1.55.7
@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.23.0
 	github.com/hashicorp/packer-plugin-sdk v0.6.1
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/outscale/osc-sdk-go/v2 v2.27.0
+	github.com/outscale/osc-sdk-go/v3 v3.0.0-alpha.5.0.20251030161225-4313baade35c
 	github.com/zclconf/go-cty v1.16.3
 	golang.org/x/sys v0.33.0
 )
@@ -18,12 +18,15 @@ require (
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	cloud.google.com/go/iam v1.1.6 // indirect
 	cloud.google.com/go/storage v1.38.0 // indirect
+	dario.cat/mergo v1.0.2 // indirect
 	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/ChrisTrenkamp/goxpath v0.0.0-20210404020558-97928f7e12b6 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
+	github.com/aws/smithy-go/aws-http-auth v1.0.0 // indirect
+	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bodgit/ntlmssp v0.0.0-20240208161302-b2d35758202d // indirect
 	github.com/bodgit/windows v1.0.1 // indirect
@@ -51,7 +54,7 @@ require (
 	github.com/hashicorp/go-getter/v2 v2.2.2 // indirect
 	github.com/hashicorp/go-hclog v1.6.3 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-secure-stdlib/parseutil v0.1.8 // indirect
@@ -86,6 +89,7 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
+	github.com/oapi-codegen/runtime v1.1.2 // indirect
 	github.com/packer-community/winrmcp v0.0.0-20221126162354-6e900dd2c68f // indirect
 	github.com/pkg/sftp v1.13.6 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
@@ -100,6 +104,7 @@ require (
 	go.opentelemetry.io/otel v1.23.1 // indirect
 	go.opentelemetry.io/otel/metric v1.23.1 // indirect
 	go.opentelemetry.io/otel/trace v1.23.1 // indirect
+	go.uber.org/ratelimit v0.3.1 // indirect
 	golang.org/x/crypto v0.39.0 // indirect
 	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a // indirect
 	golang.org/x/mod v0.25.0 // indirect
@@ -117,7 +122,6 @@ require (
 	google.golang.org/grpc v1.61.1 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 replace github.com/zclconf/go-cty => github.com/nywilken/go-cty v1.13.3 // added by packer-sdc fix as noted in github.com/hashicorp/packer-plugin-sdk/issues/187

@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	"github.com/outscale/packer-plugin-outscale/builder/common/retry"
 )
 
@@ -18,7 +17,7 @@ type StepCreateTags struct {
 	Ctx          interpolate.Context
 }
 
-func (s *StepCreateTags) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *StepCreateTags) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	config := state.Get("accessConfig").(*AccessConfig)
 	ui := state.Get("ui").(packersdk.Ui)
 	omis := state.Get("omis").(map[string]string)
@@ -31,15 +30,7 @@ func (s *StepCreateTags) Run(_ context.Context, state multistep.StateBag) multis
 	for region, ami := range omis {
 		ui.Say(fmt.Sprintf("Adding tags to OMI (%s)...", ami))
 
-		regionconn := config.NewOSCClientByRegion(region)
-
-		// Retrieve image list for given OMI
-		resourceIds := []string{ami}
-		imageResp, _, err := regionconn.Api.ImageApi.ReadImages(regionconn.Auth).ReadImagesRequest(oscgo.ReadImagesRequest{
-			Filters: &oscgo.FiltersImage{
-				ImageIds: &resourceIds,
-			},
-		}).Execute()
+		regionconn, err := config.NewOSCClientByRegion(region)
 		if err != nil {
 			err := fmt.Errorf("error retrieving details for OMI (%s): %w", ami, err)
 			state.Put("error", err)
@@ -47,22 +38,36 @@ func (s *StepCreateTags) Run(_ context.Context, state multistep.StateBag) multis
 			return multistep.ActionHalt
 		}
 
-		if len(imageResp.GetImages()) == 0 {
+		// Retrieve image list for given OMI
+		resourceIds := []string{ami}
+		imageResp, err := regionconn.ReadImages(ctx, oscgo.ReadImagesRequest{
+			Filters: &oscgo.FiltersImage{
+				ImageIds: &resourceIds,
+			},
+		})
+		if err != nil {
+			err := fmt.Errorf("error retrieving details for OMI (%s): %w", ami, err)
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
+
+		if len(*imageResp.Images) == 0 {
 			err := fmt.Errorf("error retrieving details for OMI (%s), no images found", ami)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
 
-		image := imageResp.GetImages()[0]
+		image := (*imageResp.Images)[0]
 		snapshotIds := []string{}
 
 		// Add only those with a Snapshot ID, i.e. not Ephemeral
-		for _, device := range image.GetBlockDeviceMappings() {
-			if device.GetBsu().SnapshotId != nil {
-				ui.Say(fmt.Sprintf("Tagging snapshot: %s", *device.GetBsu().SnapshotId))
-				resourceIds = append(resourceIds, *device.GetBsu().SnapshotId)
-				snapshotIds = append(snapshotIds, *device.GetBsu().SnapshotId)
+		for _, device := range *image.BlockDeviceMappings {
+			if device.Bsu.SnapshotId != nil {
+				ui.Say(fmt.Sprintf("Tagging snapshot: %s", *device.Bsu.SnapshotId))
+				resourceIds = append(resourceIds, *device.Bsu.SnapshotId)
+				snapshotIds = append(snapshotIds, *device.Bsu.SnapshotId)
 			}
 		}
 
@@ -92,13 +97,7 @@ func (s *StepCreateTags) Run(_ context.Context, state multistep.StateBag) multis
 				Tags:        omiTags,
 			}
 
-			_, _, err := regionconn.Api.TagApi.CreateTags(regionconn.Auth).CreateTagsRequest(request).Execute()
-			if awsErr, ok := err.(awserr.Error); ok {
-				if awsErr.Code() == "InvalidOMIID.NotFound" ||
-					awsErr.Code() == "InvalidSnapshot.NotFound" {
-					return false, nil
-				}
-			}
+			_, _ = regionconn.CreateTags(ctx, request)
 
 			requestSnap := oscgo.CreateTagsRequest{
 				ResourceIds: snapshotIds,
@@ -106,19 +105,13 @@ func (s *StepCreateTags) Run(_ context.Context, state multistep.StateBag) multis
 			}
 			// Override tags on snapshots
 			if len(snapshotTags) > 0 {
-				_, _, err = regionconn.Api.TagApi.CreateTags(regionconn.Auth).CreateTagsRequest(requestSnap).Execute()
+				_, err = regionconn.CreateTags(ctx, requestSnap)
 			}
 			if err == nil {
 				return true, nil
 			}
-			if awsErr, ok := err.(awserr.Error); ok {
-				if awsErr.Code() == "InvalidSnapshot.NotFound" {
-					return false, nil
-				}
-			}
 			return true, err
 		})
-
 		if err != nil {
 			err := fmt.Errorf("error adding tags to Resources (%#v): %w", resourceIds, err)
 			state.Put("error", err)

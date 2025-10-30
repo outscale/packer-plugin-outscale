@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
@@ -24,7 +24,7 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	snapshotId := state.Get("snapshot_id").(string)
 	ui := state.Get("ui").(packersdk.Ui)
 
-	//regionconn := config.NewOSCClientByRegion(region)
+	// regionconn := config.NewOSCClientByRegion(region)
 	ui.Say("Creating the OMI...")
 
 	var (
@@ -39,27 +39,27 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 		rootDeviceName = config.RootDeviceName
 	} else {
 		image = state.Get("source_image").(oscgo.Image)
-		mappings = image.GetBlockDeviceMappings()
-		rootDeviceName = image.GetRootDeviceName()
+		mappings = *image.BlockDeviceMappings
+		rootDeviceName = *image.RootDeviceName
 	}
 
 	newMappings := make([]oscgo.BlockDeviceMappingImage, len(mappings))
 	for i, device := range mappings {
 		newDevice := device
 
-		//FIX: Temporary fix
-		gibSize := newDevice.Bsu.GetVolumeSize() / (1024 * 1024 * 1024)
+		// FIX: Temporary fix
+		gibSize := *newDevice.Bsu.VolumeSize / (1024 * 1024 * 1024)
 		newDevice.Bsu.VolumeSize = &gibSize
 
-		if newDevice.GetDeviceName() == rootDeviceName {
+		if *newDevice.DeviceName == rootDeviceName {
 			if newDevice.Bsu != nil {
 				newDevice.Bsu.SnapshotId = &snapshotId
 			} else {
 				newDevice.Bsu = &oscgo.BsuToCreate{SnapshotId: &snapshotId}
 			}
 
-			if config.FromScratch || int32(s.RootVolumeSize) > newDevice.Bsu.GetVolumeSize() {
-				*newDevice.Bsu.VolumeSize = int32(s.RootVolumeSize)
+			if config.FromScratch || s.RootVolumeSize > int64(*newDevice.Bsu.VolumeSize) {
+				*newDevice.Bsu.VolumeSize = int(s.RootVolumeSize)
 			}
 		}
 
@@ -85,16 +85,16 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 		registerOpts.ProductCodes = &config.ProductCodes
 	}
 	if len(config.OMIBootModes) > 0 {
-		registerOpts.SetBootModes(config.GetBootModes())
+		registerOpts.BootModes = config.GetBootModes()
 	}
-	registerResp, _, err := osconn.Api.ImageApi.CreateImage(osconn.Auth).CreateImageRequest(registerOpts).Execute()
+	registerResp, err := osconn.CreateImage(ctx, registerOpts)
 	if err != nil {
 		state.Put("error", fmt.Errorf("error registering OMI: %w", err))
 		ui.Error(state.Get("error").(error).Error())
 		return multistep.ActionHalt
 	}
 
-	imageID := registerResp.Image.GetImageId()
+	imageID := registerResp.Image.ImageId
 
 	// Set the OMI ID in the state
 	ui.Say(fmt.Sprintf("OMI: %s", imageID))
@@ -115,10 +115,14 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 
 func (s *StepCreateOMI) Cleanup(state multistep.StateBag) {}
 
-func buildRegisterOpts(config *Config, image oscgo.Image, mappings []oscgo.BlockDeviceMappingImage) oscgo.CreateImageRequest {
+func buildRegisterOpts(
+	config *Config,
+	image oscgo.Image,
+	mappings []oscgo.BlockDeviceMappingImage,
+) oscgo.CreateImageRequest {
 	registerOpts := oscgo.CreateImageRequest{
 		ImageName:           &config.OMIName,
-		Architecture:        image.Architecture,
+		Architecture:        &image.Architecture,
 		RootDeviceName:      image.RootDeviceName,
 		BlockDeviceMappings: &mappings,
 	}

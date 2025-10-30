@@ -1,17 +1,14 @@
 package common
 
 import (
-	"context"
-	"crypto/tls"
 	"errors"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
-	"github.com/outscale/packer-plugin-outscale/version"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
+	"github.com/outscale/osc-sdk-go/v3/pkg/profile"
 )
 
 // AccessConfig is for common configuration related to Outscale API access
@@ -30,7 +27,6 @@ type AccessConfig struct {
 }
 
 func getValueFromEnvVariables(envVariables []string) (string, bool) {
-
 	for _, envVariable := range envVariables {
 		if value, ok := os.LookupEnv(envVariable); ok && value != "" {
 			return value, true
@@ -41,8 +37,7 @@ func getValueFromEnvVariables(envVariables []string) (string, bool) {
 }
 
 type OscClient struct {
-	Auth context.Context
-	Api  *oscgo.APIClient
+	*oscgo.Client
 }
 
 // NewOSCClient retrieves the Outscale OSC-SDK client
@@ -50,21 +45,27 @@ func (c *AccessConfig) NewOSCClient() (*OscClient, error) {
 	if c.AccessKey == "" {
 		var ok bool
 		if c.AccessKey, ok = getValueFromEnvVariables([]string{"OSC_ACCESS_KEY", "OUTSCALE_ACCESSKEYID"}); !ok {
-			return nil, errors.New("no access key has been setted (configuration file, environment variable : OSC_ACCESS_KEY or OUTSCALE_ACCESSKEYID)")
+			return nil, errors.New(
+				"no access key has been setted (configuration file, environment variable : OSC_ACCESS_KEY or OUTSCALE_ACCESSKEYID)",
+			)
 		}
 	}
 
 	if c.SecretKey == "" {
 		var ok bool
 		if c.SecretKey, ok = getValueFromEnvVariables([]string{"OSC_SECRET_KEY", "OUTSCALE_SECRETKEYID"}); !ok {
-			return nil, errors.New("no secret key has been setted (configuration file, environment variable : OSC_SECRET_KEY or OUTSCALE_SECRETKEYID)")
+			return nil, errors.New(
+				"no secret key has been setted (configuration file, environment variable : OSC_SECRET_KEY or OUTSCALE_SECRETKEYID)",
+			)
 		}
 	}
 
 	if c.RawRegion == "" {
 		var ok bool
 		if c.RawRegion, ok = getValueFromEnvVariables([]string{"OSC_REGION", "OUTSCALE_REGION"}); !ok {
-			return nil, errors.New("no region has been setted (configuration file, environment variable : OSC_REGION or OUTSCALE_REGION)")
+			return nil, errors.New(
+				"no region has been setted (configuration file, environment variable : OSC_REGION or OUTSCALE_REGION)",
+			)
 		}
 	}
 
@@ -92,7 +93,7 @@ func (c *AccessConfig) NewOSCClient() (*OscClient, error) {
 			log.Printf("No Key Path has been setted")
 		}
 	}
-	return c.NewOSCClientByRegion(c.RawRegion), nil
+	return c.NewOSCClientByRegion(c.RawRegion)
 }
 
 // GetRegion retrieves the Outscale OSC-SDK Region set
@@ -101,60 +102,26 @@ func (c *AccessConfig) GetRegion() string {
 }
 
 // NewOSCClientByRegion returns the connection depdending of the region given
-func (c *AccessConfig) NewOSCClientByRegion(region string) *OscClient {
-	transport := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: c.InsecureSkipTLSVerify},
-		Proxy:           http.ProxyFromEnvironment,
-	}
-
-	if c.X509certPath != "" && c.X509keyPath != "" {
-		cert, err := tls.LoadX509KeyPair(c.X509certPath, c.X509keyPath)
-		if err == nil {
-			transport.TLSClientConfig = &tls.Config{
-				InsecureSkipVerify: c.InsecureSkipTLSVerify,
-				Certificates:       []tls.Certificate{cert},
-			}
-		}
-	}
-
-	skipClient := &http.Client{
-		Transport: transport,
-	}
-
-	skipClient.Transport = NewTransport(c.AccessKey, c.SecretKey, c.RawRegion, skipClient.Transport)
-
-	config := oscgo.NewConfiguration()
-	config.Debug = true
-	config.UserAgent = fmt.Sprintf("packer-plugin-outscale/%s", version.PluginVersion.String())
-	auth := context.WithValue(context.Background(), oscgo.ContextAWSv4, oscgo.AWSv4{
-		AccessKey: c.AccessKey,
-		SecretKey: c.SecretKey,
-	})
-	config.HTTPClient = skipClient
-
-	url := fmt.Sprintf("https://api.%s.outscale.com/api/v1", region)
-	if c.CustomEndpointOAPI != "" {
-		url = c.CustomEndpointOAPI
-	}
-	config.Servers = oscgo.ServerConfigurations{
-		{
-			URL:         url,
-			Description: "Loaded from profile",
-			Variables: map[string]oscgo.ServerVariable{
-				"region": {
-					Description:  "Loaded from env variables",
-					DefaultValue: region,
-					EnumValues:   []string{region},
-				},
-			},
+func (c *AccessConfig) NewOSCClientByRegion(region string) (*OscClient, error) {
+	profile := profile.Profile{
+		Region:         c.RawRegion,
+		AccessKey:      c.AccessKey,
+		SecretKey:      c.SecretKey,
+		X509ClientCert: c.X509certPath,
+		X509ClientKey:  c.X509keyPath,
+		Endpoints: profile.Endpoint{
+			API: c.CustomEndpointOAPI,
 		},
 	}
 
-	oscClient := &OscClient{
-		Api:  oscgo.NewAPIClient(config),
-		Auth: auth,
+	client, err := oscgo.NewClient(&profile)
+	if err != nil {
+		return nil, err
 	}
-	return oscClient
+
+	return &OscClient{
+		Client: client,
+	}, nil
 }
 
 func (c *AccessConfig) Prepare(ctx *interpolate.Context) []error {

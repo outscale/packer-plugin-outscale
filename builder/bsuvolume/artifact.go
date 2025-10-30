@@ -1,6 +1,7 @@
 package bsuvolume
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"sort"
@@ -8,7 +9,7 @@ import (
 
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
@@ -74,7 +75,6 @@ func (a *Artifact) State(name string) interface{} {
 		return a.stateHCPPackerRegistryMetadata()
 	}
 	return a.StateData[name]
-
 }
 
 func (a *Artifact) Destroy() error {
@@ -88,7 +88,7 @@ func (a *Artifact) Destroy() error {
 				VolumeId: volumeID,
 			}
 			oscClient := *(a.Conn)
-			_, _, err := oscClient.Api.VolumeApi.DeleteVolume(oscClient.Auth).DeleteVolumeRequest(input).Execute()
+			_, err := oscClient.DeleteVolume(context.Background(), input)
 			if err != nil {
 				errors = append(errors, err)
 			}
@@ -109,7 +109,6 @@ func (a *Artifact) Destroy() error {
 // stateHCPPackerRegistryMetadata will write the metadata as an hcpRegistryImage for each of the OMIs
 // present in this artifact.
 func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
-
 	images := make([]*registryimage.Image, 0, len(a.Volumes)+len(a.Snapshots))
 	for region, volumeIDs := range a.Volumes {
 		for _, volumeID := range volumeIDs {

@@ -8,16 +8,16 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
 // StepVmInfo verifies that this builder is running on an Outscale vm.
 type StepVmInfo struct{}
 
-func (s *StepVmInfo) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *StepVmInfo) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	oscconn := state.Get("osc").(*osccommon.OscClient)
-	//session := state.Get("clientConfig").(*session.Session)
+	// session := state.Get("clientConfig").(*session.Session)
 	ui := state.Get("ui").(packersdk.Ui)
 
 	// Get our own vm ID
@@ -39,11 +39,11 @@ func (s *StepVmInfo) Run(_ context.Context, state multistep.StateBag) multistep.
 
 	// Query the entire vm metadata
 
-	resp, _, err := oscconn.Api.VmApi.ReadVms(oscconn.Auth).ReadVmsRequest(oscgo.ReadVmsRequest{
+	resp, err := oscconn.ReadVms(ctx, oscgo.ReadVmsRequest{
 		Filters: &oscgo.FiltersVm{
 			VmIds: &[]string{string(vmID)},
 		},
-	}).Execute()
+	})
 	if err != nil {
 		err := fmt.Errorf("error getting vm data: %w", err)
 		state.Put("error", err)
@@ -51,7 +51,7 @@ func (s *StepVmInfo) Run(_ context.Context, state multistep.StateBag) multistep.
 		return multistep.ActionHalt
 	}
 
-	vmsResp := resp.GetVms()
+	vmsResp := *resp.Vms
 
 	if len(vmsResp) == 0 {
 		err := errors.New("error getting vm data: no vm found")

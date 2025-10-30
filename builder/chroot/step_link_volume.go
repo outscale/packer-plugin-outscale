@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
@@ -30,16 +30,16 @@ func (s *StepLinkVolume) Run(ctx context.Context, state multistep.StateBag) mult
 	volumeId := state.Get("volume_id").(string)
 
 	// For the API call, it expects "sd" prefixed devices.
-	//linkVolume := strings.Replace(device, "/xvd", "/sd", 1)
+	// linkVolume := strings.Replace(device, "/xvd", "/sd", 1)
 	linkVolume := device
 
 	ui.Say(fmt.Sprintf("Attaching the root volume to %s", linkVolume))
 	opts := oscgo.LinkVolumeRequest{
 		DeviceName: linkVolume,
-		VmId:       *vm.VmId,
+		VmId:       vm.VmId,
 		VolumeId:   volumeId,
 	}
-	_, _, err := oscconn.Api.VolumeApi.LinkVolume(oscconn.Auth).LinkVolumeRequest(opts).Execute()
+	_, err := oscconn.LinkVolume(ctx, opts)
 	if err != nil {
 		err := fmt.Errorf("error attaching volume: %w", err)
 		state.Put("error", err)
@@ -83,7 +83,7 @@ func (s *StepLinkVolume) CleanupFunc(state multistep.StateBag) error {
 	opts := oscgo.UnlinkVolumeRequest{
 		VolumeId: s.volumeId,
 	}
-	_, _, err := oscconn.Api.VolumeApi.UnlinkVolume(oscconn.Auth).UnlinkVolumeRequest(opts).Execute()
+	_, err := oscconn.UnlinkVolume(context.Background(), opts)
 	if err != nil {
 		return fmt.Errorf("error detaching BSU volume: %w", err)
 	}

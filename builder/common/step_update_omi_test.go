@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 // Create statebag for running test
@@ -26,6 +26,7 @@ func getStateUpdateOMI(omiId string, snapId string, state multistep.StateBag) mu
 }
 
 func TestUpdateOmi(t *testing.T) {
+	ctx := context.Background()
 	state, err := getState()
 	if err != nil {
 		t.Fatalf("error setting osc client %s", err.Error())
@@ -43,21 +44,21 @@ func TestUpdateOmi(t *testing.T) {
 	createVmOpts := oscgo.CreateVmsRequest{
 		ImageId: "ami-0aaec44f",
 	}
-	createVmOpts.SetVmType("tinav7.c4r8p2")
-	createReq, _, err := client.Api.VmApi.CreateVms(client.Auth).CreateVmsRequest(createVmOpts).Execute()
+	defaultVmType := "tinav7.c4r8p2"
+	createVmOpts.VmType = &defaultVmType
+	createReq, err := client.CreateVms(ctx, createVmOpts)
 	if err != nil {
 		t.Fatalf("error creating VM: %v", err)
 	}
-	vm := createReq.GetVms()[0]
-	vmId := vm.GetVmId()
-	volId := vm.GetBlockDeviceMappings()[0].GetBsu().VolumeId
+	vm := (*createReq.Vms)[0]
+	vmId := vm.VmId
+	volId := vm.BlockDeviceMappings[0].Bsu.VolumeId
 
 	// defer delete vm
 	defer func() {
-		_, _, _ = client.Api.VmApi.DeleteVms(client.Auth).
-			DeleteVmsRequest(oscgo.DeleteVmsRequest{
-				VmIds: []string{vmId},
-			}).Execute()
+		_, _ = client.DeleteVms(ctx, oscgo.DeleteVmsRequest{
+			VmIds: []string{vmId},
+		})
 	}()
 
 	err = waitUntilForOscVmRunning(client, vmId)
@@ -68,49 +69,45 @@ func TestUpdateOmi(t *testing.T) {
 	// Create new image
 	imgName := "ci-packer"
 	bootModes := []oscgo.BootMode{"legacy", "uefi"}
-	createRet, _, err := client.Api.ImageApi.CreateImage(client.Auth).
-		CreateImageRequest(oscgo.CreateImageRequest{
-			ImageName: &imgName,
-			VmId:      &vmId,
-			BootModes: &bootModes,
-		}).Execute()
+	createRet, err := client.CreateImage(ctx, oscgo.CreateImageRequest{
+		ImageName: &imgName,
+		VmId:      &vmId,
+		BootModes: &bootModes,
+	})
 	if err != nil {
 		t.Fatalf("should not error, but: %v", err)
 	}
 	image := createRet.Image
-	imgId := image.GetImageId()
+	imgId := image.ImageId
 
 	// defer delete image
 	defer func() {
-		_, _, _ = client.Api.ImageApi.DeleteImage(client.Auth).
-			DeleteImageRequest(oscgo.DeleteImageRequest{
-				ImageId: imgId,
-			}).Execute()
+		_, _ = client.DeleteImage(ctx, oscgo.DeleteImageRequest{
+			ImageId: imgId,
+		})
 	}()
 
-	if !reflect.DeepEqual(image.GetBootModes(), bootModes) {
+	if !reflect.DeepEqual(image.BootModes, bootModes) {
 		t.Fatalf("created OMI doesn't contains the bootmodes %v: %v", bootModes, err)
 	}
 
 	snapshotDesc := "snapshot-ci-packer"
-	createSnap, _, err := client.Api.SnapshotApi.CreateSnapshot(client.Auth).
-		CreateSnapshotRequest(oscgo.CreateSnapshotRequest{
-			Description: &snapshotDesc,
-			VolumeId:    volId,
-		}).Execute()
+	createSnap, err := client.CreateSnapshot(ctx, oscgo.CreateSnapshotRequest{
+		Description: &snapshotDesc,
+		VolumeId:    &volId,
+	})
 	if err != nil {
 		t.Fatalf("should not error, but: %v", err)
 	}
-	snapId := createSnap.Snapshot.GetSnapshotId()
+	snapId := createSnap.Snapshot.SnapshotId
 	defer func() {
-		_, _, _ = client.Api.SnapshotApi.DeleteSnapshot(client.Auth).
-			DeleteSnapshotRequest(oscgo.DeleteSnapshotRequest{
-				SnapshotId: snapId,
-			}).Execute()
+		_, _ = client.DeleteSnapshot(ctx, oscgo.DeleteSnapshotRequest{
+			SnapshotId: snapId,
+		})
 	}()
 
 	state = getStateUpdateOMI(imgId, snapId, state)
-	action := stepUpdateOMIAttributes.Run(context.Background(), state)
+	action := stepUpdateOMIAttributes.Run(ctx, state)
 	if err := state.Get("error"); err != nil {
 		t.Fatalf("should not error, but: %v", err)
 	}

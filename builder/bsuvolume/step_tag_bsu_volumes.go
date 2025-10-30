@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
@@ -17,18 +17,21 @@ type stepTagBSUVolumes struct {
 	Ctx           interpolate.Context
 }
 
-func (s *stepTagBSUVolumes) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *stepTagBSUVolumes) Run(
+	ctx context.Context,
+	state multistep.StateBag,
+) multistep.StepAction {
 	oscconn := state.Get("osc").(*osccommon.OscClient)
 	vm := state.Get("vm").(oscgo.Vm)
 	ui := state.Get("ui").(packersdk.Ui)
 
 	volumes := make(BsuVolumes)
-	for _, instanceBlockDevices := range *vm.BlockDeviceMappings {
+	for _, instanceBlockDevices := range vm.BlockDeviceMappings {
 		for _, configVolumeMapping := range s.VolumeMapping {
-			if &configVolumeMapping.DeviceName == instanceBlockDevices.DeviceName {
+			if configVolumeMapping.DeviceName == instanceBlockDevices.DeviceName {
 				volumes[s.RawRegion] = append(
 					volumes[s.RawRegion],
-					instanceBlockDevices.Bsu.GetVolumeId())
+					instanceBlockDevices.Bsu.VolumeId)
 			}
 		}
 	}
@@ -53,9 +56,9 @@ func (s *stepTagBSUVolumes) Run(_ context.Context, state multistep.StateBag) mul
 			}
 			tags.Report(ui)
 
-			for _, v := range *vm.BlockDeviceMappings {
-				if v.GetDeviceName() == mapping.DeviceName {
-					toTag[v.Bsu.GetVolumeId()] = tags
+			for _, v := range vm.BlockDeviceMappings {
+				if v.DeviceName == mapping.DeviceName {
+					toTag[v.Bsu.VolumeId] = tags
 				}
 			}
 		}
@@ -65,9 +68,14 @@ func (s *stepTagBSUVolumes) Run(_ context.Context, state multistep.StateBag) mul
 				ResourceIds: []string{volumeId},
 				Tags:        tags,
 			}
-			_, _, err := oscconn.Api.TagApi.CreateTags(oscconn.Auth).CreateTagsRequest(request).Execute()
+			_, err := oscconn.CreateTags(ctx, request)
 			if err != nil {
-				err := fmt.Errorf("error tagging BSU Volume %s on %s: %w", volumeId, vm.GetVmId(), err)
+				err := fmt.Errorf(
+					"error tagging BSU Volume %s on %s: %w",
+					volumeId,
+					vm.VmId,
+					err,
+				)
 				state.Put("error", err)
 				ui.Error(err.Error())
 				return multistep.ActionHalt

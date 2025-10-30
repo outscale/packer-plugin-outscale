@@ -6,14 +6,14 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 // BlockDevice
 type BlockDevice struct {
 	DeleteOnVmDeletion bool   `mapstructure:"delete_on_vm_deletion"`
 	DeviceName         string `mapstructure:"device_name"`
-	IOPS               int64  `mapstructure:"iops"`
+	IOPS               int    `mapstructure:"iops"`
 	NoDevice           bool   `mapstructure:"no_device"`
 	SnapshotId         string `mapstructure:"snapshot_id"`
 	VolumeType         string `mapstructure:"volume_type"`
@@ -33,28 +33,29 @@ type LaunchBlockDevices struct {
 	LaunchMappings []BlockDevice `mapstructure:"launch_block_device_mappings"`
 }
 
-func setBsuToCreate(blockDevice BlockDevice) oscgo.BsuToCreate {
-	bsu := oscgo.NewBsuToCreate()
-	bsu.SetDeleteOnVmDeletion(true)
+func setBsuToCreate(blockDevice BlockDevice) *oscgo.BsuToCreate {
+	defaultDeleteOnVmDeletion := true
+	bsu := &oscgo.BsuToCreate{
+		DeleteOnVmDeletion: &defaultDeleteOnVmDeletion,
+	}
 	if deleteOnVmDeletion := blockDevice.DeleteOnVmDeletion; !deleteOnVmDeletion {
-		bsu.SetDeleteOnVmDeletion(deleteOnVmDeletion)
+		bsu.DeleteOnVmDeletion = &deleteOnVmDeletion
 	}
 	if volType := blockDevice.VolumeType; volType != "" {
-		bsu.SetVolumeType(volType)
+		bsu.VolumeType = &volType
 	}
-	if volSize := blockDevice.VolumeSize; volSize > 0 {
-		bsu.SetVolumeSize(int32(blockDevice.VolumeSize))
-
+	if volSize := int(blockDevice.VolumeSize); volSize > 0 {
+		bsu.VolumeSize = &volSize
 	}
 	// IOPS is only valid for io1 type
 	if blockDevice.VolumeType == "io1" {
-		bsu.SetIops(int32(blockDevice.IOPS))
+		bsu.Iops = &blockDevice.IOPS
 	}
 	if snapId := blockDevice.SnapshotId; snapId != "" {
-		bsu.SetSnapshotId(snapId)
+		bsu.SnapshotId = &snapId
 	}
 
-	return *bsu
+	return bsu
 }
 
 func buildOscBlockDevicesImage(b []BlockDevice) []oscgo.BlockDeviceMappingImage {
@@ -63,9 +64,9 @@ func buildOscBlockDevicesImage(b []BlockDevice) []oscgo.BlockDeviceMappingImage 
 		mapping := oscgo.BlockDeviceMappingImage{}
 
 		if deviceName := blockDevice.DeviceName; deviceName != "" {
-			mapping.SetDeviceName(deviceName)
+			mapping.DeviceName = &deviceName
 		}
-		mapping.SetBsu(setBsuToCreate(blockDevice))
+		mapping.Bsu = setBsuToCreate(blockDevice)
 		blockDevices = append(blockDevices, mapping)
 	}
 	return blockDevices
@@ -77,13 +78,13 @@ func buildOscBlockDevicesVmCreation(b []BlockDevice) []oscgo.BlockDeviceMappingV
 		mapping := oscgo.BlockDeviceMappingVmCreation{}
 
 		if deviceName := blockDevice.DeviceName; deviceName != "" {
-			mapping.SetDeviceName(deviceName)
+			mapping.DeviceName = &deviceName
 		}
 
 		if blockDevice.NoDevice {
 			mapping.NoDevice = aws.String("")
 		} else {
-			mapping.SetBsu(setBsuToCreate(blockDevice))
+			mapping.Bsu = setBsuToCreate(blockDevice)
 		}
 		blockDevices = append(blockDevices, mapping)
 	}

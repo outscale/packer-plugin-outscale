@@ -4,7 +4,7 @@ import (
 	"log"
 	"strconv"
 
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 func buildOscNetFilters(input map[string]string) oscgo.FiltersNet {
@@ -40,7 +40,7 @@ func buildOscSubnetFilters(input map[string]string) oscgo.FiltersSubnet {
 		switch name := k; name {
 		case "available-ips-counts":
 			if ipCount, err := strconv.Atoi(v); err == nil {
-				filters.AvailableIpsCounts = &[]int32{int32(ipCount)}
+				filters.AvailableIpsCounts = &[]int{ipCount}
 			}
 		case "ip-ranges":
 			filters.IpRanges = &filterValue
@@ -83,7 +83,7 @@ func buildOSCOMIFilters(input map[string]string) oscgo.FiltersImage {
 			filters.RootDeviceTypes = &filterValue
 		// case "block-device-mapping-volume-type":
 		// 	filters.BlockDeviceMappingVolumeType = filterValue
-		//Some params are missing.
+		// Some params are missing.
 		default:
 			log.Printf("[WARN] Unknown Filter Name: %s.", name)
 		}

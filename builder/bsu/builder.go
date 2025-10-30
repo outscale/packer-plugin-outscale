@@ -83,7 +83,11 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	return nil, nil, nil
 }
 
-func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook) (packersdk.Artifact, error) {
+func (b *Builder) Run(
+	ctx context.Context,
+	ui packersdk.Ui,
+	hook packersdk.Hook,
+) (packersdk.Artifact, error) {
 	var oscConn *osccommon.OscClient
 	var err error
 	if oscConn, err = b.config.NewOSCClient(); err != nil {
@@ -189,7 +193,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			&stepCreateOMI{
 				RawRegion:    b.config.RawRegion,
 				ProductCodes: b.config.ProductCodes,
-				BootModes:    b.config.GetBootModes(),
+				BootModes:    *b.config.GetBootModes(),
 			},
 			&osccommon.StepUpdateOMIAttributes{
 				AccountIds:         b.config.OMIAccountIDs,
@@ -213,7 +217,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		return nil, rawErr.(error)
 	}
 
-	//Build the artifact
+	// Build the artifact
 	if omis, ok := state.GetOk("omis"); ok {
 		// Build the artifact and return it
 		artifact := &osccommon.Artifact{

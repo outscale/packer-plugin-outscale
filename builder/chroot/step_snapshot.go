@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
@@ -33,7 +33,7 @@ func (s *StepSnapshot) Run(ctx context.Context, state multistep.StateBag) multis
 		Description: &description,
 		VolumeId:    &volumeId,
 	}
-	createSnapResp, _, err := oscconn.Api.SnapshotApi.CreateSnapshot(oscconn.Auth).CreateSnapshotRequest(request).Execute()
+	createSnapResp, err := oscconn.CreateSnapshot(ctx, request)
 	if err != nil {
 		err := fmt.Errorf("error creating snapshot: %w", err)
 		state.Put("error", err)
@@ -42,7 +42,7 @@ func (s *StepSnapshot) Run(ctx context.Context, state multistep.StateBag) multis
 	}
 
 	// Set the snapshot ID so we can delete it later
-	s.snapshotId = createSnapResp.Snapshot.GetSnapshotId()
+	s.snapshotId = createSnapResp.Snapshot.SnapshotId
 	ui.Message(fmt.Sprintf("Snapshot ID: %s", s.snapshotId))
 
 	// Wait for the snapshot to be ready
@@ -77,7 +77,7 @@ func (s *StepSnapshot) Cleanup(state multistep.StateBag) {
 		ui := state.Get("ui").(packersdk.Ui)
 		ui.Say("Removing snapshot since we cancelled or halted...")
 		request := oscgo.DeleteSnapshotRequest{SnapshotId: s.snapshotId}
-		_, _, err := oscconn.Api.SnapshotApi.DeleteSnapshot(oscconn.Auth).DeleteSnapshotRequest(request).Execute()
+		_, err := oscconn.DeleteSnapshot(context.Background(), request)
 		if err != nil {
 			ui.Error(fmt.Sprintf("Error: %s", err.Error()))
 		}

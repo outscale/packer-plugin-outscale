@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 // StepGetPassword reads the password from a Windows server and sets it
@@ -26,7 +26,7 @@ type StepGetPassword struct {
 	BuildName string
 }
 
-func (s *StepGetPassword) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *StepGetPassword) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packersdk.Ui)
 
 	// Skip if we're not using winrm
@@ -51,7 +51,7 @@ func (s *StepGetPassword) Run(_ context.Context, state multistep.StateBag) multi
 		ui.Message(
 			"It is normal for this process to take up to 15 minutes,\n" +
 				"but it usually takes around 5. Please wait.")
-		password, err = s.waitForPassword(state, cancel)
+		password, err = s.waitForPassword(ctx, state, cancel)
 		waitDone <- true
 	}()
 
@@ -101,7 +101,11 @@ WaitLoop:
 
 func (s *StepGetPassword) Cleanup(multistep.StateBag) {}
 
-func (s *StepGetPassword) waitForPassword(state multistep.StateBag, cancel <-chan struct{}) (string, error) {
+func (s *StepGetPassword) waitForPassword(
+	ctx context.Context,
+	state multistep.StateBag,
+	cancel <-chan struct{},
+) (string, error) {
 	oscconn := state.Get("osc").(*OscClient)
 	vm := state.Get("vm").(oscgo.Vm)
 	privateKey := s.Comm.SSHPrivateKey
@@ -114,7 +118,10 @@ func (s *StepGetPassword) waitForPassword(state multistep.StateBag, cancel <-cha
 		case <-time.After(15 * time.Second):
 		}
 
-		resp, _, err := oscconn.Api.VmApi.ReadAdminPassword(oscconn.Auth).ReadAdminPasswordRequest(oscgo.ReadAdminPasswordRequest{VmId: vm.GetVmId()}).Execute()
+		resp, err := oscconn.ReadAdminPassword(
+			ctx,
+			oscgo.ReadAdminPasswordRequest{VmId: vm.VmId},
+		)
 		if err != nil {
 			err := fmt.Errorf("error retrieving auto-generated vm password: %w", err)
 			return "", err

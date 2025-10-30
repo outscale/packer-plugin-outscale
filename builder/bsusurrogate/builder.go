@@ -43,7 +43,6 @@ type Builder struct {
 func (b *Builder) ConfigSpec() hcldec.ObjectSpec { return b.config.FlatMapstructure().HCL2Spec() }
 
 func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
-
 	b.config.ctx.Funcs = osccommon.TemplateFuncs
 
 	err := config.Decode(&b.config, &config.DecodeOpts{
@@ -82,14 +81,23 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	for _, launchDevice := range b.config.BlockDevices.LaunchMappings {
 		if launchDevice.DeviceName == b.config.RootDevice.SourceDeviceName {
 			foundRootVolume = true
-			if launchDevice.DeleteOnVmDeletion && b.config.VmInitiatedShutdownBehavior == osccommon.TerminateShutdownBehavior {
-				errs = packersdk.MultiErrorAppend(errs, errors.New("cannot delete the launch device with the VM if the shutdown behavior is set to terminate. "))
+			if launchDevice.DeleteOnVmDeletion &&
+				b.config.VmInitiatedShutdownBehavior == osccommon.TerminateShutdownBehavior {
+				errs = packersdk.MultiErrorAppend(
+					errs,
+					errors.New(
+						"cannot delete the launch device with the VM if the shutdown behavior is set to terminate. ",
+					),
+				)
 			}
 		}
 	}
 
 	if !foundRootVolume {
-		errs = packersdk.MultiErrorAppend(errs, fmt.Errorf("no volume with name '%s' is found", b.config.RootDevice.SourceDeviceName))
+		errs = packersdk.MultiErrorAppend(
+			errs,
+			fmt.Errorf("no volume with name '%s' is found", b.config.RootDevice.SourceDeviceName),
+		)
 	}
 
 	if errs != nil && len(errs.Errors) > 0 {
@@ -98,10 +106,13 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 
 	packersdk.LogSecretFilter.Set(b.config.AccessKey, b.config.SecretKey, b.config.Token)
 	return nil, nil, nil
-
 }
 
-func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook) (packersdk.Artifact, error) {
+func (b *Builder) Run(
+	ctx context.Context,
+	ui packersdk.Ui,
+	hook packersdk.Hook,
+) (packersdk.Artifact, error) {
 	var oscConn *osccommon.OscClient
 	var err error
 
@@ -117,7 +128,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	state.Put("hook", hook)
 	state.Put("ui", ui)
 
-	//VMStep
+	// VMStep
 	omiDevices := b.config.BuildOscOMIDevices()
 	launchOSCDevices := b.config.BuildOSCLaunchDevices()
 
@@ -212,7 +223,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			LaunchDevices: launchOSCDevices,
 			RawRegion:     b.config.RawRegion,
 			ProductCodes:  b.config.ProductCodes,
-			BootModes:     b.config.GetBootModes(),
+			BootModes:     *b.config.GetBootModes(),
 		},
 		&osccommon.StepUpdateOMIAttributes{
 			AccountIds:         b.config.OMIAccountIDs,
@@ -235,7 +246,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		return nil, rawErr.(error)
 	}
 
-	//Build the artifact
+	// Build the artifact
 	if omis, ok := state.GetOk("omis"); ok {
 		// Build the artifact and return it
 		artifact := &osccommon.Artifact{

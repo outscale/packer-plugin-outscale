@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
-	oscgo "github.com/outscale/osc-sdk-go/v2"
+	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
 type StepPublicIp struct {
@@ -19,14 +19,13 @@ type StepPublicIp struct {
 	doCleanup bool
 }
 
-func (s *StepPublicIp) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *StepPublicIp) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	var (
 		ui   = state.Get("ui").(packersdk.Ui)
 		conn = state.Get("osc").(*OscClient)
 	)
 
 	if !s.AssociatePublicIpAddress {
-
 		// In this case, we are in the public Cloud, so we'll
 		// not explicitely allocate a public IP.
 		return multistep.ActionContinue
@@ -34,8 +33,7 @@ func (s *StepPublicIp) Run(_ context.Context, state multistep.StateBag) multiste
 
 	ui.Say("Creating temporary PublicIp for instance ")
 	allocOpts := oscgo.CreatePublicIpRequest{}
-	resp, _, err := conn.Api.PublicIpApi.CreatePublicIp(conn.Auth).CreatePublicIpRequest(allocOpts).Execute()
-
+	resp, err := conn.CreatePublicIp(ctx, allocOpts)
 	if err != nil {
 		state.Put("error", fmt.Errorf("error creating temporary PublicIp: %w", err))
 		return multistep.ActionHalt
@@ -45,8 +43,8 @@ func (s *StepPublicIp) Run(_ context.Context, state multistep.StateBag) multiste
 	s.doCleanup = true
 
 	// Set some data for use in future steps
-	s.publicIpId = *resp.GetPublicIp().PublicIpId
-	state.Put("publicip_id", *resp.GetPublicIp().PublicIpId)
+	s.publicIpId = *resp.PublicIp.PublicIpId
+	state.Put("publicip_id", *resp.PublicIp.PublicIpId)
 
 	return multistep.ActionContinue
 }
@@ -63,11 +61,16 @@ func (s *StepPublicIp) Cleanup(state multistep.StateBag) {
 
 	// Remove the Public IP
 	ui.Say("Deleting temporary PublicIp...")
-	_, _, err := conn.Api.PublicIpApi.DeletePublicIp(conn.Auth).DeletePublicIpRequest(oscgo.DeletePublicIpRequest{
+	ctx := context.Background()
+	_, err := conn.DeletePublicIp(ctx, oscgo.DeletePublicIpRequest{
 		PublicIpId: &s.publicIpId,
-	}).Execute()
-
+	})
 	if err != nil {
-		ui.Error(fmt.Sprintf("Error cleaning up PublicIp. Please delete the PublicIp manually: %s", s.publicIpId))
+		ui.Error(
+			fmt.Sprintf(
+				"Error cleaning up PublicIp. Please delete the PublicIp manually: %s",
+				s.publicIpId,
+			),
+		)
 	}
 }

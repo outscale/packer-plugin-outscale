@@ -13,7 +13,7 @@ import (
 type FlatBlockDevice struct {
 	DeleteOnVmDeletion *bool   `mapstructure:"delete_on_vm_deletion" cty:"delete_on_vm_deletion" hcl:"delete_on_vm_deletion"`
 	DeviceName         *string `mapstructure:"device_name" cty:"device_name" hcl:"device_name"`
-	IOPS               *int64  `mapstructure:"iops" cty:"iops" hcl:"iops"`
+	IOPS               *int    `mapstructure:"iops" cty:"iops" hcl:"iops"`
 	NoDevice           *bool   `mapstructure:"no_device" cty:"no_device" hcl:"no_device"`
 	SnapshotId         *string `mapstructure:"snapshot_id" cty:"snapshot_id" hcl:"snapshot_id"`
 	VolumeType         *string `mapstructure:"volume_type" cty:"volume_type" hcl:"volume_type"`

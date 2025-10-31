@@ -32,7 +32,7 @@ func (s *StepCreateTags) Run(ctx context.Context, state multistep.StateBag) mult
 
 		regionconn, err := config.NewOSCClientByRegion(region)
 		if err != nil {
-			err := fmt.Errorf("error retrieving details for OMI (%s): %w", ami, err)
+			err = fmt.Errorf("error retrieving details for OMI (%s): %w", ami, err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -46,14 +46,14 @@ func (s *StepCreateTags) Run(ctx context.Context, state multistep.StateBag) mult
 			},
 		})
 		if err != nil {
-			err := fmt.Errorf("error retrieving details for OMI (%s): %w", ami, err)
+			err = fmt.Errorf("error retrieving details for OMI (%s): %w", ami, err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
 
 		if len(*imageResp.Images) == 0 {
-			err := fmt.Errorf("error retrieving details for OMI (%s), no images found", ami)
+			err = fmt.Errorf("error retrieving details for OMI (%s), no images found", ami)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -97,7 +97,10 @@ func (s *StepCreateTags) Run(ctx context.Context, state multistep.StateBag) mult
 				Tags:        omiTags,
 			}
 
-			_, _ = regionconn.CreateTags(ctx, request)
+			_, err = regionconn.CreateTags(ctx, request)
+			if err != nil {
+				return false, err
+			}
 
 			requestSnap := oscgo.CreateTagsRequest{
 				ResourceIds: snapshotIds,
@@ -113,7 +116,7 @@ func (s *StepCreateTags) Run(ctx context.Context, state multistep.StateBag) mult
 			return true, err
 		})
 		if err != nil {
-			err := fmt.Errorf("error adding tags to Resources (%#v): %w", resourceIds, err)
+			err = fmt.Errorf("error adding tags to Resources (%#v): %w", resourceIds, err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt

@@ -104,7 +104,7 @@ func (c *AccessConfig) GetRegion() string {
 // NewOSCClientByRegion returns the connection depdending of the region given
 func (c *AccessConfig) NewOSCClientByRegion(region string) (*OscClient, error) {
 	profile := profile.Profile{
-		Region:         c.RawRegion,
+		Region:         region,
 		AccessKey:      c.AccessKey,
 		SecretKey:      c.SecretKey,
 		X509ClientCert: c.X509certPath,
@@ -112,6 +112,8 @@ func (c *AccessConfig) NewOSCClientByRegion(region string) (*OscClient, error) {
 		Endpoints: profile.Endpoint{
 			API: c.CustomEndpointOAPI,
 		},
+		Protocol:      "https",
+		TlsSkipVerify: c.InsecureSkipTLSVerify,
 	}
 
 	client, err := oscgo.NewClient(&profile)

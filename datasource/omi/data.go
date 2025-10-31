@@ -1,5 +1,5 @@
-//go:generate packer-sdc struct-markdown
-//go:generate packer-sdc mapstructure-to-hcl2 -type DatasourceOutput,Config
+//go:generate go run -modfile=../../go.mod github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc struct-markdown
+//go:generate go run -modfile=../../go.mod github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc mapstructure-to-hcl2 -type DatasourceOutput,Config
 package omi
 
 import (

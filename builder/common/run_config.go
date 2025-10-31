@@ -1,4 +1,4 @@
-//go:generate packer-sdc mapstructure-to-hcl2 -type SecurityGroupFilterOptions,OmiFilterOptions,SubnetFilterOptions,NetFilterOptions,BlockDevice
+//go:generate go run -modfile=../../go.mod github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc mapstructure-to-hcl2 -type SecurityGroupFilterOptions,OmiFilterOptions,SubnetFilterOptions,NetFilterOptions,BlockDevice
 
 package common
 
@@ -23,13 +23,15 @@ import (
 var (
 	StopShutdownBehavior      string = "stop"
 	TerminateShutdownBehavior string = "terminate"
-	reShutdownBehavior               = regexp.MustCompile("^(" + StopShutdownBehavior + "|" + TerminateShutdownBehavior + ")$")
+	reShutdownBehavior               = regexp.MustCompile(
+		"^(" + StopShutdownBehavior + "|" + TerminateShutdownBehavior + ")$",
+	)
 )
 
 // docs at
 // https://docs.outscale.com/en/userguide/Getting-Information-About-Your-OMIs.html
 type OmiFilterOptions struct {
-	config.NameValueFilter `mapstructure:",squash"`
+	config.NameValueFilter `         mapstructure:",squash"`
 	Owners                 []string
 	MostRecent             bool `mapstructure:"most_recent"`
 }
@@ -45,7 +47,7 @@ func (d *OmiFilterOptions) NoOwner() bool {
 // docs at
 // https://docs.outscale.com/en/userguide/Getting-Information-About-Your-Subnets.html
 type SubnetFilterOptions struct {
-	config.NameValueFilter `mapstructure:",squash"`
+	config.NameValueFilter `     mapstructure:",squash"`
 	MostFree               bool `mapstructure:"most_free"`
 	Random                 bool `mapstructure:"random"`
 }
@@ -134,7 +136,12 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 
 	if c.Comm.SSHKeyPairName != "" {
 		if c.Comm.Type == "winrm" && c.Comm.WinRMPassword == "" && c.Comm.SSHPrivateKeyFile == "" {
-			errs = append(errs, errors.New("ssh_private_key_file must be provided to retrieve the winrm password when using ssh_keypair_name"))
+			errs = append(
+				errs,
+				errors.New(
+					"ssh_private_key_file must be provided to retrieve the winrm password when using ssh_keypair_name",
+				),
+			)
 		} else if c.Comm.SSHPrivateKeyFile == "" && !c.Comm.SSHAgentAuth {
 			errs = append(errs, errors.New("ssh_private_key_file must be provided or ssh_agent_auth enabled when ssh_keypair_name is specified"))
 		}
@@ -142,7 +149,10 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 	if c.BootMode != "" {
 		bootModesSupported := []oscgo.BootMode{"legacy", "uefi"}
 		if !slices.Contains(bootModesSupported, oscgo.BootMode(c.BootMode)) {
-			errs = append(errs, fmt.Errorf("the vm boot_Mode '%v' is not supported yet", c.BootMode))
+			errs = append(
+				errs,
+				fmt.Errorf("the vm boot_Mode '%v' is not supported yet", c.BootMode),
+			)
 		}
 	}
 	if c.SourceOmi == "" && c.SourceOmiFilter.Empty() {
@@ -150,7 +160,10 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 	}
 
 	if c.SourceOmi == "" && c.SourceOmiFilter.NoOwner() {
-		errs = append(errs, errors.New("for security reasons, your source AMI filter must declare an owner"))
+		errs = append(
+			errs,
+			errors.New("for security reasons, your source AMI filter must declare an owner"),
+		)
 	}
 
 	if c.VmType == "" {
@@ -172,7 +185,10 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 
 	if c.SecurityGroupId != "" {
 		if len(c.SecurityGroupIds) > 0 {
-			errs = append(errs, errors.New("only one of security_group_id or security_group_ids can be specified"))
+			errs = append(
+				errs,
+				errors.New("only one of security_group_id or security_group_ids can be specified"),
+			)
 		} else {
 			c.SecurityGroupIds = []string{c.SecurityGroupId}
 			c.SecurityGroupId = ""

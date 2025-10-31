@@ -104,7 +104,7 @@ func (s *StepSecurityGroup) Run(
 	// Set the group ID so we can delete it later
 	s.createdGroupId = resp.SecurityGroup.SecurityGroupId
 
-	port := int(s.CommConfig.Port())
+	port := s.CommConfig.Port()
 	if port == 0 {
 		if s.CommConfig.Type != "none" {
 			state.Put("error", "port must be set to a non-zero value.")

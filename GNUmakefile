@@ -29,19 +29,16 @@ dev:
 test:
 	go test -race -count $(COUNT) $(TEST) -timeout=3m
 
-install-packer-sdc: ## Install packer sofware development command
-	go install github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc@${HASHICORP_PACKER_PLUGIN_SDK_VERSION}
-
-plugin-check: install-packer-sdc build
-	packer-sdc plugin-check ${BINARY}
+plugin-check: build
+	go run -modfile=./go.mod github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc plugin-check ${BINARY}
 
 testacc: dev
 	@PACKER_ACC=1 go test -count $(COUNT) -v $(TEST) -timeout=120m
 
-generate: install-packer-sdc
+generate:
 	go generate ./...
 	if [ -d ".docs" ]; then rm -r ".docs"; fi
-	packer-sdc renderdocs -src "docs" -partials docs-partials/ -dst ".docs/"
+	go run -modfile=./go.mod github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc renderdocs -src "docs" -partials docs-partials/ -dst ".docs/"
 	./.web-docs/scripts/compile-to-webdocs.sh "." ".docs" ".web-docs" "outscale"
 	rm -r ".docs"
 	# checkout the .docs folder for a preview of the docs

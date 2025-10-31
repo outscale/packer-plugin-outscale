@@ -1,4 +1,4 @@
-//go:generate packer-sdc mapstructure-to-hcl2 -type Config,BlockDevice
+//go:generate go run -modfile=../../go.mod github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc mapstructure-to-hcl2 -type Config,BlockDevice
 
 // The ebsvolume package contains a packersdk.Builder implementation that
 // builds EBS volumes for Outscale using an ephemeral instance,
@@ -87,7 +87,11 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	return nil, nil, nil
 }
 
-func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook) (packersdk.Artifact, error) {
+func (b *Builder) Run(
+	ctx context.Context,
+	ui packersdk.Ui,
+	hook packersdk.Hook,
+) (packersdk.Artifact, error) {
 	// clientConfig, err := b.config.Config()
 	// if err != nil {
 	// 	return nil, err
@@ -99,8 +103,8 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	// 	},
 	// }
 
-	//var oscConn *osccommon.OscClient
-	//var err error
+	// var oscConn *osccommon.OscClient
+	// var err error
 	oscConn, err := b.config.NewOSCClient()
 	if err != nil {
 		return nil, err

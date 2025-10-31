@@ -1,4 +1,4 @@
-//go:generate packer-sdc mapstructure-to-hcl2 -type Config,RootBlockDevice
+//go:generate go run -modfile=../../go.mod github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc mapstructure-to-hcl2 -type Config,RootBlockDevice
 
 // Package bsusurrogate contains a packersdk.Builder implementation that
 // builds a new EBS-backed OMI using an ephemeral instance.

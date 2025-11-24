@@ -34,6 +34,17 @@ func TestUpdateOmi(t *testing.T) {
 	config := state.Get("accessConfig").(*AccessConfig)
 	client := state.Get("osc").(*OscClient)
 
+	stepSourceOMIInfo := mostRecentOmiFilterStep()
+	imageAction := stepSourceOMIInfo.Run(context.Background(), state)
+	if err := state.Get("error"); err != nil {
+		t.Fatalf("should not error, but: %v", err)
+	}
+
+	if imageAction != multistep.ActionContinue {
+		t.Fatalf("shoul continue, but: %v", imageAction)
+	}
+	sourceImage := state.Get("source_image").(oscgo.Image)
+
 	stepUpdateOMIAttributes := StepUpdateOMIAttributes{
 		AccountIds:         []string{},
 		SnapshotAccountIds: []string{},
@@ -42,7 +53,7 @@ func TestUpdateOmi(t *testing.T) {
 	}
 
 	createVmOpts := oscgo.CreateVmsRequest{
-		ImageId: "ami-0aaec44f",
+		ImageId: sourceImage.ImageId,
 	}
 	defaultVmType := "tinav7.c4r8p2"
 	createVmOpts.VmType = &defaultVmType

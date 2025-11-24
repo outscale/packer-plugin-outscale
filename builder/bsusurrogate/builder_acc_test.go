@@ -23,6 +23,7 @@ func TestAccBuilder_basic(t *testing.T) {
 	}
 	acctest.TestPlugin(t, testCase)
 }
+
 func TestAccBuilder_VmTerminate(t *testing.T) {
 	testCase := &acctest.PluginTestCase{
 		Name:     "bsusurrogate_vm_terminate_test",
@@ -44,8 +45,14 @@ const testBuilderAccBasic = `
 	"builders": [{
 		"type": "outscale-bsusurrogate",
 		"region": "eu-west-2",
-		"vm_type": "t2.micro",
-		"source_omi": "ami-68ed4301",
+		"vm_type": "tinav5.c1r1p1",
+		"source_omi_filter": {
+		    "filters": {
+	       		"image-name": "Debian-12-*"
+	        },
+	        "owners": ["Outscale"],
+	        "most_recent": true
+        },
 		"ssh_username": "outscale",
 		"omi_name": "packer-test {{timestamp}}",
 		"subregion_name": "eu-west-2a",
@@ -75,8 +82,14 @@ const testBuilderAccVmTerminate = `
 	"builders": [{
 		"type": "outscale-bsusurrogate",
 		"region": "eu-west-2",
-		"vm_type": "t2.micro",
-		"source_omi": "ami-68ed4301",
+		"vm_type": "tinav5.c1r1p1",
+		"source_omi_filter": {
+		    "filters": {
+	       		"image-name": "Debian-12-*"
+	        },
+	        "owners": ["Outscale"],
+	        "most_recent": true
+        },
 		"ssh_username": "outscale",
 		"omi_name": "packer-test {{timestamp}}",
 		"subregion_name": "eu-west-2a",

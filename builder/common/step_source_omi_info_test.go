@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
+	"github.com/hashicorp/packer-plugin-sdk/template/config"
 
 	"context"
 
@@ -28,19 +29,28 @@ func getState() (multistep.StateBag, error) {
 	return state, err
 }
 
-func TestMostRecentOmiFilter(t *testing.T) {
+func mostRecentOmiFilterStep() StepSourceOMIInfo {
 	stepSourceOMIInfo := StepSourceOMIInfo{
-		SourceOmi: "ami-0aaec44f",
 		OmiFilters: OmiFilterOptions{
+			Owners: []string{"Outscale"},
+			NameValueFilter: config.NameValueFilter{
+				Filters: map[string]string{"image-name": "Debian-12-*"},
+			},
 			MostRecent: true,
 		},
 	}
+	return stepSourceOMIInfo
+}
+
+func TestMostRecentOmiFilter(t *testing.T) {
+	step := mostRecentOmiFilterStep()
+
 	state, err := getState()
 	if state == nil {
 		t.Fatalf("error retrieving state %s", err.Error())
 	}
 
-	action := stepSourceOMIInfo.Run(context.Background(), state)
+	action := step.Run(context.Background(), state)
 	if err := state.Get("error"); err != nil {
 		t.Fatalf("should not error, but: %v", err)
 	}

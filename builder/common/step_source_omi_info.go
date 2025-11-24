@@ -29,7 +29,7 @@ type imageOscSort []oscgo.Image
 func (a imageOscSort) Len() int      { return len(a) }
 func (a imageOscSort) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 func (a imageOscSort) Less(i, j int) bool {
-	return a[j].CreationDate.Unix() < a[i].CreationDate.Unix()
+	return a[i].CreationDate.Unix() < a[j].CreationDate.Unix()
 }
 
 // Returns the most recent OMI out of a slice of images.

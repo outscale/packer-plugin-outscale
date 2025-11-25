@@ -1,24 +1,23 @@
 name: Ensure Docs are Compiled
 on:
-  push:
+    push:
 jobs:
-  ensure-docs-compiled:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout 🛎
-        uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: 'go.mod'
-      - shell: bash
-        run: make generate
-      - shell: bash
-        run: |
-          if [[ -z "$(git status -s)" ]]; then
-            echo "OK"
-          else
-            echo "Docs have been updated, but the compiled docs have not been committed."
-            echo "Run 'make generate', and commit the result to resolve this error."
-            exit 1
-          fi
-
+    ensure-docs-compiled:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout 🛎
+              uses: actions/checkout@v5
+            - uses: actions/setup-go@v6
+              with:
+                  go-version-file: "go.mod"
+            - shell: bash
+              run: make generate
+            - shell: bash
+              run: |
+                  if [[ -z "$(git status -s)" ]]; then
+                    echo "OK"
+                  else
+                    echo "Docs have been updated, but the compiled docs have not been committed."
+                    echo "Run 'make generate', and commit the result to resolve this error."
+                    exit 1
+                  fi

@@ -87,8 +87,8 @@ func (d *Datasource) Execute() (cty.Value, error) {
 		return cty.NullVal(cty.EmptyObject), err
 	}
 
-	imageTags := make(map[string]string, len(*image.Tags))
-	for _, tag := range *image.Tags {
+	imageTags := make(map[string]string, len(image.Tags))
+	for _, tag := range image.Tags {
 		imageTags[tag.Key] = tag.Value
 	}
 

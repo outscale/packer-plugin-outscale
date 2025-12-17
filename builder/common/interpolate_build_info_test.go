@@ -14,7 +14,7 @@ func testImage() oscgo.Image {
 	return oscgo.Image{
 		ImageId:   imageId,
 		ImageName: &imageName,
-		Tags: &[]oscgo.ResourceTag{
+		Tags: []oscgo.ResourceTag{
 			{
 				Key:   "key-1",
 				Value: "value-1",

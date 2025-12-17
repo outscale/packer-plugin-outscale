@@ -43,8 +43,8 @@ func (s *StepPublicIp) Run(ctx context.Context, state multistep.StateBag) multis
 	s.doCleanup = true
 
 	// Set some data for use in future steps
-	s.publicIpId = *resp.PublicIp.PublicIpId
-	state.Put("publicip_id", *resp.PublicIp.PublicIpId)
+	s.publicIpId = resp.PublicIp.PublicIpId
+	state.Put("publicip_id", resp.PublicIp.PublicIpId)
 
 	return multistep.ActionContinue
 }

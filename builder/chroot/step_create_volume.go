@@ -93,7 +93,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	// Set the volume ID so we remember to delete it later
-	s.volumeId = *createVolumeResp.Volume.VolumeId
+	s.volumeId = createVolumeResp.Volume.VolumeId
 	log.Printf("Volume ID: %s", s.volumeId)
 
 	// Create tags for volume

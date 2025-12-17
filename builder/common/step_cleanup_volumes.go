@@ -57,8 +57,8 @@ func (s *StepCleanupVolumes) Cleanup(state multistep.StateBag) {
 	// If any of the returned volumes are in a "deleting" stage or otherwise not
 	// available, remove them from the list of volumes
 	for _, v := range *resp.Volumes {
-		if v.State != nil && *v.State != "available" {
-			delete(volList, *v.VolumeId)
+		if v.State != "available" {
+			delete(volList, v.VolumeId)
 		}
 	}
 

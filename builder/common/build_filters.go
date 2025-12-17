@@ -21,6 +21,7 @@ func buildOscNetFilters(input map[string]string) oscgo.FiltersNet {
 				filters.IsDefault = &isDefault
 			}
 		case "state":
+			filterValue := []oscgo.NetState{oscgo.NetState(v)}
 			filters.States = &filterValue
 		case "tag-key":
 			filters.TagKeys = &filterValue
@@ -47,6 +48,7 @@ func buildOscSubnetFilters(input map[string]string) oscgo.FiltersSubnet {
 		case "net-ids":
 			filters.NetIds = &filterValue
 		case "states":
+			filterValue := []oscgo.SubnetState{oscgo.SubnetState(v)}
 			filters.States = &filterValue
 		case "subnet-ids":
 			filters.SubnetIds = &filterValue

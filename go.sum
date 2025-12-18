@@ -325,6 +325,8 @@ github.com/oapi-codegen/runtime v1.1.2 h1:P2+CubHq8fO4Q6fV1tqDBZHCwpVpvPg7oKiYzQ
 github.com/oapi-codegen/runtime v1.1.2/go.mod h1:SK9X900oXmPWilYR5/WKPzt3Kqxn/uS/+lbpREv+eCg=
 github.com/outscale/osc-sdk-go/v3 v3.0.0-beta.1 h1:RwfPVdwXWYBvYNxn1uE3md2ft2vowiT/HJtKInm3ooo=
 github.com/outscale/osc-sdk-go/v3 v3.0.0-beta.1/go.mod h1:+UWiUEbhmj8HUyhoGjmve0WKDezaEirKskWoYk5euTc=
+github.com/outscale/osc-sdk-go/v3 v3.0.0-beta.2 h1:3UauJs026vpjnFXKQvn1uVrUIstF9GL8E7XDTgA+Sn0=
+github.com/outscale/osc-sdk-go/v3 v3.0.0-beta.2/go.mod h1:+UWiUEbhmj8HUyhoGjmve0WKDezaEirKskWoYk5euTc=
 github.com/packer-community/winrmcp v0.0.0-20221126162354-6e900dd2c68f h1:sWm3fnjG6kxvDuGiQf46Io5xCTj3QJfNJIeICJ4g1kw=
 github.com/packer-community/winrmcp v0.0.0-20221126162354-6e900dd2c68f/go.mod h1:f6Izs6JvFTdnRbziASagjZ2vmf55NSIkC/weStxCHqk=
 github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=

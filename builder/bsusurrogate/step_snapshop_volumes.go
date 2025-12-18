@@ -3,7 +3,6 @@ package bsusurrogate
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	multierror "github.com/hashicorp/go-multierror"
@@ -70,19 +69,12 @@ func (s *StepSnapshotVolumes) Run(
 
 	s.snapshotIds = map[string]string{}
 
-	var wg sync.WaitGroup
 	var errs *multierror.Error
 	for _, device := range s.LaunchDevices {
-		wg.Add(1)
-		go func(device oscgo.BlockDeviceMappingVmCreation) {
-			defer wg.Done()
-			if err := s.snapshotVolume(ctx, *device.DeviceName, state); err != nil {
-				errs = multierror.Append(errs, err)
-			}
-		}(device)
+		if err := s.snapshotVolume(ctx, *device.DeviceName, state); err != nil {
+			errs = multierror.Append(errs, err)
+		}
 	}
-
-	wg.Wait()
 
 	if errs != nil {
 		state.Put("error", errs)

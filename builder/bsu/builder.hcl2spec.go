@@ -4,6 +4,7 @@ package bsu
 
 import (
 	"github.com/hashicorp/hcl/v2/hcldec"
+	"github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	"github.com/outscale/packer-plugin-outscale/builder/common"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -71,7 +72,7 @@ type FlatConfig struct {
 	NetFilter                   *common.FlatNetFilterOptions           `mapstructure:"net_filter" cty:"net_filter" hcl:"net_filter"`
 	NetId                       *string                                `mapstructure:"net_id" cty:"net_id" hcl:"net_id"`
 	WindowsPasswordTimeout      *string                                `mapstructure:"windows_password_timeout" cty:"windows_password_timeout" hcl:"windows_password_timeout"`
-	BootMode                    *string                                `mapstructure:"boot_mode" cty:"boot_mode" hcl:"boot_mode"`
+	BootMode                    *osc.BootMode                          `mapstructure:"boot_mode" cty:"boot_mode" hcl:"boot_mode"`
 	Type                        *string                                `mapstructure:"communicator" cty:"communicator" hcl:"communicator"`
 	PauseBeforeConnect          *string                                `mapstructure:"pause_before_connecting" cty:"pause_before_connecting" hcl:"pause_before_connecting"`
 	SSHHost                     *string                                `mapstructure:"ssh_host" cty:"ssh_host" hcl:"ssh_host"`

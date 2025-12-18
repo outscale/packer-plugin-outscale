@@ -89,7 +89,7 @@ type RunConfig struct {
 	NetFilter                   NetFilterOptions           `mapstructure:"net_filter"`
 	NetId                       string                     `mapstructure:"net_id"`
 	WindowsPasswordTimeout      time.Duration              `mapstructure:"windows_password_timeout"`
-	BootMode                    string                     `mapstructure:"boot_mode"`
+	BootMode                    oscgo.BootMode             `mapstructure:"boot_mode"`
 	// Communicator settings
 	Comm         communicator.Config `mapstructure:",squash"`
 	SSHInterface string              `mapstructure:"ssh_interface"`
@@ -148,7 +148,7 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 	}
 	if c.BootMode != "" {
 		bootModesSupported := []oscgo.BootMode{"legacy", "uefi"}
-		if !slices.Contains(bootModesSupported, oscgo.BootMode(c.BootMode)) {
+		if !slices.Contains(bootModesSupported, c.BootMode) {
 			errs = append(
 				errs,
 				fmt.Errorf("the vm boot_Mode '%v' is not supported yet", c.BootMode),

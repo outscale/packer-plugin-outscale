@@ -10,74 +10,52 @@ import (
 )
 
 func waitUntilForOscVmRunning(conn *OscClient, vmID string) error {
-	errCh := make(chan error, 1)
-	go waitForState(errCh, oscgo.VmStateRunning, waitUntilOscVmStateFunc(conn, vmID))
-	err := <-errCh
-	return err
+	return waitForState(oscgo.VmStateRunning, waitUntilOscVmStateFunc(conn, vmID))
 }
 
 func waitUntilOscVmDeleted(conn *OscClient, vmID string) error {
-	errCh := make(chan error, 1)
-	go waitForState(errCh, oscgo.VmStateTerminated, waitUntilOscVmStateFunc(conn, vmID))
-	return <-errCh
+	return waitForState(oscgo.VmStateTerminated, waitUntilOscVmStateFunc(conn, vmID))
 }
 
 func waitUntilOscVmStopped(conn *OscClient, vmID string) error {
-	errCh := make(chan error, 1)
-	go waitForState(errCh, oscgo.VmStateStopped, waitUntilOscVmStateFunc(conn, vmID))
-	return <-errCh
+	return waitForState(oscgo.VmStateStopped, waitUntilOscVmStateFunc(conn, vmID))
 }
 
 func WaitUntilOscSnapshotCompleted(conn *OscClient, id string) error {
-	errCh := make(chan error, 1)
-	go waitForState(errCh, oscgo.SnapshotStateCompleted, waitUntilOscSnapshotStateFunc(conn, id))
-	return <-errCh
+	return waitForState(oscgo.SnapshotStateCompleted, waitUntilOscSnapshotStateFunc(conn, id))
 }
 
 func WaitUntilOscImageAvailable(conn *OscClient, imageID string) error {
-	errCh := make(chan error, 1)
-	go waitForState(errCh, oscgo.ImageStateAvailable, waitUntilOscImageStateFunc(conn, imageID))
-	return <-errCh
+	return waitForState(oscgo.ImageStateAvailable, waitUntilOscImageStateFunc(conn, imageID))
 }
 
 func WaitUntilOscVolumeAvailable(conn *OscClient, volumeID string) error {
-	errCh := make(chan error, 1)
-	go waitForState(errCh, oscgo.VolumeStateAvailable, volumeOscWaitFunc(conn, volumeID))
-	return <-errCh
+	return waitForState(oscgo.VolumeStateAvailable, volumeOscWaitFunc(conn, volumeID))
 }
 
 func WaitUntilOscVolumeIsLinked(conn *OscClient, volumeID string) error {
-	errCh := make(chan error, 1)
-	go waitForState(
-		errCh,
+	return waitForState(
 		oscgo.VolumeStateInUse,
 		waitUntilOscVolumeLinkedStateFunc(conn, volumeID),
 	)
-	return <-errCh
 }
 
 func WaitUntilOscVolumeIsUnlinked(conn *OscClient, volumeID string) error {
-	errCh := make(chan error, 1)
-	go waitForState(
-		errCh,
+	return waitForState(
 		"dettached",
 		waitUntilOscVolumeUnLinkedStateFunc(conn, volumeID),
 	)
-	return <-errCh
 }
 
 func WaitUntilOscSnapshotDone(conn *OscClient, snapshotID string) error {
-	errCh := make(chan error, 1)
-	go waitForState(
-		errCh,
+	return waitForState(
 		oscgo.SnapshotStateCompleted,
 		waitUntilOscSnapshotDoneStateFunc(conn, snapshotID),
 	)
-	return <-errCh
 }
 
-func waitForState[T comparable](errCh chan<- error, target T, refresh func() (T, error)) {
-	err := retry.Run(2, 2, 0, func(_ uint) (bool, error) {
+func waitForState[T comparable](target T, refresh func() (T, error)) error {
+	return retry.Run(2, 2, 0, func(_ uint) (bool, error) {
 		state, err := refresh()
 		if err != nil {
 			return false, err
@@ -86,7 +64,6 @@ func waitForState[T comparable](errCh chan<- error, target T, refresh func() (T,
 		}
 		return false, nil
 	})
-	errCh <- err
 }
 
 func waitUntilOscVmStateFunc(conn *OscClient, id string) func() (oscgo.VmState, error) {

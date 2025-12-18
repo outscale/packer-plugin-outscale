@@ -95,7 +95,7 @@ func (s *StepDeregisterOMI) Run(
 							return multistep.ActionHalt
 						}
 
-						ui.Say(fmt.Sprintf("Deleted snapshot: %s", *b.Bsu.SnapshotId))
+						ui.Say("Deleted snapshot: " + *b.Bsu.SnapshotId)
 					}
 				}
 			}

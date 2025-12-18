@@ -26,7 +26,7 @@ func getStateUpdateOMI(omiId string, snapId string, state multistep.StateBag) mu
 }
 
 func TestUpdateOmi(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	state, err := getState()
 	if err != nil {
 		t.Fatalf("error setting osc client %s", err.Error())

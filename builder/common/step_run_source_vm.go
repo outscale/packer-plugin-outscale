@@ -40,7 +40,7 @@ type StepRunSourceVm struct {
 	UserDataFile                string
 	VolumeTags                  TagMap
 	RawRegion                   string
-	BootMode                    string
+	BootMode                    oscgo.BootMode
 	vmId                        string
 }
 
@@ -122,7 +122,7 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 		BlockDeviceMappings: blockDevice,
 	}
 	if s.BootMode != "" {
-		runOpts.BootMode = (*oscgo.BootMode)(&s.BootMode)
+		runOpts.BootMode = &s.BootMode
 	}
 	log.Printf("subregion is %s", subregion)
 	if subregion != "" {

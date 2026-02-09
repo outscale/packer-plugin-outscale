@@ -110,6 +110,10 @@ func (c *RunConfig) Prepare(ctx *interpolate.Context) []error {
 		c.WindowsPasswordTimeout = 20 * time.Minute
 	}
 
+	if c.Comm.SSHTimeout == 0 {
+		c.Comm.SSHTimeout = 10 * time.Minute
+	}
+
 	if c.RunTags == nil {
 		c.RunTags = make(map[string]string)
 	}

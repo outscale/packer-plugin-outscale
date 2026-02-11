@@ -1,3 +1,60 @@
+# 📜 Changelog
+
+All notable changes to this project will be documented in this file.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+and this project adheres to [Semantic Versioning](https://semver.org/).
+
+---
+
+## [Unreleased]
+
+### 💥 Breaking
+- (nothing yet)
+
+### ✨ Added
+- (nothing yet)
+
+### 🛠️ Changed / Refactoring
+- (nothing yet)
+
+### 📝 Documentation
+- (nothing yet)
+
+### ⚰️ Deprecated
+- (nothing yet)
+
+### 🗑️ Removed
+- (nothing yet)
+
+### 🐛 Fixed
+- (nothing yet)
+
+### 🔒 Security
+- (nothing yet)
+
+### 📦 Dependency updates
+- (nothing yet)
+
+### 🌱 Others
+- (nothing yet)
+
+## [1.6.0-beta.1] - 2026-02-11
+
+### ✨ Added
+* 🚧 chore: migrate to sdk v3 by @jobs62 in https://github.com/outscale/packer-plugin-outscale/pull/220
+
+### 🛠️ Changed / Refactoring
+* 🔧 chore: increase default ssh timeout by @ryohkhn in https://github.com/outscale/packer-plugin-outscale/pull/222
+
+### 📝 Documentation
+* 📝 docs: Update the README by @outscale-rce in https://github.com/outscale/packer-plugin-outscale/pull/215
+
+### 🌱 Others
+* Update examples by @outscale-toa in https://github.com/outscale/packer-plugin-outscale/pull/214
+* :construction_worker: install ansible for playbook provisoner by @outscale-toa in https://github.com/outscale/packer-plugin-outscale/pull/216
+* :construction_worker: Fix example tests by @outscale-toa in https://github.com/outscale/packer-plugin-outscale/pull/217
+* Fix examples workflows by @outscale-toa in https://github.com/outscale/packer-plugin-outscale/pull/218
+
 ## [1.5.0] - 2025-06-25
 
 * **Feature:** Add new parameters `omi_boot_modes`  and ` boot_mode` in `CreateImage`

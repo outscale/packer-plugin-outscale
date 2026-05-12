@@ -18,12 +18,12 @@ jobs:
         runs-on: ubuntu-latest
         environment: test-us-east-2
         steps:
-            - uses: actions/checkout@v5
-            - uses: actions/setup-go@v6
+            - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+            - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
               with:
                   go-version-file: "go.mod"
             - name: Lint
-              uses: golangci/golangci-lint-action@v3
+              uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3
               with:
                   version: latest
                   # skip cache because of flaky behaviors
@@ -55,7 +55,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         environment: test-us-east-2
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
             - name: 🧹 Frieza
               uses: outscale/frieza-github-actions/frieza-clean@master
               with:
@@ -63,11 +63,11 @@ jobs:
                   secret_key: ${{ secrets.OSC_SECRET_KEY }}
                   region: ${{ secrets.OSC_REGION }}
             - name: Install Go
-              uses: actions/setup-go@v6
+              uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
               with:
                   go-version-file: "go.mod"
             - name: Checkout code
-              uses: actions/checkout@v5
+              uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
             - name: Test
               env:
                   OSC_ACCESS_KEY: ${{secrets.OSC_ACCESS_KEY}}
@@ -80,16 +80,16 @@ jobs:
                 goos: ["linux", "darwin", "windows"]
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
 
             - name: Set up Go
-              uses: actions/setup-go@v6
+              uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
               with:
                   go-version-file: "go.mod"
             - name: Build
               run: GOOS=${{matrix.goos}} go build -v -o packer-plugin-outscale_${{matrix.goos}}
             - name: Upload a Build Artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
               with:
                   name: packer-plugin-outscale_${{matrix.goos}}
                   path: ./packer-plugin-outscale_${{matrix.goos}}

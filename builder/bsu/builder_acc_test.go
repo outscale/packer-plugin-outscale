@@ -2,25 +2,17 @@
 package bsu
 
 import (
-	"fmt"
-	"os/exec"
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/acctest"
+	"github.com/outscale/packer-plugin-outscale/internal/testacc"
 )
 
 func TestAccBuilder_basic(t *testing.T) {
 	testCase := &acctest.PluginTestCase{
 		Name:     "bsu_basic_test",
 		Template: testBuilderAccBasic,
-		Check: func(buildCommand *exec.Cmd, logfile string) error {
-			if buildCommand.ProcessState != nil {
-				if buildCommand.ProcessState.ExitCode() != 0 {
-					return fmt.Errorf("Bad exit code. Logfile: %s", logfile)
-				}
-			}
-			return nil
-		},
+		Check:    testacc.CheckWithLogs,
 	}
 	acctest.TestPlugin(t, testCase)
 }
@@ -29,14 +21,7 @@ func TestAccBuilder_GoodProductCode(t *testing.T) {
 	testCase := &acctest.PluginTestCase{
 		Name:     "bsu_product_code_test",
 		Template: testBuilderAccWithGoodProductCode,
-		Check: func(buildCommand *exec.Cmd, logfile string) error {
-			if buildCommand.ProcessState != nil {
-				if buildCommand.ProcessState.ExitCode() != 0 {
-					return fmt.Errorf("Bad exit code. Logfile: %s", logfile)
-				}
-			}
-			return nil
-		},
+		Check:    testacc.CheckWithLogs,
 	}
 	acctest.TestPlugin(t, testCase)
 }

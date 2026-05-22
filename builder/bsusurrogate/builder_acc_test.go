@@ -1,25 +1,17 @@
 package bsusurrogate
 
 import (
-	"fmt"
-	"os/exec"
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/acctest"
+	"github.com/outscale/packer-plugin-outscale/internal/testacc"
 )
 
 func TestAccBuilder_basic(t *testing.T) {
 	testCase := &acctest.PluginTestCase{
 		Name:     "bsusurrogate_basic_test",
 		Template: testBuilderAccBasic,
-		Check: func(buildCommand *exec.Cmd, logfile string) error {
-			if buildCommand.ProcessState != nil {
-				if buildCommand.ProcessState.ExitCode() != 0 {
-					return fmt.Errorf("Bad exit code. Logfile: %s", logfile)
-				}
-			}
-			return nil
-		},
+		Check:    testacc.CheckWithLogs,
 	}
 	acctest.TestPlugin(t, testCase)
 }
@@ -28,14 +20,7 @@ func TestAccBuilder_VmTerminate(t *testing.T) {
 	testCase := &acctest.PluginTestCase{
 		Name:     "bsusurrogate_vm_terminate_test",
 		Template: testBuilderAccVmTerminate,
-		Check: func(buildCommand *exec.Cmd, logfile string) error {
-			if buildCommand.ProcessState != nil {
-				if buildCommand.ProcessState.ExitCode() != 0 {
-					return fmt.Errorf("Bad exit code. Logfile: %s", logfile)
-				}
-			}
-			return nil
-		},
+		Check:    testacc.CheckWithLogs,
 	}
 	acctest.TestPlugin(t, testCase)
 }

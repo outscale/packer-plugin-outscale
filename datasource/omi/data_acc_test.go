@@ -2,25 +2,17 @@ package omi
 
 import (
 	_ "embed"
-	"fmt"
-	"os/exec"
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/acctest"
+	"github.com/outscale/packer-plugin-outscale/internal/testacc"
 )
 
 func TestAccDatasource_OutscaleOmi(t *testing.T) {
 	testCase := &acctest.PluginTestCase{
 		Name:     "bsu_data_source_test",
 		Template: testBuilderAccBasicDataSource,
-		Check: func(buildCommand *exec.Cmd, logfile string) error {
-			if buildCommand.ProcessState != nil {
-				if buildCommand.ProcessState.ExitCode() != 0 {
-					return fmt.Errorf("Bad exit code. Logfile: %s", logfile)
-				}
-			}
-			return nil
-		},
+		Check:    testacc.CheckWithLogs,
 	}
 	acctest.TestPlugin(t, testCase)
 }

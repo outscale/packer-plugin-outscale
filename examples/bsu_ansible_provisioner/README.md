@@ -48,7 +48,8 @@ new_omi_name        = "Ubuntu-24.04-Apache"
 ssh_username        = "outscale"
 vm_type             = "tinav6.c4r8p2"
 region              = "eu-west-2"
-osc_source_image_id = "ami-860c2495"
+osc_source_image_name = "Ubuntu-24.04-*"
+# osc_source_image_id  = "ami-b29cea33"
 ```
 
 ---
@@ -74,6 +75,9 @@ This process will:
 - Launch an **Outscale VM**.
 - Run the **Ansible Playbook** to install **Apache**.
 - Save the **new OMI**.
+
+The source OMI is selected dynamically from the most recent Outscale-owned image matching `osc_source_image_name`.
+You can also pin a specific image by uncommenting `osc_source_image_id` in the vars file and the matching `source_omi` line in the template.
 
 ---
 

@@ -27,10 +27,15 @@ variable "vm_type" {
   type        = string
 }
 
-variable "osc_source_image_id" {
-  description = "ID of the existing Outscale Machine Image (OMI) used as a base"
+variable "osc_source_image_name" {
+  description = "Name pattern of the existing Outscale Machine Image (OMI) used as a base"
   type        = string
 }
+
+# variable "osc_source_image_id" {
+#   description = "ID of the existing Outscale Machine Image (OMI) used as a base"
+#   type        = string
+# }
 
 variable "ssh_username" {
   description = "SSH username used to connect to the instance"
@@ -46,10 +51,17 @@ source "outscale-bsu" "create-omi" {
     volume_type           = "gp2" # General Purpose SSD
   }
 
-  communicator   = "ssh" # Specifies SSH as the communication method
-  region         = var.region
-  vm_type        = var.vm_type
-  source_omi     = var.osc_source_image_id
+  communicator = "ssh" # Specifies SSH as the communication method
+  region       = var.region
+  vm_type      = var.vm_type
+  # source_omi = var.osc_source_image_id
+  source_omi_filter {
+    filters = {
+      image-name = var.osc_source_image_name
+    }
+    owners      = ["Outscale"]
+    most_recent = true
+  }
   omi_name       = "${var.new_omi_name}-${formatdate("YYYYMMDD-HHmmss", timestamp())}" # Append timestamp to OMI name
   ssh_username   = var.ssh_username
   omi_boot_modes = ["legacy", "uefi"] # Enable boot modes on the new Outscale Machine Image (OMI) to be created

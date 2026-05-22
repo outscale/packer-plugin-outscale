@@ -1,5 +1,9 @@
 name: Execute CI
 
+concurrency:
+    group: test-us-east-2
+    cancel-in-progress: false
+
 on:
     pull_request:
         branches:
@@ -13,6 +17,7 @@ on:
             - "examples/**"
             - "scripts/run-examples.sh"
             - "GNUmakefile"
+            - ".github/workflows/ci.yml"
 jobs:
     check-code:
         runs-on: ubuntu-latest
@@ -47,6 +52,7 @@ jobs:
                      echo "You can use the command: \`make generate\` to reformat code."; \
                      exit 1; \
                   fi
+
     test:
         strategy:
             max-parallel: 1
@@ -73,7 +79,31 @@ jobs:
                   OSC_ACCESS_KEY: ${{secrets.OSC_ACCESS_KEY}}
                   OSC_SECRET_KEY: ${{secrets.OSC_SECRET_KEY}}
                   OSC_REGION: ${{secrets.OSC_REGION}}
-              run: go test -count 1 ./... -coverprofile=coverage.txt -covermode=atomic -timeout=3m
+              run: make test
+
+    acceptance:
+        needs: test
+        runs-on: ubuntu-latest
+        environment: test-us-east-2
+        steps:
+            - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+            - name: 🧹 Frieza
+              uses: outscale/frieza-github-actions/frieza-clean@master
+              with:
+                  access_key: ${{ secrets.OSC_ACCESS_KEY }}
+                  secret_key: ${{ secrets.OSC_SECRET_KEY }}
+                  region: ${{ secrets.OSC_REGION }}
+            - name: Install Go
+              uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
+              with:
+                  go-version-file: "go.mod"
+            - name: Run acceptance tests
+              env:
+                  OSC_ACCESS_KEY: ${{ secrets.OSC_ACCESS_KEY }}
+                  OSC_SECRET_KEY: ${{ secrets.OSC_SECRET_KEY }}
+                  OSC_REGION: ${{ secrets.OSC_REGION }}
+              run: make testacc
+
     build:
         strategy:
             matrix:

@@ -1,8 +1,13 @@
 name: Packer examples tests
+
+concurrency:
+    group: test-us-east-2
+    cancel-in-progress: false
+
 on:
     pull_request:
         branches:
-            - master
+            - main
         paths:
             - "examples/**.pkr.hcl"
             - "examples/**.sh"

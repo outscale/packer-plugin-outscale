@@ -16,7 +16,10 @@ vm_type = "tinav6.c4r8p2"
 # Example: "eu-west-2" is a specific Outscale region in Europe.
 region = "us-east-2"
 
-# The ID of the base Outscale Machine Image (OMI) used for the build
-# This is the source image from which the new image will be created.
-# Example: "ami-860c2495" corresponds to Ubuntu 24.04.
-osc_source_image_id = "ami-b9d44e7e"
+# The name pattern of the base Outscale Machine Image (OMI) used for the build.
+# The most recent Outscale-owned image matching this pattern will be selected.
+osc_source_image_name = "Ubuntu-24.04-*"
+
+# The ID of the base Outscale Machine Image (OMI) used for the build.
+# Uncomment this and the matching `source_omi` line in the template to pin a specific image.
+# osc_source_image_id = "ami-b29cea33"

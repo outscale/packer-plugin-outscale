@@ -27,10 +27,10 @@ func (s *StepCreateTags) Run(ctx context.Context, state multistep.StateBag) mult
 	}
 
 	// Adds tags to OMIs and snapshots
-	for region, ami := range omis {
+	for _, ami := range omis {
 		ui.Say(fmt.Sprintf("Adding tags to OMI (%s)...", ami))
 
-		regionconn, err := config.NewOSCClientByRegion(region)
+		regionconn, err := config.NewOSCClient()
 		if err != nil {
 			err = fmt.Errorf("error retrieving details for OMI (%s): %w", ami, err)
 			state.Put("error", err)

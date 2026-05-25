@@ -80,7 +80,7 @@ func (a *Artifact) Destroy() error {
 	for region, imageId := range a.Omis {
 		log.Printf("Deregistering image ID (%s) from region (%s)", imageId, region)
 
-		regionConn, err := config.NewOSCClientByRegion(region)
+		regionConn, err := config.NewOSCClient()
 		if err != nil {
 			errors = append(errors, err)
 			continue

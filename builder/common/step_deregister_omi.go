@@ -34,69 +34,67 @@ func (s *StepDeregisterOMI) Run(
 
 	log.Printf("LOG_ s.Regions: %#+v\n", s.Regions)
 
-	for _, region := range s.Regions {
-		// get new connection for each region in which we need to deregister vms
-		conn, err := s.AccessConfig.NewOSCClientByRegion(region)
+	// get new connection for each region in which we need to deregister vms
+	conn, err := s.AccessConfig.NewOSCClient()
+	if err != nil {
+		err := fmt.Errorf("error describing OMI: %w", err)
+		state.Put("error", err)
+		ui.Error(err.Error())
+
+		return multistep.ActionHalt
+	}
+
+	filterReq := oscgo.ReadImagesRequest{
+		Filters: &oscgo.FiltersImage{ImageNames: &[]string{s.OMIName}},
+	}
+	resp, err := conn.ReadImages(ctx, filterReq)
+	if err != nil {
+		err := fmt.Errorf("error describing OMI: %w", err)
+		state.Put("error", err)
+		ui.Error(err.Error())
+
+		return multistep.ActionHalt
+	}
+
+	log.Printf("LOG_ resp.Images: %#+v\n", resp.Images)
+
+	// Deregister image(s) by name
+	for _, img := range *resp.Images {
+		// We are supposing that DeleteImage does the same action as DeregisterImage
+		_, err := conn.DeleteImage(ctx, oscgo.DeleteImageRequest{
+			ImageId: img.ImageId,
+		})
 		if err != nil {
-			err := fmt.Errorf("error describing OMI: %w", err)
+			err := fmt.Errorf("error deregistering existing OMI: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 
 			return multistep.ActionHalt
 		}
 
-		filterReq := oscgo.ReadImagesRequest{
-			Filters: &oscgo.FiltersImage{ImageNames: &[]string{s.OMIName}},
-		}
-		resp, err := conn.ReadImages(ctx, filterReq)
-		if err != nil {
-			err := fmt.Errorf("error describing OMI: %w", err)
-			state.Put("error", err)
-			ui.Error(err.Error())
+		ui.Say(
+			fmt.Sprintf(
+				"Deregistered OMI %s, id: %s",
+				s.OMIName,
+				img.ImageId,
+			),
+		)
 
-			return multistep.ActionHalt
-		}
+		// Delete snapshot(s) by image
+		if s.ForceDeleteSnapshot {
+			for _, b := range *img.BlockDeviceMappings {
+				if b.Bsu.SnapshotId != nil {
+					request := oscgo.DeleteSnapshotRequest{SnapshotId: *b.Bsu.SnapshotId}
+					_, err := conn.DeleteSnapshot(ctx, request)
+					if err != nil {
+						err := fmt.Errorf("error deleting existing snapshot: %w", err)
+						state.Put("error", err)
+						ui.Error(err.Error())
 
-		log.Printf("LOG_ resp.Images: %#+v\n", resp.Images)
-
-		// Deregister image(s) by name
-		for _, img := range *resp.Images {
-			// We are supposing that DeleteImage does the same action as DeregisterImage
-			_, err := conn.DeleteImage(ctx, oscgo.DeleteImageRequest{
-				ImageId: img.ImageId,
-			})
-			if err != nil {
-				err := fmt.Errorf("error deregistering existing OMI: %w", err)
-				state.Put("error", err)
-				ui.Error(err.Error())
-
-				return multistep.ActionHalt
-			}
-
-			ui.Say(
-				fmt.Sprintf(
-					"Deregistered OMI %s, id: %s",
-					s.OMIName,
-					img.ImageId,
-				),
-			)
-
-			// Delete snapshot(s) by image
-			if s.ForceDeleteSnapshot {
-				for _, b := range *img.BlockDeviceMappings {
-					if b.Bsu.SnapshotId != nil {
-						request := oscgo.DeleteSnapshotRequest{SnapshotId: *b.Bsu.SnapshotId}
-						_, err := conn.DeleteSnapshot(ctx, request)
-						if err != nil {
-							err := fmt.Errorf("error deleting existing snapshot: %w", err)
-							state.Put("error", err)
-							ui.Error(err.Error())
-
-							return multistep.ActionHalt
-						}
-
-						ui.Say("Deleted snapshot: " + *b.Bsu.SnapshotId)
+						return multistep.ActionHalt
 					}
+
+					ui.Say("Deleted snapshot: " + *b.Bsu.SnapshotId)
 				}
 			}
 		}

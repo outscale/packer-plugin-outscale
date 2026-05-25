@@ -62,9 +62,9 @@ func (s *StepUpdateOMIAttributes) Run(
 	}
 
 	// Updating image attributes
-	for region, omi := range omis {
+	for _, omi := range omis {
 		ui.Say(fmt.Sprintf("Updating attributes on OMI (%s)...", omi))
-		regionconn, err := config.NewOSCClientByRegion(region)
+		regionconn, err := config.NewOSCClient()
 		if err != nil {
 			err := fmt.Errorf("error updating OMI: %w", err)
 			state.Put("error", err)
@@ -88,10 +88,10 @@ func (s *StepUpdateOMIAttributes) Run(
 	}
 
 	// Updating snapshot attributes
-	for region, region_snapshots := range snapshots {
-		for _, snapshot := range region_snapshots {
-			ui.Say(fmt.Sprintf("Updating attributes on snapshot (%s)...", snapshot))
-			regionconn, err := config.NewOSCClientByRegion(region)
+	for _, snapshot := range snapshots {
+		for _, snapshot_id := range snapshot {
+			ui.Say(fmt.Sprintf("Updating attributes on snapshot (%s)...", snapshot_id))
+			regionconn, err := config.NewOSCClient()
 			if err != nil {
 				err := fmt.Errorf("error updating snapshot: %w", err)
 				state.Put("error", err)
@@ -99,8 +99,8 @@ func (s *StepUpdateOMIAttributes) Run(
 				return multistep.ActionHalt
 			}
 
-			ui.Message(fmt.Sprintf("Updating: %s", snapshot))
-			updateSnapshoptRequest.SnapshotId = snapshot
+			ui.Message(fmt.Sprintf("Updating: %s", snapshot_id))
+			updateSnapshoptRequest.SnapshotId = snapshot_id
 			_, err = regionconn.UpdateSnapshot(ctx, updateSnapshoptRequest)
 			if err != nil {
 				err := fmt.Errorf("error updating snapshot: %w", err)

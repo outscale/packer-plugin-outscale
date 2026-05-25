@@ -28,7 +28,7 @@ jobs:
               with:
                   go-version-file: "go.mod"
             - name: Lint
-              uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3
+              uses: golangci/golangci-lint-action@82606bf257cbaff209d206a39f5134f0cfbfd2ee # v9
               with:
                   version: latest
                   # skip cache because of flaky behaviors

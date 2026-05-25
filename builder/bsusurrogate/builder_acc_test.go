@@ -29,7 +29,7 @@ const testBuilderAccBasic = `
 {
 	"builders": [{
 		"type": "outscale-bsusurrogate",
-		"vm_type": "tinav5.c1r1p1",
+		"vm_type": "tinav7.c1r1p1",
 		"source_omi_filter": {
 		    "filters": {
 	       		"image-name": "Debian-12-*"
@@ -64,7 +64,7 @@ const testBuilderAccVmTerminate = `
 {
 	"builders": [{
 		"type": "outscale-bsusurrogate",
-		"vm_type": "tinav5.c1r1p1",
+		"vm_type": "tinav7.c1r1p1",
 		"source_omi_filter": {
 		    "filters": {
 	       		"image-name": "Debian-12-*"

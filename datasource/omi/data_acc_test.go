@@ -45,7 +45,7 @@ data "outscale-omi" "test" {
         volume_type = "standard"
     }
 	source_omi    = data.outscale-omi.test.id
-	vm_type = "tinav5.c1r1p1"
+	vm_type = "tinav7.c1r1p1"
 	ssh_username  = "outscale"
   }
 

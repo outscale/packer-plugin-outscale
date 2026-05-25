@@ -44,7 +44,6 @@ data "outscale-omi" "test" {
         volume_size = "10"
         volume_type = "standard"
     }
-	region        = "eu-west-2"
 	source_omi    = data.outscale-omi.test.id
 	vm_type = "tinav5.c1r1p1"
 	ssh_username  = "outscale"

@@ -29,7 +29,6 @@ const testBuilderAccBasic = `
 {
 	"builders": [{
 		"type": "outscale-bsusurrogate",
-		"region": "eu-west-2",
 		"vm_type": "tinav5.c1r1p1",
 		"source_omi_filter": {
 		    "filters": {
@@ -40,7 +39,6 @@ const testBuilderAccBasic = `
         },
 		"ssh_username": "outscale",
 		"omi_name": "packer-test {{timestamp}}",
-		"subregion_name": "eu-west-2a",
 		"launch_block_device_mappings" : [
 			{
 			"volume_type" : "io1",
@@ -66,7 +64,6 @@ const testBuilderAccVmTerminate = `
 {
 	"builders": [{
 		"type": "outscale-bsusurrogate",
-		"region": "eu-west-2",
 		"vm_type": "tinav5.c1r1p1",
 		"source_omi_filter": {
 		    "filters": {
@@ -77,7 +74,6 @@ const testBuilderAccVmTerminate = `
         },
 		"ssh_username": "outscale",
 		"omi_name": "packer-test {{timestamp}}",
-		"subregion_name": "eu-west-2a",
 		"launch_block_device_mappings" : [
 			{
 			"volume_type" : "io1",

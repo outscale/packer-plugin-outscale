@@ -22,7 +22,6 @@ const testBuilderAccBasic = `
     "builders": [
         {
             "type": "outscale-bsuvolume",
-            "region": "eu-west-2",
             "vm_type": "tinav5.c1r1p1",
             "source_omi_filter": {
 			    "filters": {

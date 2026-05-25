@@ -2,7 +2,6 @@
 {
 	"builders": [{
 		"type": "outscale-bsusurrogate",
-		"region": "eu-west-2",
 		"vm_type": "tinav5.c1r1p1",
 		"source_omi_filter": {
 			"filters" = {
@@ -13,7 +12,6 @@
 		},
 		"ssh_username": "outscale",
 		"omi_name": "packer-test {{timestamp}}",
-		"subregion_name": "eu-west-2a",
 		"launch_block_device_mappings" : [
 			{
 			"volume_type" : "io1",

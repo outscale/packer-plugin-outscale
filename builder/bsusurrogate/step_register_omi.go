@@ -56,14 +56,14 @@ func (s *StepRegisterOMI) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 
 	// Set the OMI ID in the state
-	ui.Say(fmt.Sprintf("OMI: %s", registerResp.Image.ImageId))
+	ui.Say("OMI: " + registerResp.Image.ImageId)
 	omis := make(map[string]string)
 	omis[s.RawRegion] = registerResp.Image.ImageId
 	state.Put("omis", omis)
 
 	// Wait for the image to become ready
 	ui.Say("Waiting for OMI to become ready...")
-	if err := osccommon.WaitUntilOscImageAvailable(oscconn, registerResp.Image.ImageId); err != nil {
+	if err := osccommon.WaitUntilOscImageAvailable(ctx, oscconn, registerResp.Image.ImageId); err != nil {
 		err := fmt.Errorf("error waiting for OMI: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
@@ -115,7 +115,7 @@ func (s *StepRegisterOMI) Cleanup(state multistep.StateBag) {
 	deregisterOpts := oscgo.DeleteImageRequest{ImageId: s.image.ImageId}
 	_, err := oscconn.DeleteImage(context.Background(), deregisterOpts)
 	if err != nil {
-		ui.Error(fmt.Sprintf("error deregistering OMI, may still be around: %s", err.Error()))
+		ui.Error("error deregistering OMI, may still be around: " + err.Error())
 		return
 	}
 }
@@ -144,15 +144,15 @@ func (s *StepRegisterOMI) combineDevices(
 			if *device.Bsu.VolumeType != "io1" {
 				device.Bsu.Iops = nil
 			}
-
 		}
 		devices[*device.DeviceName] = copyToDeviceMappingImage(device)
 	}
 
-	blockDevices := []oscgo.BlockDeviceMappingImage{}
+	blockDevices := make([]oscgo.BlockDeviceMappingImage, 0, len(devices))
 	for _, device := range devices {
 		blockDevices = append(blockDevices, device)
 	}
+
 	return blockDevices
 }
 

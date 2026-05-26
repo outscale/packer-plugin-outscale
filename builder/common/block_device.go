@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
@@ -59,7 +58,7 @@ func setBsuToCreate(blockDevice BlockDevice) *oscgo.BsuToCreate {
 }
 
 func buildOscBlockDevicesImage(b []BlockDevice) []oscgo.BlockDeviceMappingImage {
-	var blockDevices []oscgo.BlockDeviceMappingImage
+	blockDevices := make([]oscgo.BlockDeviceMappingImage, 0, len(b))
 	for _, blockDevice := range b {
 		mapping := oscgo.BlockDeviceMappingImage{}
 
@@ -73,7 +72,7 @@ func buildOscBlockDevicesImage(b []BlockDevice) []oscgo.BlockDeviceMappingImage 
 }
 
 func buildOscBlockDevicesVmCreation(b []BlockDevice) []oscgo.BlockDeviceMappingVmCreation {
-	var blockDevices []oscgo.BlockDeviceMappingVmCreation
+	blockDevices := make([]oscgo.BlockDeviceMappingVmCreation, 0, len(b))
 	for _, blockDevice := range b {
 		mapping := oscgo.BlockDeviceMappingVmCreation{}
 
@@ -82,7 +81,7 @@ func buildOscBlockDevicesVmCreation(b []BlockDevice) []oscgo.BlockDeviceMappingV
 		}
 
 		if blockDevice.NoDevice {
-			mapping.NoDevice = aws.String("")
+			mapping.NoDevice = new("")
 		} else {
 			mapping.Bsu = setBsuToCreate(blockDevice)
 		}

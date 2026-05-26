@@ -9,7 +9,6 @@ package bsu
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer-plugin-sdk/common"
@@ -43,7 +42,7 @@ type Builder struct {
 
 func (b *Builder) ConfigSpec() hcldec.ObjectSpec { return b.config.FlatMapstructure().HCL2Spec() }
 
-func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
+func (b *Builder) Prepare(raws ...any) ([]string, []string, error) {
 	b.config.ctx.Funcs = osccommon.TemplateFuncs
 	err := config.Decode(&b.config, &config.DecodeOpts{
 		PluginType:         BuilderId,
@@ -63,7 +62,7 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 		return nil, nil, err
 	}
 
-	if b.config.PackerConfig.PackerForce {
+	if b.config.PackerForce {
 		b.config.OMIForceDeregister = true
 	}
 
@@ -122,8 +121,8 @@ func (b *Builder) Run(
 		},
 		&osccommon.StepKeyPair{
 			Debug:        b.config.PackerDebug,
-			Comm:         &b.config.RunConfig.Comm,
-			DebugKeyPath: fmt.Sprintf("osc_%s", b.config.PackerBuildName),
+			Comm:         &b.config.Comm,
+			DebugKeyPath: "osc_" + b.config.PackerBuildName,
 		},
 		&osccommon.StepPublicIp{
 			AssociatePublicIpAddress: b.config.AssociatePublicIpAddress,
@@ -132,7 +131,7 @@ func (b *Builder) Run(
 		&osccommon.StepSecurityGroup{
 			SecurityGroupFilter:   b.config.SecurityGroupFilter,
 			SecurityGroupIds:      b.config.SecurityGroupIds,
-			CommConfig:            &b.config.RunConfig.Comm,
+			CommConfig:            &b.config.Comm,
 			TemporarySGSourceCidr: b.config.TemporarySGSourceCidr,
 		},
 		&osccommon.StepCleanupVolumes{
@@ -140,7 +139,7 @@ func (b *Builder) Run(
 		},
 		&osccommon.StepRunSourceVm{
 			BlockDevices:                b.config.BlockDevices,
-			Comm:                        &b.config.RunConfig.Comm,
+			Comm:                        &b.config.Comm,
 			Ctx:                         b.config.ctx,
 			Debug:                       b.config.PackerDebug,
 			BsuOptimized:                b.config.BsuOptimized,
@@ -160,20 +159,21 @@ func (b *Builder) Run(
 		},
 		&osccommon.StepGetPassword{
 			Debug:     b.config.PackerDebug,
-			Comm:      &b.config.RunConfig.Comm,
+			Comm:      &b.config.Comm,
 			Timeout:   b.config.WindowsPasswordTimeout,
 			BuildName: b.config.PackerBuildName,
 		},
 		&communicator.StepConnect{
-			Config: &b.config.RunConfig.Comm,
-			Host: osccommon.OscSSHHost(
+			Config: &b.config.Comm,
+			Host: osccommon.SSHHost(
+				ctx,
 				oscConn,
 				b.config.SSHInterface),
-			SSHConfig: b.config.RunConfig.Comm.SSHConfigFunc(),
+			SSHConfig: b.config.Comm.SSHConfigFunc(),
 		},
 		&commonsteps.StepProvision{},
 		&commonsteps.StepCleanupTempKeys{
-			Comm: &b.config.RunConfig.Comm,
+			Comm: &b.config.Comm,
 		},
 		&osccommon.StepStopBSUBackedVm{
 			Skip:          false,
@@ -223,7 +223,7 @@ func (b *Builder) Run(
 		artifact := &osccommon.Artifact{
 			Omis:           omis.(map[string]string),
 			BuilderIdValue: BuilderId,
-			StateData:      map[string]interface{}{"generated_data": state.Get("generated_data")},
+			StateData:      map[string]any{"generated_data": state.Get("generated_data")},
 		}
 
 		return artifact, nil

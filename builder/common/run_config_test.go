@@ -1,17 +1,17 @@
-package common
+package common_test
 
 import (
-	"io/ioutil"
 	"os"
 	"regexp"
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
+	"github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
-func testConfig() *RunConfig {
-	return &RunConfig{
+func testConfig() *common.RunConfig {
+	return &common.RunConfig{
 		SourceOmi: "abcd",
 		VmType:    "m1.small",
 		Comm: communicator.Config{
@@ -22,10 +22,10 @@ func testConfig() *RunConfig {
 	}
 }
 
-func testConfigFilter() *RunConfig {
+func testConfigFilter() *common.RunConfig {
 	config := testConfig()
 	config.SourceOmi = ""
-	config.SourceOmiFilter = OmiFilterOptions{}
+	config.SourceOmiFilter = common.OmiFilterOptions{}
 	return config
 }
 
@@ -64,7 +64,7 @@ func TestRunConfigPrepare_SourceOmiFilterOwnersBlank(t *testing.T) {
 	c := testConfigFilter()
 	filter_key := "name"
 	filter_value := "foo"
-	c.SourceOmiFilter = OmiFilterOptions{
+	c.SourceOmiFilter = common.OmiFilterOptions{
 		NameValueFilter: config.NameValueFilter{
 			Filters: map[string]string{filter_key: filter_value},
 		},
@@ -79,7 +79,7 @@ func TestRunConfigPrepare_SourceOmiFilterGood(t *testing.T) {
 	owner := "123"
 	filter_key := "name"
 	filter_value := "foo"
-	goodFilter := OmiFilterOptions{
+	goodFilter := common.OmiFilterOptions{
 		Owners: []string{owner},
 		NameValueFilter: config.NameValueFilter{
 			Filters: map[string]string{filter_key: filter_value},
@@ -136,12 +136,12 @@ func TestRunConfigPrepare_SSHPort(t *testing.T) {
 
 func TestRunConfigPrepare_UserData(t *testing.T) {
 	c := testConfig()
-	tf, err := os.CreateTemp("", "packer")
+	tf, err := os.CreateTemp(t.TempDir(), "packer")
 	if err != nil {
 		t.Fatalf("err: %s", err)
 	}
-	defer os.Remove(tf.Name())
-	defer tf.Close()
+	defer os.Remove(tf.Name()) //nolint:errcheck
+	defer tf.Close()           //nolint:errcheck
 
 	c.UserData = "foo"
 	c.UserDataFile = tf.Name()
@@ -161,12 +161,12 @@ func TestRunConfigPrepare_UserDataFile(t *testing.T) {
 		t.Fatalf("Should error if the file specified by user_data_file does not exist")
 	}
 
-	tf, err := ioutil.TempFile("", "packer")
+	tf, err := os.CreateTemp(t.TempDir(), "packer")
 	if err != nil {
 		t.Fatalf("err: %s", err)
 	}
-	defer os.Remove(tf.Name())
-	defer tf.Close()
+	defer os.Remove(tf.Name()) //nolint:errcheck
+	defer tf.Close()           //nolint:errcheck
 
 	c.UserDataFile = tf.Name()
 	if err := c.Prepare(nil); len(err) != 0 {

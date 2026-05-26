@@ -1,18 +1,18 @@
-package common
+package common_test
 
 import (
-	"context"
 	"reflect"
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
+	"github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
 // Create statebag for running test
 func getStateUpdateOMI(omiId string, snapId string, state multistep.StateBag) multistep.StateBag {
-	config := state.Get("accessConfig").(*AccessConfig)
+	config := state.Get("accessConfig").(*common.AccessConfig)
 
 	omis := make(map[string]string, 0)
 	omis[config.RawRegion] = omiId
@@ -31,11 +31,11 @@ func TestUpdateOmi(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error setting osc client %s", err.Error())
 	}
-	config := state.Get("accessConfig").(*AccessConfig)
-	client := state.Get("osc").(*OscClient)
+	config := state.Get("accessConfig").(*common.AccessConfig)
+	client := state.Get("osc").(*common.OscClient)
 
 	stepSourceOMIInfo := mostRecentOmiFilterStep()
-	imageAction := stepSourceOMIInfo.Run(context.Background(), state)
+	imageAction := stepSourceOMIInfo.Run(t.Context(), state)
 	if err := state.Get("error"); err != nil {
 		t.Fatalf("should not error, but: %v", err)
 	}
@@ -45,7 +45,7 @@ func TestUpdateOmi(t *testing.T) {
 	}
 	sourceImage := state.Get("source_image").(oscgo.Image)
 
-	stepUpdateOMIAttributes := StepUpdateOMIAttributes{
+	stepUpdateOMIAttributes := common.StepUpdateOMIAttributes{
 		AccountIds:         []string{},
 		SnapshotAccountIds: []string{},
 		RawRegion:          config.RawRegion,
@@ -72,7 +72,7 @@ func TestUpdateOmi(t *testing.T) {
 		})
 	}()
 
-	err = waitUntilForOscVmRunning(client, vmId)
+	err = common.WaitUntilForOscVmRunning(ctx, client, vmId)
 	if err != nil {
 		t.Fatalf("error waiting for VM to be running: %v", err)
 	}

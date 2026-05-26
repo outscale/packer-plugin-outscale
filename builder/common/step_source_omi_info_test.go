@@ -1,4 +1,4 @@
-package common
+package common_test
 
 import (
 	"bytes"
@@ -6,8 +6,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
-
-	"context"
+	"github.com/outscale/packer-plugin-outscale/builder/common"
 
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 )
@@ -15,7 +14,7 @@ import (
 // Create statebag for running test
 func getState() (multistep.StateBag, error) {
 	state := new(multistep.BasicStateBag)
-	accessConfig := &AccessConfig{}
+	accessConfig := &common.AccessConfig{}
 	oscConn, err := accessConfig.NewOSCClient()
 	if err != nil {
 		return nil, err
@@ -29,9 +28,9 @@ func getState() (multistep.StateBag, error) {
 	return state, err
 }
 
-func mostRecentOmiFilterStep() StepSourceOMIInfo {
-	stepSourceOMIInfo := StepSourceOMIInfo{
-		OmiFilters: OmiFilterOptions{
+func mostRecentOmiFilterStep() common.StepSourceOMIInfo {
+	stepSourceOMIInfo := common.StepSourceOMIInfo{
+		OmiFilters: common.OmiFilterOptions{
 			Owners: []string{"Outscale"},
 			NameValueFilter: config.NameValueFilter{
 				Filters: map[string]string{"image-name": "Debian-12-*"},
@@ -50,7 +49,7 @@ func TestMostRecentOmiFilter(t *testing.T) {
 		t.Fatalf("error retrieving state %s", err.Error())
 	}
 
-	action := step.Run(context.Background(), state)
+	action := step.Run(t.Context(), state)
 	if err := state.Get("error"); err != nil {
 		t.Fatalf("should not error, but: %v", err)
 	}
@@ -58,5 +57,4 @@ func TestMostRecentOmiFilter(t *testing.T) {
 	if action != multistep.ActionContinue {
 		t.Fatalf("should continue, but: %v", action)
 	}
-
 }

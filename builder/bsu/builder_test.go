@@ -1,13 +1,14 @@
-package bsu
+package bsu_test
 
 import (
 	"testing"
 
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/packer-plugin-outscale/builder/bsu"
 )
 
-func testConfig() map[string]interface{} {
-	return map[string]interface{}{
+func testConfig() map[string]any {
+	return map[string]any{
 		"access_key":   "foo",
 		"secret_key":   "bar",
 		"source_omi":   "foo",
@@ -19,16 +20,15 @@ func testConfig() map[string]interface{} {
 }
 
 func TestBuilder_ImplementsBuilder(t *testing.T) {
-	var raw interface{}
-	raw = &Builder{}
+	var raw any = &bsu.Builder{}
 	if _, ok := raw.(packersdk.Builder); !ok {
 		t.Fatalf("Builder should be a builder")
 	}
 }
 
 func TestBuilder_Prepare_BadType(t *testing.T) {
-	b := &Builder{}
-	c := map[string]interface{}{
+	b := &bsu.Builder{}
+	c := map[string]any{
 		"access_key": []string{},
 	}
 
@@ -42,7 +42,7 @@ func TestBuilder_Prepare_BadType(t *testing.T) {
 }
 
 func TestBuilderPrepare_OMIName(t *testing.T) {
-	var b Builder
+	var b bsu.Builder
 	config := testConfig()
 
 	// Test good
@@ -58,7 +58,7 @@ func TestBuilderPrepare_OMIName(t *testing.T) {
 
 	// Test bad
 	config["omi_name"] = "foo {{"
-	b = Builder{}
+	b = bsu.Builder{}
 	_, warnings, err = b.Prepare(config)
 	if len(warnings) > 0 {
 		t.Fatalf("bad: %#v", warnings)
@@ -69,7 +69,7 @@ func TestBuilderPrepare_OMIName(t *testing.T) {
 
 	// Test bad
 	delete(config, "omi_name")
-	b = Builder{}
+	b = bsu.Builder{}
 	_, warnings, err = b.Prepare(config)
 	if len(warnings) > 0 {
 		t.Fatalf("bad: %#v", warnings)
@@ -80,7 +80,7 @@ func TestBuilderPrepare_OMIName(t *testing.T) {
 }
 
 func TestBuilderPrepare_InvalidKey(t *testing.T) {
-	var b Builder
+	var b bsu.Builder
 	config := testConfig()
 
 	// Add a random key
@@ -95,7 +95,7 @@ func TestBuilderPrepare_InvalidKey(t *testing.T) {
 }
 
 func TestBuilderPrepare_InvalidShutdownBehavior(t *testing.T) {
-	var b Builder
+	var b bsu.Builder
 	config := testConfig()
 
 	// Test good

@@ -1,4 +1,4 @@
-package bsuvolume
+package bsuvolume_test
 
 import (
 	"reflect"
@@ -6,12 +6,13 @@ import (
 
 	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
 	"github.com/mitchellh/mapstructure"
+	"github.com/outscale/packer-plugin-outscale/builder/bsuvolume"
 )
 
 func TestArtifactState(t *testing.T) {
 	expectedData := "this is the data"
-	artifact := &Artifact{
-		StateData: map[string]interface{}{"state_data": "this is the data"},
+	artifact := &bsuvolume.Artifact{
+		StateData: map[string]any{"state_data": "this is the data"},
 	}
 
 	// Valid state
@@ -27,7 +28,7 @@ func TestArtifactState(t *testing.T) {
 	}
 
 	// Nil StateData should not fail and should return nil
-	artifact = &Artifact{}
+	artifact = &bsuvolume.Artifact{}
 	result = artifact.State("key")
 	if result != nil {
 		t.Fatalf("Bad: State should be nil for nil StateData")
@@ -35,16 +36,15 @@ func TestArtifactState(t *testing.T) {
 }
 
 func TestArtifactState_hcpPackerRegistryMetadata(t *testing.T) {
-
-	volumes := make(BsuVolumes)
+	volumes := make(bsuvolume.BsuVolumes)
 	volumes["eu-west-2"] = []string{"vol-4567", "vol-0987"}
-	snapshots := make(BsuSnapshots)
+	snapshots := make(bsuvolume.BsuSnapshots)
 	snapshots["eu-west-2"] = []string{"snap-4567", "snap-0987"}
 
-	artifact := &Artifact{
+	artifact := &bsuvolume.Artifact{
 		Volumes:   volumes,
 		Snapshots: snapshots,
-		StateData: map[string]interface{}{"generated_data": map[string]interface{}{"SourceOMI": "ami-12345"}},
+		StateData: map[string]any{"generated_data": map[string]any{"SourceOMI": "ami-12345"}},
 	}
 
 	result := artifact.State(registryimage.ArtifactStateURI)

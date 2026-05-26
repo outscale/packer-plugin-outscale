@@ -37,7 +37,7 @@ func (c *OMIConfig) Prepare(accessConfig *AccessConfig, ctx *interpolate.Context
 		errs = append(errs, errors.New("omi_name must be specified"))
 	}
 
-	errs = append(errs, c.prepareRegions(accessConfig)...)
+	errs = append(errs, c.PrepareRegions(accessConfig)...)
 
 	if len(c.OMIName) < 3 || len(c.OMIName) > 128 {
 		errs = append(errs, errors.New("omi_name must be between 3 and 128 characters long"))
@@ -45,7 +45,7 @@ func (c *OMIConfig) Prepare(accessConfig *AccessConfig, ctx *interpolate.Context
 	if len(c.OMIBootModes) > 0 {
 		bootModesSupported := []oscgo.BootMode{"legacy", "uefi"}
 		for _, booModeValue := range c.OMIBootModes {
-			var bootMode oscgo.BootMode = (oscgo.BootMode)(booModeValue)
+			bootMode := (oscgo.BootMode)(booModeValue)
 			if !slices.Contains(bootModesSupported, bootMode) {
 				errs = append(
 					errs,
@@ -70,7 +70,7 @@ func (c *OMIConfig) Prepare(accessConfig *AccessConfig, ctx *interpolate.Context
 	return nil
 }
 
-func (c *OMIConfig) prepareRegions(accessConfig *AccessConfig) (errs []error) {
+func (c *OMIConfig) PrepareRegions(accessConfig *AccessConfig) (errs []error) {
 	if len(c.OMIRegions) > 0 {
 		regionSet := make(map[string]struct{})
 		regions := make([]string, 0, len(c.OMIRegions))

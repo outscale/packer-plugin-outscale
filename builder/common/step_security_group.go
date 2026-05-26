@@ -75,15 +75,15 @@ func (s *StepSecurityGroup) Run(
 			securityGroupIds = append(securityGroupIds, sg.SecurityGroupId)
 		}
 
-		ui.Message(fmt.Sprintf("Found Security Group(s): %s", strings.Join(securityGroupIds, ", ")))
+		ui.Message("Found Security Group(s): " + strings.Join(securityGroupIds, ", "))
 		state.Put("securityGroupIds", securityGroupIds)
 
 		return multistep.ActionContinue
 	}
 
 	/* Create the group */
-	groupName := fmt.Sprintf("packer_osc_%s", uuid.TimeOrderedUUID())
-	ui.Say(fmt.Sprintf("Creating temporary security group for this instance: %s", groupName))
+	groupName := "packer_osc_" + uuid.TimeOrderedUUID()
+	ui.Say("Creating temporary security group for this instance: " + groupName)
 
 	createSGReq := oscgo.CreateSecurityGroupRequest{
 		SecurityGroupName: groupName,
@@ -165,10 +165,7 @@ func (s *StepSecurityGroup) Cleanup(state multistep.StateBag) {
 		SecurityGroupId: &s.createdGroupId,
 	})
 	if err != nil {
-		ui.Error(fmt.Sprintf(
-			"Error cleaning up security group. Please delete the group manually: %s",
-			s.createdGroupId,
-		))
+		ui.Error("Error cleaning up security group. Please delete the group manually: " + s.createdGroupId)
 	}
 }
 

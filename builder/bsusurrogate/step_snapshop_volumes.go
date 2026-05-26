@@ -42,7 +42,7 @@ func (s *StepSnapshotVolumes) snapshotVolume(
 	}
 
 	ui.Say(fmt.Sprintf("Creating snapshot of EBS Volume %s...", volumeId))
-	description := fmt.Sprintf("Packer: %s", time.Now().String())
+	description := "Packer: " + time.Now().String()
 
 	request := oscgo.CreateSnapshotRequest{
 		Description: &description,
@@ -57,7 +57,7 @@ func (s *StepSnapshotVolumes) snapshotVolume(
 	s.snapshotIds[deviceName] = createSnapResp.Snapshot.SnapshotId
 
 	// Wait for snapshot to be created
-	err = osccommon.WaitUntilOscSnapshotCompleted(oscconn, createSnapResp.Snapshot.SnapshotId)
+	err = osccommon.WaitUntilOscSnapshotCompleted(ctx, oscconn, createSnapResp.Snapshot.SnapshotId)
 	return err
 }
 

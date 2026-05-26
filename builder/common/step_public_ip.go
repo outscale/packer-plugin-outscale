@@ -27,7 +27,7 @@ func (s *StepPublicIp) Run(ctx context.Context, state multistep.StateBag) multis
 
 	if !s.AssociatePublicIpAddress {
 		// In this case, we are in the public Cloud, so we'll
-		// not explicitely allocate a public IP.
+		// not explicitly allocate a public IP.
 		return multistep.ActionContinue
 	}
 
@@ -67,10 +67,7 @@ func (s *StepPublicIp) Cleanup(state multistep.StateBag) {
 	})
 	if err != nil {
 		ui.Error(
-			fmt.Sprintf(
-				"Error cleaning up PublicIp. Please delete the PublicIp manually: %s",
-				s.publicIpId,
-			),
+			"Error cleaning up PublicIp. Please delete the PublicIp manually: " + s.publicIpId,
 		)
 	}
 }

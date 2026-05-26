@@ -26,10 +26,10 @@ func (s *StepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 
 	var (
 		conn   = state.Get("osc").(*OscClient)
-		images []interface{}
+		images []any
 	)
 
-	ui.Say(fmt.Sprintf("Prevalidating OMI Name: %s", s.DestOmiName))
+	ui.Say("Prevalidating OMI Name: " + s.DestOmiName)
 
 	accountResp, err := conn.ReadAccounts(ctx, oscgo.ReadAccountsRequest{})
 	if err != nil || len(*accountResp.Accounts) == 0 {

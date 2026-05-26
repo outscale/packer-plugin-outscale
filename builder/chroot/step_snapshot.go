@@ -27,7 +27,7 @@ func (s *StepSnapshot) Run(ctx context.Context, state multistep.StateBag) multis
 	volumeId := state.Get("volume_id").(string)
 
 	ui.Say("Creating snapshot...")
-	description := fmt.Sprintf("Packer: %s", time.Now().String())
+	description := "Packer: " + time.Now().String()
 
 	request := oscgo.CreateSnapshotRequest{
 		Description: &description,
@@ -43,10 +43,10 @@ func (s *StepSnapshot) Run(ctx context.Context, state multistep.StateBag) multis
 
 	// Set the snapshot ID so we can delete it later
 	s.snapshotId = createSnapResp.Snapshot.SnapshotId
-	ui.Message(fmt.Sprintf("Snapshot ID: %s", s.snapshotId))
+	ui.Message("Snapshot ID: " + s.snapshotId)
 
 	// Wait for the snapshot to be ready
-	err = osccommon.WaitUntilOscSnapshotDone(oscconn, s.snapshotId)
+	err = osccommon.WaitUntilOscSnapshotDone(ctx, oscconn, s.snapshotId)
 	if err != nil {
 		err := fmt.Errorf("error waiting for snapshot: %w", err)
 		state.Put("error", err)
@@ -79,7 +79,7 @@ func (s *StepSnapshot) Cleanup(state multistep.StateBag) {
 		request := oscgo.DeleteSnapshotRequest{SnapshotId: s.snapshotId}
 		_, err := oscconn.DeleteSnapshot(context.Background(), request)
 		if err != nil {
-			ui.Error(fmt.Sprintf("Error: %s", err.Error()))
+			ui.Error("Error: " + err.Error())
 		}
 	}
 }

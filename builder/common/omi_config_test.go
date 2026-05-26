@@ -1,25 +1,28 @@
-package common
+package common_test
 
 import (
 	"reflect"
+	"strings"
 	"testing"
+
+	"github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
-func testOMIConfig() *OMIConfig {
-	return &OMIConfig{
+func testOMIConfig() *common.OMIConfig {
+	return &common.OMIConfig{
 		OMIName: "foo",
 	}
 }
 
-func getFakeAccessConfig(region string) *AccessConfig {
-	c := testAccessConfig()
+func getFakeAccessConfig(region string) *common.AccessConfig {
+	c := &common.AccessConfig{}
 	c.RawRegion = region
 	return c
 }
 
 func TestOMIConfigPrepare_name(t *testing.T) {
 	c := testOMIConfig()
-	accessConf := testAccessConfig()
+	accessConf := &common.AccessConfig{}
 	if err := c.Prepare(accessConf, nil); err != nil {
 		t.Fatalf("shouldn't have err: %s", err)
 	}
@@ -35,19 +38,19 @@ func TestOMIConfigPrepare_regions(t *testing.T) {
 	c.OMIRegions = nil
 
 	var errs []error
-	accessConf := testAccessConfig()
-	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
+	accessConf := &common.AccessConfig{}
+	if errs = c.PrepareRegions(accessConf); len(errs) > 0 {
 		t.Fatalf("shouldn't have err: %#v", errs)
 	}
 
 	c.OMIRegions = []string{"us-east-1", "us-west-1"}
 
-	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
+	if errs = c.PrepareRegions(accessConf); len(errs) > 0 {
 		t.Fatalf("shouldn't have err: %#v", errs)
 	}
 
 	c.OMIRegions = []string{"us-east-1", "us-west-1", "us-east-1"}
-	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
+	if errs = c.PrepareRegions(accessConf); len(errs) > 0 {
 		t.Fatalf("bad: %s", errs[0])
 	}
 
@@ -57,32 +60,32 @@ func TestOMIConfigPrepare_regions(t *testing.T) {
 	}
 
 	c.OMIRegions = []string{"custom"}
-	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
+	if errs = c.PrepareRegions(accessConf); len(errs) > 0 {
 		t.Fatal("shouldn't have error")
 	}
 
 	c.OMIRegions = []string{"us-east-1", "us-east-2", "us-west-1"}
 
-	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
+	if errs = c.PrepareRegions(accessConf); len(errs) > 0 {
 		t.Fatalf("shouldn't have error: %s", errs[0])
 	}
 
 	c.OMIRegions = []string{"us-east-1", "us-east-2", "us-west-1"}
 
-	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
+	if errs = c.PrepareRegions(accessConf); len(errs) > 0 {
 		t.Fatal("should have passed; we are able to use default KMS key if not sharing")
 	}
 
 	c.SnapshotAccountIDs = []string{"user-foo", "user-bar"}
 	c.OMIRegions = []string{"us-east-1", "us-east-2", "us-west-1"}
 
-	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
+	if errs = c.PrepareRegions(accessConf); len(errs) > 0 {
 		t.Fatal("should have an error b/c can't use default KMS key if sharing")
 	}
 
 	c.OMIRegions = []string{"us-east-1", "us-west-1"}
 
-	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
+	if errs = c.PrepareRegions(accessConf); len(errs) > 0 {
 		t.Fatal("should have error b/c theres a region in the key map that isn't in omi_regions")
 	}
 
@@ -91,7 +94,7 @@ func TestOMIConfigPrepare_regions(t *testing.T) {
 	c.SnapshotAccountIDs = []string{"foo", "bar"}
 	c.OMIRegions = []string{"us-east-1", "us-west-1"}
 
-	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
+	if errs = c.PrepareRegions(accessConf); len(errs) > 0 {
 		t.Fatal("should have error b/c theres a region in in omi_regions that isn't in the key map")
 	}
 
@@ -99,27 +102,26 @@ func TestOMIConfigPrepare_regions(t *testing.T) {
 	accessConf = getFakeAccessConfig("us-east-1")
 	c.OMIRegions = []string{"us-east-1", "us-west-1", "us-east-2"}
 
-	if errs = c.prepareRegions(accessConf); len(errs) > 0 {
+	if errs = c.PrepareRegions(accessConf); len(errs) > 0 {
 		t.Fatal("should allow user to have the raw region in omi_regions")
 	}
-
 }
 
 func TestOMINameValidation(t *testing.T) {
 	c := testOMIConfig()
 
-	accessConf := testAccessConfig()
+	accessConf := &common.AccessConfig{}
 
 	c.OMIName = "aa"
 	if err := c.Prepare(accessConf, nil); err == nil {
 		t.Fatal("shouldn't be able to have an omi name with less than 3 characters")
 	}
 
-	var longOmiName string
-	for i := 0; i < 129; i++ {
-		longOmiName += "a"
+	var longOmiName strings.Builder
+	for range 129 {
+		longOmiName.WriteString("a")
 	}
-	c.OMIName = longOmiName
+	c.OMIName = longOmiName.String()
 	if err := c.Prepare(accessConf, nil); err == nil {
 		t.Fatal("shouldn't be able to have an omi name with great than 128 characters")
 	}
@@ -138,5 +140,4 @@ func TestOMINameValidation(t *testing.T) {
 	if err := c.Prepare(accessConf, nil); err != nil {
 		t.Fatalf("expected `xyz-base-2017-04-05-1934` to pass validation.")
 	}
-
 }

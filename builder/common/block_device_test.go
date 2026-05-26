@@ -1,23 +1,20 @@
-package common
+package common_test
 
 import (
 	"reflect"
 	"testing"
 
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
+	"github.com/outscale/packer-plugin-outscale/builder/common"
 )
-
-func ptrTo[T any](t T) *T {
-	return &t
-}
 
 func TestBlockDevice_LaunchDevices(t *testing.T) {
 	cases := []struct {
-		Config *BlockDevice
+		Config *common.BlockDevice
 		Result oscgo.BlockDeviceMappingVmCreation
 	}{
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName:         "/dev/sdb",
 				SnapshotId:         "snap-1234",
 				VolumeType:         "standard",
@@ -26,31 +23,31 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					SnapshotId:         ptrTo("snap-1234"),
-					VolumeType:         ptrTo("standard"),
-					VolumeSize:         ptrTo(8),
-					DeleteOnVmDeletion: ptrTo(true),
+					SnapshotId:         new("snap-1234"),
+					VolumeType:         new("standard"),
+					VolumeSize:         new(8),
+					DeleteOnVmDeletion: new(true),
 				},
 			},
 		},
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName: "/dev/sdb",
 				VolumeSize: 8,
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeSize:         ptrTo(8),
-					DeleteOnVmDeletion: ptrTo(false),
+					VolumeSize:         new(8),
+					DeleteOnVmDeletion: new(false),
 				},
 			},
 		},
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName:         "/dev/sdb",
 				VolumeType:         "io1",
 				VolumeSize:         8,
@@ -59,17 +56,17 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         ptrTo("io1"),
-					VolumeSize:         ptrTo(8),
-					DeleteOnVmDeletion: ptrTo(true),
-					Iops:               ptrTo(1000),
+					VolumeType:         new("io1"),
+					VolumeSize:         new(8),
+					DeleteOnVmDeletion: new(true),
+					Iops:               new(1000),
 				},
 			},
 		},
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName:         "/dev/sdb",
 				VolumeType:         "gp2",
 				VolumeSize:         8,
@@ -77,16 +74,16 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         ptrTo("gp2"),
-					VolumeSize:         ptrTo(8),
-					DeleteOnVmDeletion: ptrTo(true),
+					VolumeType:         new("gp2"),
+					VolumeSize:         new(8),
+					DeleteOnVmDeletion: new(true),
 				},
 			},
 		},
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName:         "/dev/sdb",
 				VolumeType:         "gp2",
 				VolumeSize:         8,
@@ -94,35 +91,34 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         ptrTo("gp2"),
-					VolumeSize:         ptrTo(8),
-					DeleteOnVmDeletion: ptrTo(true),
+					VolumeType:         new("gp2"),
+					VolumeSize:         new(8),
+					DeleteOnVmDeletion: new(true),
 				},
 			},
 		},
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName:         "/dev/sdb",
 				VolumeType:         "standard",
 				DeleteOnVmDeletion: true,
 			},
 
 			Result: oscgo.BlockDeviceMappingVmCreation{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         ptrTo("standard"),
-					DeleteOnVmDeletion: ptrTo(true),
+					VolumeType:         new("standard"),
+					DeleteOnVmDeletion: new(true),
 				},
 			},
 		},
 	}
 
 	for _, tc := range cases {
-
-		launchBlockDevices := LaunchBlockDevices{
-			LaunchMappings: []BlockDevice{*tc.Config},
+		launchBlockDevices := common.LaunchBlockDevices{
+			LaunchMappings: []common.BlockDevice{*tc.Config},
 		}
 
 		expected := []oscgo.BlockDeviceMappingVmCreation{tc.Result}
@@ -137,11 +133,11 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 
 func TestBlockDevice_OMI(t *testing.T) {
 	cases := []struct {
-		Config *BlockDevice
+		Config *common.BlockDevice
 		Result oscgo.BlockDeviceMappingImage
 	}{
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName:         "/dev/sdb",
 				SnapshotId:         "snap-1234",
 				VolumeType:         "standard",
@@ -150,32 +146,32 @@ func TestBlockDevice_OMI(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					SnapshotId:         ptrTo("snap-1234"),
-					VolumeType:         ptrTo("standard"),
-					VolumeSize:         ptrTo(8),
-					DeleteOnVmDeletion: ptrTo(true),
+					SnapshotId:         new("snap-1234"),
+					VolumeType:         new("standard"),
+					VolumeSize:         new(8),
+					DeleteOnVmDeletion: new(true),
 				},
 			},
 		},
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName:         "/dev/sdb",
 				VolumeSize:         8,
 				DeleteOnVmDeletion: true,
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeSize:         ptrTo(8),
-					DeleteOnVmDeletion: ptrTo(true),
+					VolumeSize:         new(8),
+					DeleteOnVmDeletion: new(true),
 				},
 			},
 		},
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName:         "/dev/sdb",
 				VolumeType:         "io1",
 				VolumeSize:         8,
@@ -184,17 +180,17 @@ func TestBlockDevice_OMI(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         ptrTo("io1"),
-					VolumeSize:         ptrTo(8),
-					DeleteOnVmDeletion: ptrTo(true),
-					Iops:               ptrTo(1000),
+					VolumeType:         new("io1"),
+					VolumeSize:         new(8),
+					DeleteOnVmDeletion: new(true),
+					Iops:               new(1000),
 				},
 			},
 		},
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName:         "/dev/sdb",
 				VolumeType:         "gp2",
 				VolumeSize:         8,
@@ -202,16 +198,16 @@ func TestBlockDevice_OMI(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         ptrTo("gp2"),
-					VolumeSize:         ptrTo(8),
-					DeleteOnVmDeletion: ptrTo(true),
+					VolumeType:         new("gp2"),
+					VolumeSize:         new(8),
+					DeleteOnVmDeletion: new(true),
 				},
 			},
 		},
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName:         "/dev/sdb",
 				VolumeType:         "gp2",
 				VolumeSize:         8,
@@ -219,34 +215,34 @@ func TestBlockDevice_OMI(t *testing.T) {
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         ptrTo("gp2"),
-					VolumeSize:         ptrTo(8),
-					DeleteOnVmDeletion: ptrTo(true),
+					VolumeType:         new("gp2"),
+					VolumeSize:         new(8),
+					DeleteOnVmDeletion: new(true),
 				},
 			},
 		},
 		{
-			Config: &BlockDevice{
+			Config: &common.BlockDevice{
 				DeviceName:         "/dev/sdb",
 				VolumeType:         "standard",
 				DeleteOnVmDeletion: true,
 			},
 
 			Result: oscgo.BlockDeviceMappingImage{
-				DeviceName: ptrTo("/dev/sdb"),
+				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         ptrTo("standard"),
-					DeleteOnVmDeletion: ptrTo(true),
+					VolumeType:         new("standard"),
+					DeleteOnVmDeletion: new(true),
 				},
 			},
 		},
 	}
 
 	for i, tc := range cases {
-		omiBlockDevices := OMIBlockDevices{
-			OMIMappings: []BlockDevice{*tc.Config},
+		omiBlockDevices := common.OMIBlockDevices{
+			OMIMappings: []common.BlockDevice{*tc.Config},
 		}
 
 		expected := []oscgo.BlockDeviceMappingImage{tc.Result}

@@ -9,48 +9,48 @@ import (
 	"github.com/outscale/packer-plugin-outscale/builder/common/retry"
 )
 
-func waitUntilForOscVmRunning(conn *OscClient, vmID string) error {
-	return waitForState(oscgo.VmStateRunning, waitUntilOscVmStateFunc(conn, vmID))
+func WaitUntilForOscVmRunning(ctx context.Context, conn *OscClient, vmID string) error {
+	return waitForState(oscgo.VmStateRunning, waitUntilOscVmStateFunc(ctx, conn, vmID))
 }
 
-func waitUntilOscVmDeleted(conn *OscClient, vmID string) error {
-	return waitForState(oscgo.VmStateTerminated, waitUntilOscVmStateFunc(conn, vmID))
+func waitUntilOscVmDeleted(ctx context.Context, conn *OscClient, vmID string) error {
+	return waitForState(oscgo.VmStateTerminated, waitUntilOscVmStateFunc(ctx, conn, vmID))
 }
 
-func waitUntilOscVmStopped(conn *OscClient, vmID string) error {
-	return waitForState(oscgo.VmStateStopped, waitUntilOscVmStateFunc(conn, vmID))
+func waitUntilOscVmStopped(ctx context.Context, conn *OscClient, vmID string) error {
+	return waitForState(oscgo.VmStateStopped, waitUntilOscVmStateFunc(ctx, conn, vmID))
 }
 
-func WaitUntilOscSnapshotCompleted(conn *OscClient, id string) error {
-	return waitForState(oscgo.SnapshotStateCompleted, waitUntilOscSnapshotStateFunc(conn, id))
+func WaitUntilOscSnapshotCompleted(ctx context.Context, conn *OscClient, id string) error {
+	return waitForState(oscgo.SnapshotStateCompleted, waitUntilOscSnapshotStateFunc(ctx, conn, id))
 }
 
-func WaitUntilOscImageAvailable(conn *OscClient, imageID string) error {
-	return waitForState(oscgo.ImageStateAvailable, waitUntilOscImageStateFunc(conn, imageID))
+func WaitUntilOscImageAvailable(ctx context.Context, conn *OscClient, imageID string) error {
+	return waitForState(oscgo.ImageStateAvailable, waitUntilOscImageStateFunc(ctx, conn, imageID))
 }
 
-func WaitUntilOscVolumeAvailable(conn *OscClient, volumeID string) error {
-	return waitForState(oscgo.VolumeStateAvailable, volumeOscWaitFunc(conn, volumeID))
+func WaitUntilOscVolumeAvailable(ctx context.Context, conn *OscClient, volumeID string) error {
+	return waitForState(oscgo.VolumeStateAvailable, volumeOscWaitFunc(ctx, conn, volumeID))
 }
 
-func WaitUntilOscVolumeIsLinked(conn *OscClient, volumeID string) error {
+func WaitUntilOscVolumeIsLinked(ctx context.Context, conn *OscClient, volumeID string) error {
 	return waitForState(
 		oscgo.VolumeStateInUse,
-		waitUntilOscVolumeLinkedStateFunc(conn, volumeID),
+		waitUntilOscVolumeLinkedStateFunc(ctx, conn, volumeID),
 	)
 }
 
-func WaitUntilOscVolumeIsUnlinked(conn *OscClient, volumeID string) error {
+func WaitUntilOscVolumeIsUnlinked(ctx context.Context, conn *OscClient, volumeID string) error {
 	return waitForState(
 		"dettached",
-		waitUntilOscVolumeUnLinkedStateFunc(conn, volumeID),
+		waitUntilOscVolumeUnLinkedStateFunc(ctx, conn, volumeID),
 	)
 }
 
-func WaitUntilOscSnapshotDone(conn *OscClient, snapshotID string) error {
+func WaitUntilOscSnapshotDone(ctx context.Context, conn *OscClient, snapshotID string) error {
 	return waitForState(
 		oscgo.SnapshotStateCompleted,
-		waitUntilOscSnapshotDoneStateFunc(conn, snapshotID),
+		waitUntilOscSnapshotDoneStateFunc(ctx, conn, snapshotID),
 	)
 }
 
@@ -66,10 +66,8 @@ func waitForState[T comparable](target T, refresh func() (T, error)) error {
 	})
 }
 
-func waitUntilOscVmStateFunc(conn *OscClient, id string) func() (oscgo.VmState, error) {
+func waitUntilOscVmStateFunc(ctx context.Context, conn *OscClient, id string) func() (oscgo.VmState, error) {
 	return func() (oscgo.VmState, error) {
-		ctx := context.Background()
-
 		log.Printf("[Debug] Retrieving state for VM with id %s", id)
 		resp, err := conn.ReadVms(ctx, oscgo.ReadVmsRequest{
 			Filters: &oscgo.FiltersVm{
@@ -93,13 +91,8 @@ func waitUntilOscVmStateFunc(conn *OscClient, id string) func() (oscgo.VmState, 
 	}
 }
 
-func waitUntilOscVolumeLinkedStateFunc(
-	conn *OscClient,
-	id string,
-) func() (oscgo.VolumeState, error) {
+func waitUntilOscVolumeLinkedStateFunc(ctx context.Context, conn *OscClient, id string) func() (oscgo.VolumeState, error) {
 	return func() (oscgo.VolumeState, error) {
-		ctx := context.Background()
-
 		log.Printf("[Debug] Check if volume with id %s exists", id)
 		resp, err := conn.ReadVolumes(ctx, oscgo.ReadVolumesRequest{
 			Filters: &oscgo.FiltersVolume{
@@ -122,9 +115,8 @@ func waitUntilOscVolumeLinkedStateFunc(
 	}
 }
 
-func waitUntilOscVolumeUnLinkedStateFunc(conn *OscClient, id string) func() (string, error) {
+func waitUntilOscVolumeUnLinkedStateFunc(ctx context.Context, conn *OscClient, id string) func() (string, error) {
 	return func() (string, error) {
-		ctx := context.Background()
 		log.Printf("[Debug] Check if volume with id %s exists", id)
 		request := oscgo.ReadVolumesRequest{
 			Filters: &oscgo.FiltersVolume{VolumeIds: &[]string{id}},
@@ -146,10 +138,8 @@ func waitUntilOscVolumeUnLinkedStateFunc(conn *OscClient, id string) func() (str
 	}
 }
 
-func waitUntilOscSnapshotStateFunc(conn *OscClient, id string) func() (oscgo.SnapshotState, error) {
+func waitUntilOscSnapshotStateFunc(ctx context.Context, conn *OscClient, id string) func() (oscgo.SnapshotState, error) {
 	return func() (oscgo.SnapshotState, error) {
-		ctx := context.Background()
-
 		log.Printf("[Debug] Check if Snapshot with id %s exists", id)
 		resp, err := conn.ReadSnapshots(ctx, oscgo.ReadSnapshotsRequest{
 			Filters: &oscgo.FiltersSnapshot{SnapshotIds: &[]string{id}},
@@ -166,9 +156,8 @@ func waitUntilOscSnapshotStateFunc(conn *OscClient, id string) func() (oscgo.Sna
 	}
 }
 
-func waitUntilOscImageStateFunc(conn *OscClient, id string) func() (oscgo.ImageState, error) {
+func waitUntilOscImageStateFunc(ctx context.Context, conn *OscClient, id string) func() (oscgo.ImageState, error) {
 	return func() (oscgo.ImageState, error) {
-		ctx := context.Background()
 		log.Printf("[Debug] Check if Image with id %s exists", id)
 		filterReq := oscgo.ReadImagesRequest{
 			Filters: &oscgo.FiltersImage{ImageIds: &[]string{id}},
@@ -191,11 +180,11 @@ func waitUntilOscImageStateFunc(conn *OscClient, id string) func() (oscgo.ImageS
 }
 
 func waitUntilOscSnapshotDoneStateFunc(
+	ctx context.Context,
 	conn *OscClient,
 	id string,
 ) func() (oscgo.SnapshotState, error) {
 	return func() (oscgo.SnapshotState, error) {
-		ctx := context.Background()
 		log.Printf("[Debug] Check if Snapshot with id %s exists", id)
 		resp, err := conn.ReadSnapshots(ctx, oscgo.ReadSnapshotsRequest{
 			Filters: &oscgo.FiltersSnapshot{SnapshotIds: &[]string{id}},
@@ -216,9 +205,8 @@ func waitUntilOscSnapshotDoneStateFunc(
 	}
 }
 
-func volumeOscWaitFunc(conn *OscClient, id string) func() (oscgo.VolumeState, error) {
+func volumeOscWaitFunc(ctx context.Context, conn *OscClient, id string) func() (oscgo.VolumeState, error) {
 	return func() (oscgo.VolumeState, error) {
-		ctx := context.Background()
 		log.Printf("[Debug] Check if SvolumeG with id %s exists", id)
 		resp, err := conn.ReadVolumes(ctx, oscgo.ReadVolumesRequest{
 			Filters: &oscgo.FiltersVolume{VolumeIds: &[]string{id}},

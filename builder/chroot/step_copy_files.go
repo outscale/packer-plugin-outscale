@@ -45,7 +45,7 @@ func (s *StepCopyFiles) Run(ctx context.Context, state multistep.StateBag) multi
 			}
 
 			stderr.Reset()
-			cmd := ShellCommand(cmdText)
+			cmd := ShellCommand(ctx, cmdText)
 			cmd.Stderr = stderr
 			if err := cmd.Run(); err != nil {
 				err := fmt.Errorf(
@@ -75,12 +75,12 @@ func (s *StepCopyFiles) CleanupFunc(state multistep.StateBag) error {
 	if s.files != nil {
 		for _, file := range s.files {
 			log.Printf("Removing: %s", file)
-			localCmdText, err := wrappedCommand(fmt.Sprintf("rm -f %s", file))
+			localCmdText, err := wrappedCommand("rm -f " + file)
 			if err != nil {
 				return err
 			}
 
-			localCmd := ShellCommand(localCmdText)
+			localCmd := ShellCommand(context.Background(), localCmdText)
 			if err := localCmd.Run(); err != nil {
 				return err
 			}

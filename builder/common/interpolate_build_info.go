@@ -12,7 +12,7 @@ type BuildInfoTemplate struct {
 	SourceOMITags map[string]string
 }
 
-func extractBuildInfo(region string, state multistep.StateBag) *BuildInfoTemplate {
+func ExtractBuildInfo(region string, state multistep.StateBag) *BuildInfoTemplate {
 	rawSourceOMI, hasSourceOMI := state.GetOk("source_image")
 	if !hasSourceOMI {
 		return &BuildInfoTemplate{

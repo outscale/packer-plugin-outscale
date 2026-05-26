@@ -34,7 +34,7 @@ func (c *Communicator) Start(ctx context.Context, cmd *packersdk.RemoteCmd) erro
 		return err
 	}
 
-	localCmd := ShellCommand(command)
+	localCmd := ShellCommand(ctx, command)
 	localCmd.Stdin = cmd.Stdin
 	localCmd.Stdout = cmd.Stdout
 	localCmd.Stderr = cmd.Stderr
@@ -46,7 +46,8 @@ func (c *Communicator) Start(ctx context.Context, cmd *packersdk.RemoteCmd) erro
 	go func() {
 		exitStatus := 0
 		if err := localCmd.Wait(); err != nil {
-			if exitErr, ok := err.(*exec.ExitError); ok {
+			exitErr := &exec.ExitError{}
+			if errors.As(err, &exitErr) {
 				exitStatus = 1
 
 				// There is no process-independent way to get the REAL
@@ -73,18 +74,20 @@ func (c *Communicator) Upload(dst string, r io.Reader, fi *os.FileInfo) error {
 	if err != nil {
 		return fmt.Errorf("error preparing shell script: %w", err)
 	}
-	defer os.Remove(tf.Name())
+	clean := func() error { return os.Remove(tf.Name()) }
 
 	if _, err := io.Copy(tf, r); err != nil {
-		return err
+		return errors.Join(err, clean())
 	}
 
 	cpCmd, err := c.CmdWrapper(fmt.Sprintf("cp %s %s", tf.Name(), dst))
 	if err != nil {
-		return err
+		return errors.Join(err, clean())
 	}
 
-	return ShellCommand(cpCmd).Run()
+	err = ShellCommand(context.Background(), cpCmd).Run()
+
+	return errors.Join(err, clean())
 }
 
 func (c *Communicator) UploadDir(dst string, src string, exclude []string) error {
@@ -93,7 +96,7 @@ func (c *Communicator) UploadDir(dst string, src string, exclude []string) error
 	// directory "src" is omitted.  BSD does this automatically when
 	// the source contains a trailing slash, but linux does not.
 	if src[len(src)-1] == '/' {
-		src = src + "."
+		src += "."
 	}
 
 	// TODO: remove any file copied if it appears in `exclude`
@@ -106,12 +109,12 @@ func (c *Communicator) UploadDir(dst string, src string, exclude []string) error
 	}
 
 	var stderr bytes.Buffer
-	cmd := ShellCommand(cpCmd)
+	cmd := ShellCommand(context.Background(), cpCmd)
 	cmd.Env = append(cmd.Env, "LANG=C")
 	cmd.Env = append(cmd.Env, os.Environ()...)
 	cmd.Stderr = &stderr
 	err = cmd.Run()
-	if err == nil {
+	if err != nil {
 		return err
 	}
 
@@ -130,15 +133,14 @@ func (c *Communicator) DownloadDir(src string, dst string, exclude []string) err
 func (c *Communicator) Download(src string, w io.Writer) error {
 	src = filepath.Join(c.Chroot, src)
 	log.Printf("Downloading from chroot dir: %s", src)
-	f, err := os.Open(src)
+	f, err := os.Open(src) //nolint:gosec
 	if err != nil {
 		return err
 	}
-	defer f.Close()
 
 	if _, err := io.Copy(w, f); err != nil {
-		return err
+		return errors.Join(err, f.Close())
 	}
 
-	return nil
+	return f.Close()
 }

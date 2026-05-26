@@ -29,7 +29,7 @@ func templateCleanResourceName(s string) string {
 			newb[i] = '-'
 		}
 	}
-	return string(newb[:])
+	return string(newb)
 }
 
 var TemplateFuncs = template.FuncMap{

@@ -1,5 +1,5 @@
 // TODO: explain how to delete the image.
-package bsu
+package bsu_test
 
 import (
 	"testing"

@@ -42,7 +42,7 @@ func (s *StepUpdateOMIAttributes) Run(
 		return multistep.ActionContinue
 	}
 
-	s.Ctx.Data = extractBuildInfo(s.RawRegion, state)
+	s.Ctx.Data = ExtractBuildInfo(s.RawRegion, state)
 
 	updateSnapshoptRequest := oscgo.UpdateSnapshotRequest{
 		PermissionsToCreateVolume: oscgo.PermissionsOnResourceCreation{
@@ -72,7 +72,7 @@ func (s *StepUpdateOMIAttributes) Run(
 			return multistep.ActionHalt
 		}
 
-		ui.Message(fmt.Sprintf("Updating: %s", omi))
+		ui.Message("Updating: " + omi)
 		updateImageRequest.ImageId = omi
 		_, err = regionconn.UpdateImage(ctx, updateImageRequest)
 		if err != nil {
@@ -99,7 +99,7 @@ func (s *StepUpdateOMIAttributes) Run(
 				return multistep.ActionHalt
 			}
 
-			ui.Message(fmt.Sprintf("Updating: %s", snapshot_id))
+			ui.Message("Updating: " + snapshot_id)
 			updateSnapshoptRequest.SnapshotId = snapshot_id
 			_, err = regionconn.UpdateSnapshot(ctx, updateSnapshoptRequest)
 			if err != nil {
@@ -108,7 +108,6 @@ func (s *StepUpdateOMIAttributes) Run(
 				ui.Error(err.Error())
 				return multistep.ActionHalt
 			}
-
 		}
 	}
 

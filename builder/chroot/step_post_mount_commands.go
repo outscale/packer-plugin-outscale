@@ -36,7 +36,7 @@ func (s *StepPostMountCommands) Run(ctx context.Context, state multistep.StateBa
 	}
 
 	ui.Say("Running post-mount commands...")
-	if err := RunLocalCommands(s.Commands, wrappedCommand, ictx, ui); err != nil {
+	if err := RunLocalCommands(ctx, s.Commands, wrappedCommand, ictx, ui); err != nil {
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

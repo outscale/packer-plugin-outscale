@@ -32,7 +32,7 @@ func (t TagMap) OSCTags(
 	state multistep.StateBag,
 ) (OSCTags, error) {
 	var oscTags []oscgo.ResourceTag
-	ctx.Data = extractBuildInfo(region, state)
+	ctx.Data = ExtractBuildInfo(region, state)
 
 	for key, value := range t {
 		interpolatedKey, err := interpolate.Render(key, &ctx)
@@ -51,12 +51,12 @@ func (t TagMap) OSCTags(
 	return oscTags, nil
 }
 
-func CreateOSCTags(conn *OscClient, resourceID string, ui packersdk.Ui, tags OSCTags) error {
+func CreateOSCTags(ctx context.Context, conn *OscClient, resourceID string, ui packersdk.Ui, tags OSCTags) error {
 	tags.Report(ui)
 	request := oscgo.CreateTagsRequest{
 		ResourceIds: []string{resourceID},
 		Tags:        tags,
 	}
-	_, err := conn.CreateTags(context.Background(), request)
+	_, err := conn.CreateTags(ctx, request)
 	return err
 }

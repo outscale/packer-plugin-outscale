@@ -33,7 +33,7 @@ func (s *StepLinkVolume) Run(ctx context.Context, state multistep.StateBag) mult
 	// linkVolume := strings.Replace(device, "/xvd", "/sd", 1)
 	linkVolume := device
 
-	ui.Say(fmt.Sprintf("Attaching the root volume to %s", linkVolume))
+	ui.Say("Attaching the root volume to " + linkVolume)
 	opts := oscgo.LinkVolumeRequest{
 		DeviceName: linkVolume,
 		VmId:       vm.VmId,
@@ -52,7 +52,7 @@ func (s *StepLinkVolume) Run(ctx context.Context, state multistep.StateBag) mult
 	s.volumeId = volumeId
 
 	// Wait for the volume to become attached
-	err = osccommon.WaitUntilOscVolumeIsLinked(oscconn, s.volumeId)
+	err = osccommon.WaitUntilOscVolumeIsLinked(ctx, oscconn, s.volumeId)
 	if err != nil {
 		err := fmt.Errorf("error waiting for volume: %w", err)
 		state.Put("error", err)
@@ -66,12 +66,12 @@ func (s *StepLinkVolume) Run(ctx context.Context, state multistep.StateBag) mult
 
 func (s *StepLinkVolume) Cleanup(state multistep.StateBag) {
 	ui := state.Get("ui").(packersdk.Ui)
-	if err := s.CleanupFunc(state); err != nil {
+	if err := s.CleanupFunc(context.Background(), state); err != nil {
 		ui.Error(err.Error())
 	}
 }
 
-func (s *StepLinkVolume) CleanupFunc(state multistep.StateBag) error {
+func (s *StepLinkVolume) CleanupFunc(ctx context.Context, state multistep.StateBag) error {
 	if !s.attached {
 		return nil
 	}
@@ -83,7 +83,7 @@ func (s *StepLinkVolume) CleanupFunc(state multistep.StateBag) error {
 	opts := oscgo.UnlinkVolumeRequest{
 		VolumeId: s.volumeId,
 	}
-	_, err := oscconn.UnlinkVolume(context.Background(), opts)
+	_, err := oscconn.UnlinkVolume(ctx, opts)
 	if err != nil {
 		return fmt.Errorf("error detaching BSU volume: %w", err)
 	}
@@ -91,7 +91,7 @@ func (s *StepLinkVolume) CleanupFunc(state multistep.StateBag) error {
 	s.attached = false
 
 	// Wait for the volume to detach
-	err = osccommon.WaitUntilOscVolumeIsUnlinked(oscconn, s.volumeId)
+	err = osccommon.WaitUntilOscVolumeIsUnlinked(ctx, oscconn, s.volumeId)
 	if err != nil {
 		return fmt.Errorf("error waiting for volume: %w", err)
 	}

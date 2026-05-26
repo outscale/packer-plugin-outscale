@@ -37,7 +37,7 @@ func (s *StepCleanupVolumes) Cleanup(state multistep.StateBag) {
 
 	// Collect Volume information from the cached Vm as a map of volume-id
 	// to device name, to compare with save list below
-	var vl []string
+	vl := make([]string, 0, len(vm.BlockDeviceMappings))
 	volList := make(map[string]string)
 	for _, bdm := range vm.BlockDeviceMappings {
 		vl = append(vl, bdm.Bsu.VolumeId)

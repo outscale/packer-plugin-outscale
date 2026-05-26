@@ -12,6 +12,10 @@ on:
                 description: "A branch or SHA"
                 default: "main"
                 required: false
+
+permissions:
+    contents: read
+
 jobs:
     notify-release:
         runs-on: ubuntu-latest

@@ -41,7 +41,7 @@ func setBsuToCreate(blockDevice BlockDevice) *oscgo.BsuToCreate {
 		bsu.DeleteOnVmDeletion = &deleteOnVmDeletion
 	}
 	if volType := blockDevice.VolumeType; volType != "" {
-		bsu.VolumeType = &volType
+		bsu.VolumeType = new(oscgo.VolumeType(volType))
 	}
 	if volSize := int(blockDevice.VolumeSize); volSize > 0 {
 		bsu.VolumeSize = &volSize

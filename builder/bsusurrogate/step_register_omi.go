@@ -140,7 +140,7 @@ func (s *StepRegisterOMI) combineDevices(
 		if *device.DeviceName == s.RootDevice.SourceDeviceName {
 			device.DeviceName = &s.RootDevice.DeviceName
 
-			device.Bsu.VolumeType = &s.RootDevice.VolumeType
+			device.Bsu.VolumeType = new(oscgo.VolumeType(s.RootDevice.VolumeType))
 			if *device.Bsu.VolumeType != "io1" {
 				device.Bsu.Iops = nil
 			}

@@ -29,7 +29,7 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	omiName := config.OMIName
 
 	ui.Say(fmt.Sprintf("Creating OMI %s from vm %s", omiName, vm.VmId))
-	blockDeviceMapping := config.BlockDevices.BuildOscOMIDevices()
+	blockDeviceMapping := config.BuildOscOMIDevices()
 	createOpts := oscgo.CreateImageRequest{
 		ImageName: &omiName,
 	}
@@ -71,14 +71,14 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	image := *resp.Image
 
 	// Set the OMI ID in the state
-	ui.Message(fmt.Sprintf("OMI: %s", image.ImageId))
+	ui.Message("OMI: " + image.ImageId)
 	omis := make(map[string]string)
 	omis[s.RawRegion] = image.ImageId
 	state.Put("omis", omis)
 
 	// Wait for the image to become ready
 	ui.Say("Waiting for OMI to become ready...")
-	if err := osccommon.WaitUntilOscImageAvailable(oscconn, image.ImageId); err != nil {
+	if err := osccommon.WaitUntilOscImageAvailable(ctx, oscconn, image.ImageId); err != nil {
 		log.Printf("Error waiting for OMI: %s", err)
 		req := oscgo.ReadImagesRequest{
 			Filters: &oscgo.FiltersImage{ImageIds: &[]string{image.ImageId}},
@@ -107,7 +107,7 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	if len(*imagesResp.Images) <= 0 {
+	if len(*imagesResp.Images) == 0 {
 		err := fmt.Errorf("error while reading the image': %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())

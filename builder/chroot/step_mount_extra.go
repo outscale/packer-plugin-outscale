@@ -3,6 +3,7 @@ package chroot
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -33,7 +34,7 @@ func (s *StepMountExtra) Run(ctx context.Context, state multistep.StateBag) mult
 	for _, mountInfo := range config.ChrootMounts {
 		innerPath := mountPath + mountInfo[2]
 
-		if err := os.MkdirAll(innerPath, 0755); err != nil {
+		if err := os.MkdirAll(innerPath, 0o750); err != nil {
 			err := fmt.Errorf("error creating mount directory: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
@@ -45,7 +46,7 @@ func (s *StepMountExtra) Run(ctx context.Context, state multistep.StateBag) mult
 			flags = "--bind"
 		}
 
-		ui.Message(fmt.Sprintf("Mounting: %s", mountInfo[2]))
+		ui.Message("Mounting: " + mountInfo[2])
 		stderr := new(bytes.Buffer)
 		mountCommand, err := wrappedCommand(fmt.Sprintf(
 			"mount %s %s %s",
@@ -59,7 +60,7 @@ func (s *StepMountExtra) Run(ctx context.Context, state multistep.StateBag) mult
 			return multistep.ActionHalt
 		}
 
-		cmd := ShellCommand(mountCommand)
+		cmd := ShellCommand(ctx, mountCommand)
 		cmd.Stderr = stderr
 		if err := cmd.Run(); err != nil {
 			err := fmt.Errorf(
@@ -104,10 +105,11 @@ func (s *StepMountExtra) CleanupFunc(state multistep.StateBag) error {
 		// Before attempting to unmount,
 		// check to see if path is already unmounted
 		stderr := new(bytes.Buffer)
-		cmd := ShellCommand(grepCommand)
+		cmd := ShellCommand(context.Background(), grepCommand)
 		cmd.Stderr = stderr
 		if err := cmd.Run(); err != nil {
-			if exitError, ok := err.(*exec.ExitError); ok {
+			exitError := &exec.ExitError{}
+			if errors.As(err, &exitError) {
 				if status, ok := exitError.Sys().(syscall.WaitStatus); ok {
 					exitStatus := status.ExitStatus()
 					if exitStatus == 1 {
@@ -119,13 +121,13 @@ func (s *StepMountExtra) CleanupFunc(state multistep.StateBag) error {
 			}
 		}
 
-		unmountCommand, err := wrappedCommand(fmt.Sprintf("umount %s", path))
+		unmountCommand, err := wrappedCommand("umount " + path)
 		if err != nil {
 			return fmt.Errorf("error creating unmount command: %w", err)
 		}
 
 		stderr = new(bytes.Buffer)
-		cmd = ShellCommand(unmountCommand)
+		cmd = ShellCommand(context.Background(), unmountCommand)
 		cmd.Stderr = stderr
 		if err := cmd.Run(); err != nil {
 			return fmt.Errorf(

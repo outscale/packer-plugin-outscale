@@ -35,7 +35,7 @@ type Artifact struct {
 
 	// StateData should store data such as GeneratedData
 	// to be shared with post-processors
-	StateData map[string]interface{}
+	StateData map[string]any
 }
 
 func (a *Artifact) BuilderId() string {
@@ -65,10 +65,10 @@ func (a *Artifact) Id() string {
 }
 
 func (a *Artifact) String() string {
-	return fmt.Sprintf("BSU Volumes were created:\n\n%s", strings.Join(a.idList(), "\n"))
+	return "BSU Volumes were created:\n\n" + strings.Join(a.idList(), "\n")
 }
 
-func (a *Artifact) State(name string) interface{} {
+func (a *Artifact) State(name string) any {
 	// To be able to push metadata to HCP Packer Registry, Packer will read the 'par.artifact.metadata'
 	// state from artifacts to get a build's metadata.
 	if name == registryimage.ArtifactStateURI {
@@ -108,11 +108,10 @@ func (a *Artifact) Destroy() error {
 
 // stateHCPPackerRegistryMetadata will write the metadata as an hcpRegistryImage for each of the OMIs
 // present in this artifact.
-func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
+func (a *Artifact) stateHCPPackerRegistryMetadata() any {
 	images := make([]*registryimage.Image, 0, len(a.Volumes)+len(a.Snapshots))
 	for region, volumeIDs := range a.Volumes {
 		for _, volumeID := range volumeIDs {
-			volumeID := volumeID
 			image := registryimage.Image{
 				ImageID:        volumeID,
 				ProviderRegion: region,
@@ -124,7 +123,6 @@ func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
 
 	for region, snapshotIDs := range a.Snapshots {
 		for _, snapshotID := range snapshotIDs {
-			snapshotID := snapshotID
 			image := registryimage.Image{
 				ImageID:        snapshotID,
 				ProviderRegion: region,
@@ -138,7 +136,7 @@ func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
 		return images
 	}
 
-	data, ok := a.StateData["generated_data"].(map[string]interface{})
+	data, ok := a.StateData["generated_data"].(map[string]any)
 	if !ok {
 		return images
 	}

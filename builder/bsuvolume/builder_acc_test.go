@@ -1,5 +1,5 @@
 // TODO: explain how to delete the image.
-package bsuvolume
+package bsuvolume_test
 
 import (
 	"testing"

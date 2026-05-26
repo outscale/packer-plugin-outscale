@@ -23,17 +23,16 @@ func isNotEmpty(v *string) bool {
 
 // SSHHost returns a function that can be given to the SSH communicator
 // for determining the SSH address based on the vm DNS name.
-func SSHHost(conn *OscClient, sshInterface string) func(multistep.StateBag) (string, error) {
+func SSHHost(ctx context.Context, conn *OscClient, sshInterface string) func(multistep.StateBag) (string, error) {
 	return func(state multistep.StateBag) (string, error) {
-		ctx := context.Background()
-
 		const tries = 2
 		// <= with current structure to check result of describing `tries` times
 		for j := 0; j <= tries; j++ {
 			var host string
 			i := state.Get("vm").(oscgo.Vm)
 
-			if sshInterface != "" {
+			switch {
+			case sshInterface != "":
 				switch sshInterface {
 				case "public_ip":
 					if isNotEmpty(i.PublicIp) {
@@ -52,15 +51,15 @@ func SSHHost(conn *OscClient, sshInterface string) func(multistep.StateBag) (str
 						host = *i.PrivateDnsName
 					}
 				default:
-					panic(fmt.Sprintf("Unknown interface type: %s", sshInterface))
+					panic("Unknown interface type: " + sshInterface)
 				}
-			} else if isNotEmpty(i.NetId) {
+			case isNotEmpty(i.NetId):
 				if isNotEmpty(i.PublicIp) {
 					host = *i.PublicIp
 				} else if i.PrivateIp != "" {
 					host = i.PrivateIp
 				}
-			} else if isNotEmpty(i.PublicDnsName) {
+			case isNotEmpty(i.PublicDnsName):
 				host = *i.PublicDnsName
 			}
 
@@ -87,10 +86,4 @@ func SSHHost(conn *OscClient, sshInterface string) func(multistep.StateBag) (str
 
 		return "", errors.New("couldn't determine address for vm")
 	}
-}
-
-// SSHHost returns a function that can be given to the SSH communicator
-// for determining the SSH address based on the vm DNS name.
-func OscSSHHost(conn *OscClient, sshInterface string) func(multistep.StateBag) (string, error) {
-	return SSHHost(conn, sshInterface) // WTF ??
 }

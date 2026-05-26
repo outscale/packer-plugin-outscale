@@ -53,7 +53,7 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 	if s.UserDataFile != "" {
 		contents, err := os.ReadFile(s.UserDataFile)
 		if err != nil {
-			state.Put("error", fmt.Errorf("problem reading user data file: %s", err))
+			state.Put("error", fmt.Errorf("problem reading user data file: %w", err))
 			return multistep.ActionHalt
 		}
 
@@ -69,7 +69,7 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 	ui.Say("Launching a source OUTSCALE vm...")
 	image, ok := state.Get("source_image").(oscgo.Image)
 	if !ok {
-		state.Put("error", fmt.Errorf("source_image type assertion failed"))
+		state.Put("error", errors.New("source_image type assertion failed"))
 		return multistep.ActionHalt
 	}
 	s.SourceOMI = image.ImageId
@@ -93,7 +93,7 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 
 	oscTags, err := s.Tags.OSCTags(s.Ctx, rawRegion, state)
 	if err != nil {
-		err := fmt.Errorf("error tagging source vm: %s", err)
+		err := fmt.Errorf("error tagging source vm: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -101,7 +101,7 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 
 	volTags, err := s.VolumeTags.OSCTags(s.Ctx, rawRegion, state)
 	if err != nil {
-		err := fmt.Errorf("error tagging volumes: %s", err)
+		err := fmt.Errorf("error tagging volumes: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -153,7 +153,7 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 	// Set the vm ID so that the cleanup works properly
 	s.vmId = vmId
 
-	ui.Message(fmt.Sprintf("Vm ID: %s", vmId))
+	ui.Message("Vm ID: " + vmId)
 	ui.Say(fmt.Sprintf("Waiting for vm (%v) to become ready...", vmId))
 
 	request := oscgo.ReadVmsRequest{
@@ -161,7 +161,7 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 			VmIds: &[]string{vmId},
 		},
 	}
-	if err := waitUntilForOscVmRunning(oscconn, vmId); err != nil {
+	if err := WaitUntilForOscVmRunning(ctx, oscconn, vmId); err != nil {
 		err := fmt.Errorf("error waiting for vm (%s) to become ready: %w", vmId, err)
 		state.Put("error", err)
 		ui.Error(err.Error())
@@ -170,7 +170,7 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 
 	// Set Vm tags and vollume tags
 	if len(oscTags) > 0 {
-		if err := CreateOSCTags(oscconn, s.vmId, ui, oscTags); err != nil {
+		if err := CreateOSCTags(ctx, oscconn, s.vmId, ui, oscTags); err != nil {
 			err := fmt.Errorf("error creating tags for vm (%s): %w", s.vmId, err)
 			state.Put("error", err)
 			ui.Error(err.Error())
@@ -179,7 +179,7 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 
 	if len(volTags) > 0 {
-		if err := CreateOSCTags(oscconn, volumeId, ui, volTags); err != nil {
+		if err := CreateOSCTags(ctx, oscconn, volumeId, ui, volTags); err != nil {
 			err := fmt.Errorf("error creating tags for volume (%s): %w", volumeId, err)
 			state.Put("error", err)
 			ui.Error(err.Error())
@@ -211,11 +211,11 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 
 	if s.Debug {
 		if vm.PublicDnsName != nil {
-			ui.Message(fmt.Sprintf("Public DNS: %s", *vm.PublicDnsName))
+			ui.Message("Public DNS: " + *vm.PublicDnsName)
 		}
 
 		if vm.PublicIp != nil {
-			ui.Message(fmt.Sprintf("Public IP: %s", *vm.PublicIp))
+			ui.Message("Public IP: " + *vm.PublicIp)
 		}
 	}
 
@@ -298,11 +298,11 @@ func (s *StepRunSourceVm) Cleanup(state multistep.StateBag) {
 			VmIds: []string{s.vmId},
 		})
 		if err != nil {
-			ui.Error(fmt.Sprintf("Error terminating vm, may still be around: %s", err.Error()))
+			ui.Error("Error terminating vm, may still be around: " + err.Error())
 			return
 		}
 
-		if err := waitUntilOscVmDeleted(oscconn, s.vmId); err != nil {
+		if err := waitUntilOscVmDeleted(ctx, oscconn, s.vmId); err != nil {
 			ui.Error(err.Error())
 		}
 	}

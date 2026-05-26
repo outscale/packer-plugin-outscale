@@ -42,7 +42,7 @@ func (s *StepKeyPair) Run(ctx context.Context, state multistep.StateBag) multist
 	}
 
 	if s.Comm.SSHAgentAuth && s.Comm.SSHKeyPairName != "" {
-		ui.Say(fmt.Sprintf("Using SSH Agent for existing key pair %s", s.Comm.SSHKeyPairName))
+		ui.Say("Using SSH Agent for existing key pair " + s.Comm.SSHKeyPairName)
 		return multistep.ActionContinue
 	}
 
@@ -54,7 +54,7 @@ func (s *StepKeyPair) Run(ctx context.Context, state multistep.StateBag) multist
 
 	conn := state.Get("osc").(*OscClient)
 
-	ui.Say(fmt.Sprintf("Creating temporary keypair: %s", s.Comm.SSHTemporaryKeyPairName))
+	ui.Say("Creating temporary keypair: " + s.Comm.SSHTemporaryKeyPairName)
 
 	req := oscgo.CreateKeypairRequest{
 		KeypairName: s.Comm.SSHTemporaryKeyPairName,
@@ -74,17 +74,21 @@ func (s *StepKeyPair) Run(ctx context.Context, state multistep.StateBag) multist
 	// If we're in debug mode, output the private key to the working
 	// directory.
 	if s.Debug {
-		ui.Message(fmt.Sprintf("Saving key for debug purposes: %s", s.DebugKeyPath))
+		ui.Message("Saving key for debug purposes: " + s.DebugKeyPath)
 		f, err := os.Create(s.DebugKeyPath)
 		if err != nil {
 			state.Put("error", fmt.Errorf("error saving debug key: %w", err))
 			return multistep.ActionHalt
 		}
-		defer f.Close()
 
 		// Write the key out
 		if _, err := f.Write([]byte(*resp.Keypair.PrivateKey)); err != nil {
 			state.Put("error", fmt.Errorf("error saving debug key: %w", err))
+			err = f.Close()
+			if err != nil {
+				state.Put("error", fmt.Errorf("error closing debug key: %w", err))
+			}
+
 			return multistep.ActionHalt
 		}
 
@@ -92,8 +96,18 @@ func (s *StepKeyPair) Run(ctx context.Context, state multistep.StateBag) multist
 		if runtime.GOOS != "windows" {
 			if err := f.Chmod(0o600); err != nil {
 				state.Put("error", fmt.Errorf("error setting permissions of debug key: %w", err))
+				err = f.Close()
+				if err != nil {
+					state.Put("error", fmt.Errorf("error closing debug key: %w", err))
+				}
+
 				return multistep.ActionHalt
 			}
+		}
+
+		err = f.Close()
+		if err != nil {
+			state.Put("error", fmt.Errorf("error closing debug key: %w", err))
 		}
 	}
 
@@ -118,10 +132,7 @@ func (s *StepKeyPair) Cleanup(state multistep.StateBag) {
 	}
 	_, err := conn.DeleteKeypair(context.Background(), request)
 	if err != nil {
-		ui.Error(fmt.Sprintf(
-			"Error cleaning up keypair. Please delete the key manually: %s",
-			s.Comm.SSHTemporaryKeyPairName,
-		))
+		ui.Error("Error cleaning up keypair. Please delete the key manually: " + s.Comm.SSHTemporaryKeyPairName)
 	}
 
 	// Also remove the physical key if we're debugging.

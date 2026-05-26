@@ -11,8 +11,7 @@ import (
 )
 
 // StepPrepareDevice finds an available device and sets it.
-type StepPrepareDevice struct {
-}
+type StepPrepareDevice struct{}
 
 func (s *StepPrepareDevice) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
 	config := state.Get("config").(*Config)

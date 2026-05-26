@@ -35,7 +35,7 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	)
 
 	if config.FromScratch {
-		mappings = config.OMIBlockDevices.BuildOscOMIDevices()
+		mappings = config.BuildOscOMIDevices()
 		rootDeviceName = config.RootDeviceName
 	} else {
 		image = state.Get("source_image").(oscgo.Image)
@@ -97,13 +97,13 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	imageID := registerResp.Image.ImageId
 
 	// Set the OMI ID in the state
-	ui.Say(fmt.Sprintf("OMI: %s", imageID))
+	ui.Say("OMI: " + imageID)
 	omis := make(map[string]string)
 	omis[s.RawRegion] = imageID
 	state.Put("omis", omis)
 
 	ui.Say("Waiting for OMI to become ready...")
-	if err := osccommon.WaitUntilOscImageAvailable(osconn, imageID); err != nil {
+	if err := osccommon.WaitUntilOscImageAvailable(ctx, osconn, imageID); err != nil {
 		err := fmt.Errorf("error waiting for OMI: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())

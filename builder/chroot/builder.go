@@ -63,7 +63,7 @@ type Builder struct {
 
 func (b *Builder) ConfigSpec() hcldec.ObjectSpec { return b.config.FlatMapstructure().HCL2Spec() }
 
-func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
+func (b *Builder) Prepare(raws ...any) ([]string, []string, error) {
 	b.config.ctx.Funcs = osccommon.TemplateFuncs
 	err := config.Decode(&b.config, &config.DecodeOpts{
 		PluginType:         BuilderId,
@@ -86,7 +86,7 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 		return nil, nil, err
 	}
 
-	if b.config.PackerConfig.PackerForce {
+	if b.config.PackerForce {
 		b.config.OMIForceDeregister = true
 	}
 
@@ -304,7 +304,7 @@ func (b *Builder) Run(
 	artifact := &osccommon.Artifact{
 		Omis:           state.Get("omis").(map[string]string),
 		BuilderIdValue: BuilderId,
-		StateData:      map[string]interface{}{"generated_data": state.Get("generated_data")},
+		StateData:      map[string]any{"generated_data": state.Get("generated_data")},
 	}
 
 	return artifact, nil

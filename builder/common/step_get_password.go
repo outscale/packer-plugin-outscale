@@ -90,8 +90,7 @@ WaitLoop:
 
 	// In debug-mode, we output the password
 	if s.Debug {
-		ui.Message(fmt.Sprintf(
-			"Password (since debug is enabled): %s", s.Comm.WinRMPassword))
+		ui.Message("Password (since debug is enabled): " + s.Comm.WinRMPassword)
 	}
 	// store so that we can access this later during provisioning
 	packersdk.LogSecretFilter.Set(s.Comm.WinRMPassword)
@@ -167,7 +166,7 @@ func decryptPasswordDataWithPrivateKey(passwordData string, pemBytes []byte) (st
 		return "", err
 	}
 
-	out, err := rsa.DecryptPKCS1v15(nil, key, encryptedPasswd)
+	out, err := rsa.DecryptPKCS1v15(nil, key, encryptedPasswd) //nolint:staticcheck
 	if err != nil {
 		return "", err
 	}

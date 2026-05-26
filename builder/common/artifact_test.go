@@ -1,4 +1,4 @@
-package common
+package common_test
 
 import (
 	"reflect"
@@ -8,10 +8,11 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
 	"github.com/mitchellh/mapstructure"
+	"github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
 func TestArtifact_Impl(t *testing.T) {
-	var _ packersdk.Artifact = new(Artifact)
+	var _ packersdk.Artifact = new(common.Artifact)
 }
 
 func TestArtifactId(t *testing.T) {
@@ -21,7 +22,7 @@ func TestArtifactId(t *testing.T) {
 	omis["east"] = "foo"
 	omis["west"] = "bar"
 
-	a := &Artifact{
+	a := &common.Artifact{
 		Omis: omis,
 	}
 
@@ -32,7 +33,7 @@ func TestArtifactId(t *testing.T) {
 }
 
 func TestArtifactState_atlasMetadata(t *testing.T) {
-	a := &Artifact{
+	a := &common.Artifact{
 		Omis: map[string]string{
 			"east": "foo",
 			"west": "bar",
@@ -59,7 +60,7 @@ west: bar
 	omis["east"] = "foo"
 	omis["west"] = "bar"
 
-	a := &Artifact{Omis: omis}
+	a := &common.Artifact{Omis: omis}
 	result := a.String()
 	if result != expected {
 		t.Fatalf("bad: %s", result)
@@ -68,8 +69,8 @@ west: bar
 
 func TestArtifactState(t *testing.T) {
 	expectedData := "this is the data"
-	artifact := &Artifact{
-		StateData: map[string]interface{}{"state_data": expectedData},
+	artifact := &common.Artifact{
+		StateData: map[string]any{"state_data": expectedData},
 	}
 
 	// Valid state
@@ -85,7 +86,7 @@ func TestArtifactState(t *testing.T) {
 	}
 
 	// Nil StateData should not fail and should return nil
-	artifact = &Artifact{}
+	artifact = &common.Artifact{}
 	result = artifact.State("key")
 	if result != nil {
 		t.Fatalf("Bad: State should be nil for nil StateData")
@@ -93,13 +94,13 @@ func TestArtifactState(t *testing.T) {
 }
 
 func TestArtifactState_hcpPackerRegistryMetadata(t *testing.T) {
-	artifact := &Artifact{
+	artifact := &common.Artifact{
 		Omis: map[string]string{
 			"east": "foo",
 			"west": "bar",
 		},
-		StateData: map[string]interface{}{
-			"generated_data": map[string]interface{}{"SourceOMI": "ami-12345"},
+		StateData: map[string]any{
+			"generated_data": map[string]any{"SourceOMI": "ami-12345"},
 		},
 	}
 

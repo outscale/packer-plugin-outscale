@@ -60,7 +60,6 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 			Size:          &size,
 			VolumeType:    &rootVolumeType,
 		}
-
 	} else {
 		// Determine the root device snapshot
 		image := state.Get("source_image").(oscgo.Image)
@@ -98,7 +97,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 
 	// Create tags for volume
 	if len(volTags) > 0 {
-		if err := osccommon.CreateOSCTags(oscconn, s.volumeId, ui, volTags); err != nil {
+		if err := osccommon.CreateOSCTags(ctx, oscconn, s.volumeId, ui, volTags); err != nil {
 			err := fmt.Errorf("error creating tags for volume: %w", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
@@ -107,7 +106,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	// Wait for the volume to become ready
-	err = osccommon.WaitUntilOscVolumeAvailable(oscconn, s.volumeId)
+	err = osccommon.WaitUntilOscVolumeAvailable(ctx, oscconn, s.volumeId)
 	if err != nil {
 		err := fmt.Errorf("error waiting for volume: %w", err)
 		state.Put("error", err)

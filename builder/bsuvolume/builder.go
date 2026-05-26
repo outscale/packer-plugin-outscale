@@ -45,7 +45,7 @@ type EngineVarsTemplate struct {
 
 func (b *Builder) ConfigSpec() hcldec.ObjectSpec { return b.config.FlatMapstructure().HCL2Spec() }
 
-func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
+func (b *Builder) Prepare(raws ...any) ([]string, []string, error) {
 	b.config.ctx.Funcs = osccommon.TemplateFuncs
 	// Create passthrough for {{ .BuildRegion }} and {{ .SourceOMI }} variables
 	// so we can fill them in later
@@ -120,7 +120,7 @@ func (b *Builder) Run(
 
 	instanceStep := &osccommon.StepRunSourceVm{
 		BlockDevices:                b.config.launchBlockDevices,
-		Comm:                        &b.config.RunConfig.Comm,
+		Comm:                        &b.config.Comm,
 		Ctx:                         b.config.ctx,
 		Debug:                       b.config.PackerDebug,
 		BsuOptimized:                b.config.BsuOptimized,
@@ -152,7 +152,7 @@ func (b *Builder) Run(
 		},
 		&osccommon.StepKeyPair{
 			Debug:        b.config.PackerDebug,
-			Comm:         &b.config.RunConfig.Comm,
+			Comm:         &b.config.Comm,
 			DebugKeyPath: fmt.Sprintf("oapi_%s.pem", b.config.PackerBuildName),
 		},
 		&osccommon.StepPublicIp{
@@ -162,7 +162,7 @@ func (b *Builder) Run(
 		&osccommon.StepSecurityGroup{
 			SecurityGroupFilter:   b.config.SecurityGroupFilter,
 			SecurityGroupIds:      b.config.SecurityGroupIds,
-			CommConfig:            &b.config.RunConfig.Comm,
+			CommConfig:            &b.config.Comm,
 			TemporarySGSourceCidr: b.config.TemporarySGSourceCidr,
 		},
 		instanceStep,
@@ -172,20 +172,21 @@ func (b *Builder) Run(
 		},
 		&osccommon.StepGetPassword{
 			Debug:     b.config.PackerDebug,
-			Comm:      &b.config.RunConfig.Comm,
+			Comm:      &b.config.Comm,
 			Timeout:   b.config.WindowsPasswordTimeout,
 			BuildName: b.config.PackerBuildName,
 		},
 		&communicator.StepConnect{
-			Config: &b.config.RunConfig.Comm,
-			Host: osccommon.OscSSHHost(
+			Config: &b.config.Comm,
+			Host: osccommon.SSHHost(
+				ctx,
 				oscConn,
 				b.config.SSHInterface),
-			SSHConfig: b.config.RunConfig.Comm.SSHConfigFunc(),
+			SSHConfig: b.config.Comm.SSHConfigFunc(),
 		},
 		&commonsteps.StepProvision{},
 		&commonsteps.StepCleanupTempKeys{
-			Comm: &b.config.RunConfig.Comm,
+			Comm: &b.config.Comm,
 		},
 		&osccommon.StepStopBSUBackedVm{
 			DisableStopVm: b.config.DisableStopVm,
@@ -206,7 +207,7 @@ func (b *Builder) Run(
 		Volumes:        state.Get("bsuvolumes").(BsuVolumes),
 		BuilderIdValue: BuilderId,
 		Conn:           oscConn,
-		StateData:      map[string]interface{}{"generated_data": state.Get("generated_data")},
+		StateData:      map[string]any{"generated_data": state.Get("generated_data")},
 	}
 	ui.Say(fmt.Sprintf("Created Volumes: %s", artifact))
 	return artifact, nil

@@ -10,8 +10,7 @@ import (
 )
 
 // StepChrootProvision provisions the instance within a chroot.
-type StepChrootProvision struct {
-}
+type StepChrootProvision struct{}
 
 func (s *StepChrootProvision) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	hook := state.Get("hook").(packersdk.Hook)

@@ -1,4 +1,4 @@
-package common
+package common_test
 
 import (
 	"reflect"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
+	"github.com/outscale/packer-plugin-outscale/builder/common"
 )
 
 func testImage() oscgo.Image {
@@ -34,9 +35,9 @@ func testState() multistep.StateBag {
 
 func TestInterpolateBuildInfo_extractBuildInfo_noSourceImage(t *testing.T) {
 	state := testState()
-	buildInfo := extractBuildInfo("foo", state)
+	buildInfo := common.ExtractBuildInfo("foo", state)
 
-	expected := BuildInfoTemplate{
+	expected := common.BuildInfoTemplate{
 		BuildRegion: "foo",
 	}
 	if !reflect.DeepEqual(*buildInfo, expected) {
@@ -47,9 +48,9 @@ func TestInterpolateBuildInfo_extractBuildInfo_noSourceImage(t *testing.T) {
 func TestInterpolateBuildInfo_extractBuildInfo_withSourceImage(t *testing.T) {
 	state := testState()
 	state.Put("source_image", testImage())
-	buildInfo := extractBuildInfo("foo", state)
+	buildInfo := common.ExtractBuildInfo("foo", state)
 
-	expected := BuildInfoTemplate{
+	expected := common.BuildInfoTemplate{
 		BuildRegion:   "foo",
 		SourceOMI:     "ami-abcd1234",
 		SourceOMIName: "ami_test_name",

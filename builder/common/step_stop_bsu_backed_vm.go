@@ -65,7 +65,6 @@ func (s *StepStopBSUBackedVm) Run(
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
-
 	} else {
 		ui.Say("Automatic vm stop disabled. Please stop vm manually.")
 	}
@@ -74,15 +73,14 @@ func (s *StepStopBSUBackedVm) Run(
 	ui.Say("Waiting for the vm to stop...")
 	switch vm.VmInitiatedShutdownBehavior {
 	case StopShutdownBehavior:
-		err = waitUntilOscVmStopped(oscconn, vm.VmId)
+		err = waitUntilOscVmStopped(ctx, oscconn, vm.VmId)
 	case TerminateShutdownBehavior:
-		err = waitUntilOscVmDeleted(oscconn, vm.VmId)
+		err = waitUntilOscVmDeleted(ctx, oscconn, vm.VmId)
 	default:
 		err := errors.New("wrong value for the shutdown behavior")
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
-
 	}
 
 	if err != nil {

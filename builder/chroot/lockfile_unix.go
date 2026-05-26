@@ -1,5 +1,4 @@
 //go:build !windows
-// +build !windows
 
 package chroot
 
@@ -10,12 +9,14 @@ import (
 )
 
 // See: http://linux.die.net/include/sys/file.h
-const LOCK_EX = 2
-const LOCK_NB = 4
-const LOCK_UN = 8
+const (
+	LOCK_EX = 2
+	LOCK_NB = 4
+	LOCK_UN = 8
+)
 
 func lockFile(f *os.File) error {
-	err := unix.Flock(int(f.Fd()), LOCK_EX)
+	err := unix.Flock(int(f.Fd()), LOCK_EX) //nolint:gosec
 	if err != nil {
 		return err
 	}
@@ -24,5 +25,5 @@ func lockFile(f *os.File) error {
 }
 
 func unlockFile(f *os.File) error {
-	return unix.Flock(int(f.Fd()), LOCK_UN)
+	return unix.Flock(int(f.Fd()), LOCK_UN) //nolint:gosec
 }

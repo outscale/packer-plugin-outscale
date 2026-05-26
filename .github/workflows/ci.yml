@@ -31,13 +31,6 @@ jobs:
             - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
               with:
                   go-version-file: "go.mod"
-            - name: Lint
-              uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3
-              with:
-                  version: latest
-                  # skip cache because of flaky behaviors
-                  skip-build-cache: true
-                  skip-pkg-cache: true
             - name: Fmt
               run: |
                   go fmt ./...

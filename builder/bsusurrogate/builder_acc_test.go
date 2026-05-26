@@ -1,4 +1,4 @@
-package bsusurrogate
+package bsusurrogate_test
 
 import (
 	"testing"

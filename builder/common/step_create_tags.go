@@ -65,7 +65,7 @@ func (s *StepCreateTags) Run(ctx context.Context, state multistep.StateBag) mult
 		// Add only those with a Snapshot ID, i.e. not Ephemeral
 		for _, device := range *image.BlockDeviceMappings {
 			if device.Bsu.SnapshotId != nil {
-				ui.Say(fmt.Sprintf("Tagging snapshot: %s", *device.Bsu.SnapshotId))
+				ui.Say("Tagging snapshot: " + *device.Bsu.SnapshotId)
 				resourceIds = append(resourceIds, *device.Bsu.SnapshotId)
 				snapshotIds = append(snapshotIds, *device.Bsu.SnapshotId)
 			}

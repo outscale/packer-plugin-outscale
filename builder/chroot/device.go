@@ -3,6 +3,7 @@ package chroot
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -29,10 +30,16 @@ func AvailableDevice() (string, error) {
 
 		// To be able to build both Paravirtual and HVM images, the unnumbered
 		// device and the first numbered one must be available.
-		// E.g. /dev/xvdf  and  /dev/xvdf1
-		numbered_device := fmt.Sprintf("%s%d", device, 1)
-		if _, err := os.Stat(numbered_device); err != nil {
+		// E.g. /dev/xvdf and /dev/xvdf1
+		numberedDevice := fmt.Sprintf("%s%d", device, 1)
+		_, err := os.Stat(numberedDevice)
+		switch {
+		case err == nil:
+			continue
+		case errors.Is(err, fs.ErrNotExist):
 			return device, nil
+		default:
+			return "", err
 		}
 	}
 
@@ -48,7 +55,6 @@ func devicePrefix() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
 
 	dirs, err := f.Readdirnames(-1)
 	if len(dirs) > 0 {
@@ -56,19 +62,19 @@ func devicePrefix() (string, error) {
 			dirBase := filepath.Base(dir)
 			for _, prefix := range available {
 				if strings.HasPrefix(dirBase, prefix) {
-					//for outscale.
+					// for outscale.
 					if prefix != "xvd" {
 						prefix = "xvd"
 					}
-					return prefix, nil
+					return prefix, f.Close()
 				}
 			}
 		}
 	}
-
 	if err != nil {
-		return "", err
+		return "", errors.Join(err, f.Close())
 	}
 
-	return "", errors.New("device prefix could not be detected")
+	err = errors.New("device prefix could not be detected")
+	return "", errors.Join(err, f.Close())
 }

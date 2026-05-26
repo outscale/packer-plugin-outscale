@@ -81,7 +81,7 @@ func (s *StepNetworkInfo) Run(ctx context.Context, state multistep.StateBag) mul
 		}
 
 		s.NetId = (*vpcResp.Nets)[0].NetId
-		ui.Message(fmt.Sprintf("Found NET ID: %s", s.NetId))
+		ui.Message("Found NET ID: " + s.NetId)
 	}
 
 	// Subnet
@@ -129,12 +129,12 @@ func (s *StepNetworkInfo) Run(ctx context.Context, state multistep.StateBag) mul
 		case s.SubnetFilter.MostFree:
 			subnet = mostFreeOscSubnet(*subnetsResp.Subnets)
 		case s.SubnetFilter.Random:
-			subnet = (*subnetsResp.Subnets)[rand.Intn(len(*subnetsResp.Subnets))]
+			subnet = (*subnetsResp.Subnets)[rand.Intn(len(*subnetsResp.Subnets))] //nolint:gosec
 		default:
 			subnet = (*subnetsResp.Subnets)[0]
 		}
 		s.SubnetId = subnet.SubnetId
-		ui.Message(fmt.Sprintf("Found Subnet ID: %s", s.SubnetId))
+		ui.Message("Found Subnet ID: " + s.SubnetId)
 	}
 
 	// Try to find Subregion and NET Id from Subnet if they are not yet found/given

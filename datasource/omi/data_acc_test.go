@@ -1,4 +1,4 @@
-package omi
+package omi_test
 
 import (
 	_ "embed"

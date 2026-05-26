@@ -1,16 +1,16 @@
-package omi
+package omi_test
 
 import (
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/outscale/packer-plugin-outscale/builder/common"
+	"github.com/outscale/packer-plugin-outscale/datasource/omi"
 )
 
 func TestDatasourceConfigure_FilterBlank(t *testing.T) {
-
-	datasource := Datasource{
-		config: Config{
+	datasource := omi.Datasource{
+		Config: omi.Config{
 			OmiFilterOptions: common.OmiFilterOptions{},
 		},
 	}
@@ -20,8 +20,8 @@ func TestDatasourceConfigure_FilterBlank(t *testing.T) {
 }
 
 func TestRunConfigPrepare_SourceOmiFilterOwnersBlank(t *testing.T) {
-	datasource := Datasource{
-		config: Config{
+	datasource := omi.Datasource{
+		Config: omi.Config{
 			OmiFilterOptions: common.OmiFilterOptions{
 				NameValueFilter: config.NameValueFilter{
 					Filters: map[string]string{"foo": "bar"},
@@ -37,8 +37,8 @@ func TestRunConfigPrepare_SourceOmiFilterOwnersBlank(t *testing.T) {
 func TestRunConfigPrepare_SourceOmiFilterGood(t *testing.T) {
 	filter_key := "name"
 	filter_value := "foo"
-	datasource := Datasource{
-		config: Config{
+	datasource := omi.Datasource{
+		Config: omi.Config{
 			OmiFilterOptions: common.OmiFilterOptions{
 				NameValueFilter: config.NameValueFilter{
 					Filters: map[string]string{filter_key: filter_value},

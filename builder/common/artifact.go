@@ -23,7 +23,7 @@ type Artifact struct {
 
 	// StateData should store data such as GeneratedData
 	// to be shared with post-processors
-	StateData map[string]interface{}
+	StateData map[string]any
 }
 
 func (a *Artifact) BuilderId() string {
@@ -56,7 +56,7 @@ func (a *Artifact) String() string {
 	return fmt.Sprintf("OMIs were created:\n%s\n", strings.Join(omiStrings, "\n"))
 }
 
-func (a *Artifact) State(name string) interface{} {
+func (a *Artifact) State(name string) any {
 	if _, ok := a.StateData[name]; ok {
 		return a.StateData[name]
 	}
@@ -124,10 +124,10 @@ func (a *Artifact) Destroy() error {
 	return nil
 }
 
-func (a *Artifact) stateAtlasMetadata() interface{} {
+func (a *Artifact) stateAtlasMetadata() any {
 	metadata := make(map[string]string)
 	for region, imageId := range a.Omis {
-		k := fmt.Sprintf("region.%s", region)
+		k := "region." + region
 		metadata[k] = imageId
 	}
 
@@ -136,8 +136,8 @@ func (a *Artifact) stateAtlasMetadata() interface{} {
 
 // stateHCPPackerRegistryMetadata will write the metadata as an hcpRegistryImage for each of the OMIs
 // present in this artifact.
-func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
-	f := func(k, v interface{}) (*registryimage.Image, error) {
+func (a *Artifact) stateHCPPackerRegistryMetadata() any {
+	f := func(k, v any) (*registryimage.Image, error) {
 		region, ok := k.(string)
 		if !ok {
 			return nil, errors.New("unexpected type of key in OMIs map")
@@ -168,7 +168,7 @@ func (a *Artifact) stateHCPPackerRegistryMetadata() interface{} {
 		return images
 	}
 
-	data, ok := a.StateData["generated_data"].(map[string]interface{})
+	data, ok := a.StateData["generated_data"].(map[string]any)
 	if !ok {
 		return images
 	}

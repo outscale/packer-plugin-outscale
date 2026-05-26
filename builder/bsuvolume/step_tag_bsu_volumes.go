@@ -80,7 +80,6 @@ func (s *stepTagBSUVolumes) Run(
 				ui.Error(err.Error())
 				return multistep.ActionHalt
 			}
-
 		}
 	}
 

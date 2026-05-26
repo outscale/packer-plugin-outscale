@@ -3,7 +3,7 @@
 package omi
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer-plugin-sdk/common"
@@ -17,7 +17,7 @@ import (
 )
 
 type Datasource struct {
-	config Config
+	Config Config
 }
 
 type Config struct {
@@ -29,25 +29,25 @@ type Config struct {
 }
 
 func (d *Datasource) ConfigSpec() hcldec.ObjectSpec {
-	return d.config.FlatMapstructure().HCL2Spec()
+	return d.Config.FlatMapstructure().HCL2Spec()
 }
 
-func (d *Datasource) Configure(raws ...interface{}) error {
-	err := config.Decode(&d.config, nil, raws...)
+func (d *Datasource) Configure(raws ...any) error {
+	err := config.Decode(&d.Config, nil, raws...)
 	if err != nil {
 		return err
 	}
 
 	var errs *packersdk.MultiError
-	errs = packersdk.MultiErrorAppend(errs, d.config.AccessConfig.Prepare(&d.config.ctx)...)
+	errs = packersdk.MultiErrorAppend(errs, d.Config.Prepare(&d.Config.ctx)...)
 
-	if len(d.config.Owners) == 0 && d.config.NameValueFilter.Empty() {
-		errs = packersdk.MultiErrorAppend(errs, fmt.Errorf("The `filters` must be specified"))
+	if len(d.Config.Owners) == 0 && d.Config.NameValueFilter.Empty() {
+		errs = packersdk.MultiErrorAppend(errs, errors.New("the `filters` must be specified"))
 	}
-	if len(d.config.Owners) == 0 {
+	if len(d.Config.Owners) == 0 {
 		errs = packersdk.MultiErrorAppend(
 			errs,
-			fmt.Errorf("For security reasons, you must declare an owner."),
+			errors.New("for security reasons, you must declare an owner"),
 		)
 	}
 
@@ -82,7 +82,7 @@ func (d *Datasource) Execute() (cty.Value, error) {
 	if err != nil {
 		return cty.NullVal(cty.EmptyObject), err
 	}
-	image, err := d.config.OmiFilterOptions.GetFilteredImage(oscgo.ReadImagesRequest{}, oscConn)
+	image, err := d.Config.GetFilteredImage(oscgo.ReadImagesRequest{}, oscConn)
 	if err != nil {
 		return cty.NullVal(cty.EmptyObject), err
 	}

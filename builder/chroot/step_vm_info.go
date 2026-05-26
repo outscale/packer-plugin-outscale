@@ -23,13 +23,12 @@ func (s *StepVmInfo) Run(ctx context.Context, state multistep.StateBag) multiste
 	// Get our own vm ID
 	ui.Say("Gathering information about this Outscale vm...")
 
-	cmd := ShellCommand("curl http://169.254.169.254/latest/meta-data/instance-id")
+	cmd := ShellCommand(ctx, "curl http://169.254.169.254/latest/meta-data/instance-id")
 
 	vmID, err := cmd.Output()
 	if err != nil {
-		err := fmt.Errorf(
-			"error retrieving the ID of the vm Packer is running on.\n" +
-				"Please verify Packer is running on a proper Outscale vm")
+		err := errors.New("error retrieving the ID of the vm Packer is running on.\n" +
+			"Please verify Packer is running on a proper Outscale vm")
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

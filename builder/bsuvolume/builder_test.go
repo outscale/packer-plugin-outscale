@@ -1,13 +1,14 @@
-package bsuvolume
+package bsuvolume_test
 
 import (
 	"testing"
 
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/packer-plugin-outscale/builder/bsuvolume"
 )
 
-func testConfig() map[string]interface{} {
-	return map[string]interface{}{
+func testConfig() map[string]any {
+	return map[string]any{
 		"access_key":   "foo",
 		"secret_key":   "bar",
 		"source_omi":   "foo",
@@ -18,16 +19,15 @@ func testConfig() map[string]interface{} {
 }
 
 func TestBuilder_ImplementsBuilder(t *testing.T) {
-	var raw interface{}
-	raw = &Builder{}
+	var raw any = &bsuvolume.Builder{}
 	if _, ok := raw.(packersdk.Builder); !ok {
 		t.Fatalf("Builder should be a builder")
 	}
 }
 
 func TestBuilder_Prepare_BadType(t *testing.T) {
-	b := &Builder{}
-	c := map[string]interface{}{
+	b := &bsuvolume.Builder{}
+	c := map[string]any{
 		"access_key": []string{},
 	}
 
@@ -41,7 +41,7 @@ func TestBuilder_Prepare_BadType(t *testing.T) {
 }
 
 func TestBuilderPrepare_InvalidKey(t *testing.T) {
-	var b Builder
+	var b bsuvolume.Builder
 	config := testConfig()
 
 	// Add a random key
@@ -56,7 +56,7 @@ func TestBuilderPrepare_InvalidKey(t *testing.T) {
 }
 
 func TestBuilderPrepare_InvalidShutdownBehavior(t *testing.T) {
-	var b Builder
+	var b bsuvolume.Builder
 	config := testConfig()
 
 	// Test good

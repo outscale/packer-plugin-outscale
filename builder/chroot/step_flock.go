@@ -24,7 +24,7 @@ func (s *StepFlock) Run(ctx context.Context, state multistep.StateBag) multistep
 	ui := state.Get("ui").(packersdk.Ui)
 
 	lockfile := "/var/lock/packer-chroot/lock"
-	if err := os.MkdirAll(filepath.Dir(lockfile), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(lockfile), 0o750); err != nil {
 		err := fmt.Errorf("error creating lock: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())

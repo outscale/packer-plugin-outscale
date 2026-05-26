@@ -34,7 +34,7 @@ func (c *AccessConfig) GetRegion() string {
 }
 
 func (c *AccessConfig) NewOSCClient() (*OscClient, error) {
-	profile, err := profile.NewProfileFromStandardConfiguration("", "")
+	profile, err := profile.NewFrom("", "")
 	if err != nil {
 		return nil, fmt.Errorf("new client: %w", err)
 	}

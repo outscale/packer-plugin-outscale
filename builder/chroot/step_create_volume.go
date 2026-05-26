@@ -58,7 +58,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 		createVolume = &oscgo.CreateVolumeRequest{
 			SubregionName: vm.Placement.SubregionName,
 			Size:          &size,
-			VolumeType:    &rootVolumeType,
+			VolumeType:    new(oscgo.VolumeType(rootVolumeType)),
 		}
 	} else {
 		// Determine the root device snapshot
@@ -157,7 +157,7 @@ func (s *StepCreateVolume) buildCreateVolumeInput(
 		*createVolumeInput.Size = int(s.RootVolumeSize)
 	}
 
-	if s.RootVolumeType == "" || s.RootVolumeType == *rootDevice.Bsu.VolumeType {
+	if s.RootVolumeType == "" || oscgo.VolumeType(s.RootVolumeType) == *rootDevice.Bsu.VolumeType {
 		return createVolumeInput, nil
 	}
 
@@ -168,7 +168,7 @@ func (s *StepCreateVolume) buildCreateVolumeInput(
 		)
 	}
 
-	createVolumeInput.VolumeType = &s.RootVolumeType
+	createVolumeInput.VolumeType = new(oscgo.VolumeType(s.RootVolumeType))
 	// non io1 cannot set iops
 	*createVolumeInput.Iops = 0
 

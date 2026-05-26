@@ -107,7 +107,7 @@ func waitUntilOscVolumeLinkedStateFunc(ctx context.Context, conn *OscClient, id 
 			return "pending", nil
 		}
 
-		if len(*(*resp.Volumes)[0].LinkedVolumes) == 0 {
+		if len((*resp.Volumes)[0].LinkedVolumes) == 0 {
 			return "pending", nil
 		}
 		volume := (*resp.Volumes)[0]
@@ -130,7 +130,7 @@ func waitUntilOscVolumeUnLinkedStateFunc(ctx context.Context, conn *OscClient, i
 			return "pending", nil
 		}
 
-		if len(*(*resp.Volumes)[0].LinkedVolumes) == 0 {
+		if len((*resp.Volumes)[0].LinkedVolumes) == 0 {
 			return "dettached", nil
 		}
 

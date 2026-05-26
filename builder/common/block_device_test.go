@@ -26,7 +26,7 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
 					SnapshotId:         new("snap-1234"),
-					VolumeType:         new("standard"),
+					VolumeType:         new(oscgo.VolumeTypeStandard),
 					VolumeSize:         new(8),
 					DeleteOnVmDeletion: new(true),
 				},
@@ -58,7 +58,7 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			Result: oscgo.BlockDeviceMappingVmCreation{
 				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         new("io1"),
+					VolumeType:         new(oscgo.VolumeTypeIo1),
 					VolumeSize:         new(8),
 					DeleteOnVmDeletion: new(true),
 					Iops:               new(1000),
@@ -76,7 +76,7 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			Result: oscgo.BlockDeviceMappingVmCreation{
 				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         new("gp2"),
+					VolumeType:         new(oscgo.VolumeTypeGp2),
 					VolumeSize:         new(8),
 					DeleteOnVmDeletion: new(true),
 				},
@@ -93,7 +93,7 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			Result: oscgo.BlockDeviceMappingVmCreation{
 				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         new("gp2"),
+					VolumeType:         new(oscgo.VolumeTypeGp2),
 					VolumeSize:         new(8),
 					DeleteOnVmDeletion: new(true),
 				},
@@ -109,7 +109,7 @@ func TestBlockDevice_LaunchDevices(t *testing.T) {
 			Result: oscgo.BlockDeviceMappingVmCreation{
 				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         new("standard"),
+					VolumeType:         new(oscgo.VolumeTypeStandard),
 					DeleteOnVmDeletion: new(true),
 				},
 			},
@@ -149,7 +149,7 @@ func TestBlockDevice_OMI(t *testing.T) {
 				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
 					SnapshotId:         new("snap-1234"),
-					VolumeType:         new("standard"),
+					VolumeType:         new(oscgo.VolumeTypeStandard),
 					VolumeSize:         new(8),
 					DeleteOnVmDeletion: new(true),
 				},
@@ -182,7 +182,7 @@ func TestBlockDevice_OMI(t *testing.T) {
 			Result: oscgo.BlockDeviceMappingImage{
 				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         new("io1"),
+					VolumeType:         new(oscgo.VolumeTypeIo1),
 					VolumeSize:         new(8),
 					DeleteOnVmDeletion: new(true),
 					Iops:               new(1000),
@@ -200,7 +200,7 @@ func TestBlockDevice_OMI(t *testing.T) {
 			Result: oscgo.BlockDeviceMappingImage{
 				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         new("gp2"),
+					VolumeType:         new(oscgo.VolumeTypeGp2),
 					VolumeSize:         new(8),
 					DeleteOnVmDeletion: new(true),
 				},
@@ -217,7 +217,7 @@ func TestBlockDevice_OMI(t *testing.T) {
 			Result: oscgo.BlockDeviceMappingImage{
 				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         new("gp2"),
+					VolumeType:         new(oscgo.VolumeTypeGp2),
 					VolumeSize:         new(8),
 					DeleteOnVmDeletion: new(true),
 				},
@@ -233,7 +233,7 @@ func TestBlockDevice_OMI(t *testing.T) {
 			Result: oscgo.BlockDeviceMappingImage{
 				DeviceName: new("/dev/sdb"),
 				Bsu: &oscgo.BsuToCreate{
-					VolumeType:         new("standard"),
+					VolumeType:         new(oscgo.VolumeTypeStandard),
 					DeleteOnVmDeletion: new(true),
 				},
 			},

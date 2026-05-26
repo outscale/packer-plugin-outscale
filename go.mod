@@ -4,7 +4,7 @@ go 1.26.3
 
 require (
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/hcl/v2 v2.23.0
+	github.com/hashicorp/hcl/v2 v2.24.0
 	github.com/hashicorp/packer-plugin-sdk v0.6.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/outscale/osc-sdk-go/v3 v3.0.0-rc.2

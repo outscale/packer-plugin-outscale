@@ -18,6 +18,10 @@ on:
             - "scripts/run-examples.sh"
             - "GNUmakefile"
             - ".github/workflows/ci.yml"
+
+permissions:
+    contents: read
+
 jobs:
     check-code:
         runs-on: ubuntu-latest

@@ -3,6 +3,10 @@ on:
     push:
         tags:
             - "*.*.*" # Proper releases
+
+permissions:
+    contents: read
+
 jobs:
     strip-version:
         runs-on: ubuntu-latest

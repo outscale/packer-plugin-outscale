@@ -1,6 +1,10 @@
 name: Ensure Docs are Compiled
 on:
     push:
+
+permissions:
+    contents: read
+
 jobs:
     ensure-docs-compiled:
         runs-on: ubuntu-latest

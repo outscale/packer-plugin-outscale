@@ -1,17 +1,48 @@
-**DELETE THIS TEMPLATE BEFORE SUBMITTING**
+# 📦 Pull Request Template
 
-In order to have a good experience with our community, we recommend that you
-read the contributing guidelines for making a PR, and understand the lifecycle
-of a Packer Plugin PR:
+## Description
 
-https://github.com/outscale/packer-plugin-outscale/blob/main/.github/CONTRIBUTING.md#opening-an-pull-request
+Please include a summary of the changes and the related context. If this is a feature, explain the motivation. If it's a bug fix, describe what was broken.
 
-Describe the change you are making here!
+Fixes: #<issue-number> _(if applicable)_
 
-Please include tests. We recommend looking at existing tests as an example. 
+## Type of Change
 
-If your PR resolves any open issue(s), please indicate them like this so they will be closed when your PR is merged:
+Please check the relevant option(s):
 
-Closes #xxx
-Closes #xxx
+- [ ] 🐛 Bug fix
+- [ ] ✨ New feature
+- [ ] 🧹 Code cleanup or refactor
+- [ ] 📝 Documentation update
+- [ ] 🔧 Build or CI-related change
+- [ ] 🔒 Security fix
+- [ ] Other (specify):
 
+## How Has This Been Tested?
+
+Please describe the test strategy:
+
+- [ ] Manual testing
+- [ ] Unit tests
+- [ ] Integration tests
+- [ ] Not tested yet
+
+Commands used (if applicable):
+
+```bash
+# Example
+my-cli-tool build --verbose
+my-cli-tool test
+````
+
+## Checklist
+
+* [ ] I have followed the [Contributing Guidelines](../blob/main/CONTRIBUTING.md)
+* [ ] I have added tests or explained why they are not needed
+* [ ] I have updated relevant documentation (README, examples, etc.)
+* [ ] My changes follow the [Conventional Commits](https://www.conventionalcommits.org/) specification
+* [ ] My commits include appropriate [Gitmoji](https://gitmoji.dev/)
+
+## Additional Context
+
+Add any additional context or screenshots if necessary.

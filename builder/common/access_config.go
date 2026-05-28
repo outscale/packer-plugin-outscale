@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/outscale/osc-sdk-go/v3/pkg/options"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	"github.com/outscale/osc-sdk-go/v3/pkg/profile"
 )
@@ -61,7 +62,7 @@ func (c *AccessConfig) NewOSCClient() (*OscClient, error) {
 		profile.Endpoints.API = c.CustomEndpointOAPI
 	}
 
-	client, err := oscgo.NewClient(profile)
+	client, err := oscgo.NewClient(profile, options.WithLogging(newLogger()))
 	if err != nil {
 		return nil, err
 	}

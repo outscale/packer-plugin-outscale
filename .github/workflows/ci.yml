@@ -54,13 +54,13 @@ jobs:
         strategy:
             max-parallel: 1
             matrix:
-                os: [ubuntu-24.04, windows-latest]
+                os: [ubuntu-24.04, windows-latest, macos-latest]
         runs-on: ${{ matrix.os }}
         environment: test-us-east-2
         steps:
             - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
             - name: 🧹 Frieza
-              uses: outscale/frieza-github-actions/frieza-clean@master
+              uses: outscale/frieza-github-actions/frieza-clean@68ffd39d7e181f3548369e332242b329b04a3182 # master
               with:
                   access_key: ${{ secrets.OSC_ACCESS_KEY }}
                   secret_key: ${{ secrets.OSC_SECRET_KEY }}
@@ -80,12 +80,16 @@ jobs:
 
     acceptance:
         needs: test
-        runs-on: ubuntu-latest
+        strategy:
+            max-parallel: 1
+            matrix:
+                os: [ubuntu-24.04, macos-latest]
+        runs-on: ${{ matrix.os }}
         environment: test-us-east-2
         steps:
             - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
             - name: 🧹 Frieza
-              uses: outscale/frieza-github-actions/frieza-clean@master
+              uses: outscale/frieza-github-actions/frieza-clean@68ffd39d7e181f3548369e332242b329b04a3182 # master
               with:
                   access_key: ${{ secrets.OSC_ACCESS_KEY }}
                   secret_key: ${{ secrets.OSC_SECRET_KEY }}

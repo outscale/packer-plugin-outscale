@@ -31,7 +31,7 @@ jobs:
               uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
             - name: 🧹 Frieza
-              uses: outscale/frieza-github-actions/frieza-clean@master
+              uses: outscale/frieza-github-actions/frieza-clean@68ffd39d7e181f3548369e332242b329b04a3182 # master
               with:
                   access_key: ${{ secrets.OSC_ACCESS_KEY }}
                   secret_key: ${{ secrets.OSC_SECRET_KEY }}

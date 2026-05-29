@@ -74,9 +74,7 @@ builder.
   - `volume_type` (string) - The volume type. `gp2` for General Purpose (SSD) volumes, `io1` for Provisioned IOPS (SSD) volumes, and `standard` for Magnetic volumes
 
   - `tags` (map) - Tags to apply to the volume. These are retained after
-    the builder completes. This is a [template
-    engine](/docs/templates/legacy_json_templates/engine), see [Build template
-    data](#build-template-data) for more information.
+    the builder completes. Both legacy JSON templates and HCL2 templates are supported. See [Packer templates](/packer/docs/templates). See [Build template data](#build-template-data) for the contextual variables available to the legacy JSON template engine.
 
 - `associate_public_ip_address` (boolean) - If using a non-default Net, public IP addresses are not provided by default. If this is toggled, your new VM will get a Public IP.
 
@@ -104,9 +102,7 @@ builder.
 
 - `run_tags` (object of key/value strings) - Tags to apply to the instance
   that is _launched_ to create the OMI. These tags are _not_ applied to the
-  resulting OMI unless they're duplicated in `tags`. This is a [template
-  engine](/docs/templates/legacy_json_templates/engine), see [Build template
-  data](#build-template-data) for more information.
+  resulting OMI unless they're duplicated in `tags`. Both legacy JSON templates and HCL2 templates are supported. See [Packer templates](/packer/docs/templates). See [Build template data](#build-template-data) for the contextual variables available to the legacy JSON template engine.
 
 - `security_group_id` (string) - The ID (_not_ the name) of the security
   group to assign to the VM. By default this is not set and Packer will
@@ -254,8 +250,7 @@ You can use this information to access the instance as it is running.
 
 ## Build template data
 
-In configuration directives marked as a template engine above, the following
-variables are available:
+The following contextual variables are available in fields that use the legacy JSON template engine. Both legacy JSON templates and HCL2 templates are supported. See [Packer templates](/packer/docs/templates).
 
 - `BuildRegion` - The region (for example `eu-west-2`) where Packer is
   building the OMI.

@@ -59,8 +59,8 @@ func (c *OMIConfig) Prepare(accessConfig *AccessConfig, ctx *interpolate.Context
 		errs = append(errs, errors.New("the parameter 'OMIName' should only contain"+
 			" alphanumeric characters, parentheses (()), square brackets ([]), spaces "+
 			"( ), periods (.), slashes (/), dashes (-), single quotes ('), at-signs "+
-			"(@), or underscores(_). You can use the `clean_omi_name` template "+
-			"filter to automatically clean your omi name. "))
+			"(@), or underscores(_). For JSON templates, the `clean_resource_name` and `clean_omi_name` template filters are supported, and you can use them to "+
+			"automatically clean your omi name. "))
 	}
 
 	if len(errs) > 0 {

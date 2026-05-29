@@ -47,7 +47,7 @@ each category, the available configuration keys are alphabetized.
 
 - `access_key` (string) - The access key used to communicate with OUTSCALE. [Learn how to set this](/docs/builder/outscale#authentication)
 
-- `omi_name` (string) - The name of the resulting OMIS that will appear when managing OMIs in the Outscale console or via APIs. This must be unique. To help make this unique, use a function like `timestamp` (see [template engine](/docs/templates/legacy_json_templates/engine) for more info).
+- `omi_name` (string) - The name of the resulting OMIS that will appear when managing OMIs in the Outscale console or via APIs. This must be unique. Both legacy JSON templates and HCL2 templates are supported. See [Packer templates](/packer/docs/templates).
 
 - `secret_key` (string) - The secret key used to communicate with Outscale. [Learn how to set this](/docs/builder/outscale#authentication)
 
@@ -56,8 +56,7 @@ each category, the available configuration keys are alphabetized.
 ### Optional:
 
 - `omi_description` (string) - The description to set for the resulting OMI(s).
-  By default this description is empty. This is a [template engine](/docs/templates/legacy_json_templates/engine),
-  see [Build template data](#build-template-data) for more information.
+  By default this description is empty. Both legacy JSON templates and HCL2 templates are supported. See [Packer templates](/packer/docs/templates). See [Build template data](#build-template-data) for the contextual variables available to the legacy JSON template engine.
 
 - `omi_account_ids` (array of strings) - A list of account IDs that have access to launch the resulting OMI(s). By default no additional users other than the user creating the OMIS has permissions to launch it.
 
@@ -185,17 +184,13 @@ each category, the available configuration keys are alphabetized.
   `source_omi` which is also `io1`.
 
 - `root_volume_tags` (object of key/value strings) - Tags to apply to the
-  volumes that are _launched_. This is a [template
-  engine](/docs/templates/legacy_json_templates/engine), see [Build template
-  data](#build-template-data) for more information.
+  volumes that are _launched_. Both legacy JSON templates and HCL2 templates are supported. See [Packer templates](/packer/docs/templates). See [Build template data](#build-template-data) for the contextual variables available to the legacy JSON template engine.
 
 - `skip_region_validation` (boolean) - Set to true if you want to skip
   validation of the region configuration option. Default `false`.
 
 - `snapshot_tags` (object of key/value strings) - Tags to apply to snapshot.
-  They will override OMI tags if already applied to snapshot. This is a
-  [template engine](/docs/templates/legacy_json_templates/engine), see [Build template
-  data](#build-template-data) for more information.
+  They will override OMI tags if already applied to snapshot. Both legacy JSON templates and HCL2 templates are supported. See [Packer templates](/packer/docs/templates). See [Build template data](#build-template-data) for the contextual variables available to the legacy JSON template engine.
 
 - `source_omi_filter` (object) - Filters used to populate the `source_omi` field.
 
@@ -227,9 +222,7 @@ each category, the available configuration keys are alphabetized.
     criteria provided in `source_omi_filter`; this pins the OMI returned by the
     filter, but will cause Packer to fail if the `source_omi` does not exist.
 
-- `tags` (object of key/value strings) - Tags applied to the OMI. This is a
-  [template engine](/docs/templates/legacy_json_templates/engine), see [Build template
-  data](#build-template-data) for more information.
+- `tags` (object of key/value strings) - Tags applied to the OMI. Both legacy JSON templates and HCL2 templates are supported. See [Packer templates](/packer/docs/templates). See [Build template data](#build-template-data) for the contextual variables available to the legacy JSON template engine.
 
 ## Basic Example
 
@@ -356,8 +349,7 @@ provisioning commands to install the os and bootloader.
 
 ## Build template data
 
-In configuration directives marked as a template engine above, the following
-variables are available:
+The following contextual variables are available in fields that use the legacy JSON template engine. Both legacy JSON templates and HCL2 templates are supported. See [Packer templates](/packer/docs/templates).
 
 - `BuildRegion` - The region (for example `eu-west-2`) where Packer is building the OMI.
 - `SourceOMI` - The source OMIS ID (for example `ami-a2412fcd`) used to build the OMI.

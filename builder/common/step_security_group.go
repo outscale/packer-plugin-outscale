@@ -187,7 +187,7 @@ func buildSecurityGroupFilters(input map[string]string) oscgo.FiltersSecurityGro
 		case "tags":
 			filters.Tags = &filterValue
 		default:
-			log.Printf("[Debug] Unknown Filter Name: %s.", name)
+			log.Printf("[DEBUG] Unknown Filter Name: %s.", name)
 		}
 	}
 

@@ -66,12 +66,12 @@ func (s *StepLinkVolume) Run(ctx context.Context, state multistep.StateBag) mult
 
 func (s *StepLinkVolume) Cleanup(state multistep.StateBag) {
 	ui := state.Get("ui").(packersdk.Ui)
-	if err := s.CleanupFunc(context.Background(), state); err != nil {
+	if err := s.CleanupFunc(state); err != nil {
 		ui.Error(err.Error())
 	}
 }
 
-func (s *StepLinkVolume) CleanupFunc(ctx context.Context, state multistep.StateBag) error {
+func (s *StepLinkVolume) CleanupFunc(state multistep.StateBag) error {
 	if !s.attached {
 		return nil
 	}
@@ -83,7 +83,7 @@ func (s *StepLinkVolume) CleanupFunc(ctx context.Context, state multistep.StateB
 	opts := oscgo.UnlinkVolumeRequest{
 		VolumeId: s.volumeId,
 	}
-	_, err := oscconn.UnlinkVolume(ctx, opts)
+	_, err := oscconn.UnlinkVolume(context.Background(), opts)
 	if err != nil {
 		return fmt.Errorf("error detaching BSU volume: %w", err)
 	}
@@ -91,7 +91,7 @@ func (s *StepLinkVolume) CleanupFunc(ctx context.Context, state multistep.StateB
 	s.attached = false
 
 	// Wait for the volume to detach
-	err = osccommon.WaitUntilOscVolumeIsUnlinked(ctx, oscconn, s.volumeId)
+	err = osccommon.WaitUntilOscVolumeIsUnlinked(context.Background(), oscconn, s.volumeId)
 	if err != nil {
 		return fmt.Errorf("error waiting for volume: %w", err)
 	}

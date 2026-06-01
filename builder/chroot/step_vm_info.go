@@ -34,7 +34,7 @@ func (s *StepVmInfo) Run(ctx context.Context, state multistep.StateBag) multiste
 		return multistep.ActionHalt
 	}
 
-	log.Printf("[Debug] VmID got: %s", string(vmID))
+	log.Printf("[DEBUG] VmID got: %s", string(vmID))
 
 	// Query the entire vm metadata
 

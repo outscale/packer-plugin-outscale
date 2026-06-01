@@ -28,7 +28,7 @@ func buildOscNetFilters(input map[string]string) oscgo.FiltersNet {
 		case "tag-value":
 			filters.TagValues = &filterValue
 		default:
-			log.Printf("[Debug] Unknown Filter Name: %s.", name)
+			log.Printf("[DEBUG] Unknown Filter Name: %s.", name)
 		}
 	}
 	return filters
@@ -55,7 +55,7 @@ func buildOscSubnetFilters(input map[string]string) oscgo.FiltersSubnet {
 		case "sub-region-names":
 			filters.SubregionNames = &filterValue
 		default:
-			log.Printf("[Debug] Unknown Filter Name: %s.", name)
+			log.Printf("[DEBUG] Unknown Filter Name: %s.", name)
 		}
 	}
 	return filters

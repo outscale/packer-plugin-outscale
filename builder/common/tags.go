@@ -17,8 +17,7 @@ type (
 
 func (t OSCTags) Report(ui packersdk.Ui) {
 	for _, tag := range t {
-		ui.Message(fmt.Sprintf("Adding tag: \"%s\": \"%s\"",
-			tag.Key, tag.Value))
+		ui.Say(fmt.Sprintf("Adding tag: %q: %q", tag.Key, tag.Value))
 	}
 }
 

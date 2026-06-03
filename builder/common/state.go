@@ -6,7 +6,6 @@ import (
 	"log"
 	"slices"
 
-	"github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	"github.com/outscale/packer-plugin-outscale/builder/common/retry"
 )
@@ -111,13 +110,20 @@ func waitUntilOscVolumeLinkedStateFunc(ctx context.Context, conn *OscClient, id 
 			return "", ErrNotFound
 		}
 
+		// We want the volume to be 'in-use' and all linked volumes to be 'attached'
 		volume := (*resp.Volumes)[0]
+		for _, link := range volume.LinkedVolumes {
+			if link.State != oscgo.LinkedVolumeStateAttached {
+				return oscgo.VolumeStateCreating, nil
+			}
+		}
+
 		return volume.State, nil
 	}
 }
 
-func waitUntilOscVolumeUnLinkedStateFunc(ctx context.Context, conn *OscClient, id string) func() (osc.VolumeState, error) {
-	return func() (osc.VolumeState, error) {
+func waitUntilOscVolumeUnLinkedStateFunc(ctx context.Context, conn *OscClient, id string) func() (oscgo.VolumeState, error) {
+	return func() (oscgo.VolumeState, error) {
 		log.Printf("[DEBUG] Check if volume with id %s exists", id)
 		request := oscgo.ReadVolumesRequest{
 			Filters: &oscgo.FiltersVolume{VolumeIds: &[]string{id}},

@@ -46,7 +46,7 @@ func (s *StepMountExtra) Run(ctx context.Context, state multistep.StateBag) mult
 			flags = "--bind"
 		}
 
-		ui.Message("Mounting: " + mountInfo[2])
+		ui.Say("Mounting: " + mountInfo[2])
 		stderr := new(bytes.Buffer)
 		mountCommand, err := wrappedCommand(fmt.Sprintf(
 			"mount %s %s %s",

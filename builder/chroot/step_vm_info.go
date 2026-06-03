@@ -8,6 +8,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/goutils/sdk/metadata"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
@@ -23,9 +24,7 @@ func (s *StepVmInfo) Run(ctx context.Context, state multistep.StateBag) multiste
 	// Get our own vm ID
 	ui.Say("Gathering information about this Outscale vm...")
 
-	cmd := ShellCommand(ctx, "curl http://169.254.169.254/latest/meta-data/instance-id")
-
-	vmID, err := cmd.Output()
+	vmId, err := metadata.GetInstanceID(ctx)
 	if err != nil {
 		err := errors.New("error retrieving the ID of the vm Packer is running on.\n" +
 			"Please verify Packer is running on a proper Outscale vm")
@@ -34,13 +33,12 @@ func (s *StepVmInfo) Run(ctx context.Context, state multistep.StateBag) multiste
 		return multistep.ActionHalt
 	}
 
-	log.Printf("[DEBUG] VmID got: %s", string(vmID))
+	log.Printf("[DEBUG] VmID got: %s", string(vmId))
 
 	// Query the entire vm metadata
-
 	resp, err := oscconn.ReadVms(ctx, oscgo.ReadVmsRequest{
 		Filters: &oscgo.FiltersVm{
-			VmIds: &[]string{string(vmID)},
+			VmIds: &[]string{string(vmId)},
 		},
 	})
 	if err != nil {
@@ -51,7 +49,6 @@ func (s *StepVmInfo) Run(ctx context.Context, state multistep.StateBag) multiste
 	}
 
 	vmsResp := *resp.Vms
-
 	if len(vmsResp) == 0 {
 		err := errors.New("error getting vm data: no vm found")
 		state.Put("error", err)

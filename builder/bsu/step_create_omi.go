@@ -71,7 +71,7 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	image := *resp.Image
 
 	// Set the OMI ID in the state
-	ui.Message("OMI: " + image.ImageId)
+	ui.Say("OMI: " + image.ImageId)
 	omis := make(map[string]string)
 	omis[s.RawRegion] = image.ImageId
 	state.Put("omis", omis)

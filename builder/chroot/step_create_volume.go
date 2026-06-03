@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
@@ -66,7 +67,7 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 		log.Printf("Searching for root device of the image (%s)", *image.RootDeviceName)
 		var rootDevice *oscgo.BlockDeviceMappingImage
 		for _, device := range *image.BlockDeviceMappings {
-			if device.DeviceName == image.RootDeviceName {
+			if *device.DeviceName == *image.RootDeviceName {
 				rootDevice = &device
 				break
 			}
@@ -137,24 +138,22 @@ func (s *StepCreateVolume) Cleanup(state multistep.StateBag) {
 }
 
 func (s *StepCreateVolume) buildCreateVolumeInput(
-	suregionName string,
+	subregionName string,
 	rootDevice *oscgo.BlockDeviceMappingImage,
 ) (*oscgo.CreateVolumeRequest, error) {
 	if rootDevice == nil {
 		return nil, errors.New("couldn't find root device")
 	}
 
-	// FIX: Temporary fix
-	gibSize := *rootDevice.Bsu.VolumeSize / (1024 * 1024 * 1024)
 	createVolumeInput := &oscgo.CreateVolumeRequest{
-		SubregionName: suregionName,
-		Size:          &gibSize,
+		SubregionName: subregionName,
+		Size:          rootDevice.Bsu.VolumeSize,
 		SnapshotId:    rootDevice.Bsu.SnapshotId,
 		VolumeType:    rootDevice.Bsu.VolumeType,
 		Iops:          rootDevice.Bsu.Iops,
 	}
-	if int(s.RootVolumeSize) > *rootDevice.Bsu.VolumeSize {
-		*createVolumeInput.Size = int(s.RootVolumeSize)
+	if int(s.RootVolumeSize) > ptr.From(rootDevice.Bsu.VolumeSize) {
+		createVolumeInput.Size = new(int(s.RootVolumeSize))
 	}
 
 	if s.RootVolumeType == "" || oscgo.VolumeType(s.RootVolumeType) == *rootDevice.Bsu.VolumeType {

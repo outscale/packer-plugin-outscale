@@ -153,7 +153,7 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 	// Set the vm ID so that the cleanup works properly
 	s.vmId = vmId
 
-	ui.Message("Vm ID: " + vmId)
+	ui.Say("Vm ID: " + vmId)
 	ui.Say(fmt.Sprintf("Waiting for vm (%v) to become ready...", vmId))
 
 	request := oscgo.ReadVmsRequest{
@@ -211,11 +211,11 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 
 	if s.Debug {
 		if vm.PublicDnsName != nil {
-			ui.Message("Public DNS: " + *vm.PublicDnsName)
+			ui.Say("Public DNS: " + *vm.PublicDnsName)
 		}
 
 		if vm.PublicIp != nil {
-			ui.Message("Public IP: " + *vm.PublicIp)
+			ui.Say("Public IP: " + *vm.PublicIp)
 		}
 	}
 

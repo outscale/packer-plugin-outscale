@@ -72,7 +72,7 @@ func (s *StepUpdateOMIAttributes) Run(
 			return multistep.ActionHalt
 		}
 
-		ui.Message("Updating: " + omi)
+		ui.Say("Updating: " + omi)
 		updateImageRequest.ImageId = omi
 		_, err = regionconn.UpdateImage(ctx, updateImageRequest)
 		if err != nil {
@@ -99,7 +99,7 @@ func (s *StepUpdateOMIAttributes) Run(
 				return multistep.ActionHalt
 			}
 
-			ui.Message("Updating: " + snapshot_id)
+			ui.Say("Updating: " + snapshot_id)
 			updateSnapshoptRequest.SnapshotId = snapshot_id
 			_, err = regionconn.UpdateSnapshot(ctx, updateSnapshoptRequest)
 			if err != nil {

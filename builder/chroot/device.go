@@ -62,10 +62,6 @@ func devicePrefix() (string, error) {
 			dirBase := filepath.Base(dir)
 			for _, prefix := range available {
 				if strings.HasPrefix(dirBase, prefix) {
-					// for outscale.
-					if prefix != "xvd" {
-						prefix = "xvd"
-					}
 					return prefix, f.Close()
 				}
 			}

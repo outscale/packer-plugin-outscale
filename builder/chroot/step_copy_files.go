@@ -32,7 +32,7 @@ func (s *StepCopyFiles) Run(ctx context.Context, state multistep.StateBag) multi
 	if len(config.CopyFiles) > 0 {
 		ui.Say("Copying files from host to chroot...")
 		for _, path := range config.CopyFiles {
-			ui.Message(path)
+			ui.Say(path)
 			chrootPath := filepath.Join(mountPath, path)
 			log.Printf("Copying '%s' to '%s'", path, chrootPath)
 
@@ -49,7 +49,7 @@ func (s *StepCopyFiles) Run(ctx context.Context, state multistep.StateBag) multi
 			cmd.Stderr = stderr
 			if err := cmd.Run(); err != nil {
 				err := fmt.Errorf(
-					"error copying file: %w\nnStderr: %s", err, stderr.String())
+					"error copying file: %w\n Stderr: %s", err, stderr.String())
 				state.Put("error", err)
 				ui.Error(err.Error())
 				return multistep.ActionHalt

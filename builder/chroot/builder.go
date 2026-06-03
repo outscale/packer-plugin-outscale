@@ -194,7 +194,6 @@ func (b *Builder) Run(
 	}
 
 	var oscConn *osccommon.OscClient
-	// var oscConn *oscgo.APIClient
 	var err error
 	if oscConn, err = b.config.NewOSCClient(); err != nil {
 		return nil, err
@@ -208,6 +207,7 @@ func (b *Builder) Run(
 	// Setup the state bag and initial state for the steps
 	state := new(multistep.BasicStateBag)
 	state.Put("config", &b.config)
+	state.Put("accessConfig", &b.config.AccessConfig)
 	state.Put("osc", oscConn)
 	state.Put("hook", hook)
 	state.Put("ui", ui)
@@ -228,7 +228,9 @@ func (b *Builder) Run(
 				SourceOmi:  b.config.SourceOMI,
 				OmiFilters: b.config.SourceOMIFilter,
 			},
-			&StepCheckRootDevice{},
+			&StepCopySourceOMI{
+				Region: b.config.RawRegion,
+			},
 		)
 	}
 

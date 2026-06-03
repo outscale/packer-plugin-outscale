@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
@@ -29,6 +30,9 @@ func (s *StepPrepareDevice) Run(_ context.Context, state multistep.StateBag) mul
 			return multistep.ActionHalt
 		}
 	}
+
+	// The API does not allow linking a volume to /dev/vd.
+	device = strings.Replace(device, "/dev/vd", "/dev/xvd", 1)
 
 	if _, err := os.Stat(device); err == nil {
 		err := fmt.Errorf("device is in use: %s", device)

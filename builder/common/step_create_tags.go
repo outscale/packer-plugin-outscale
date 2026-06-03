@@ -18,13 +18,13 @@ type StepCreateTags struct {
 }
 
 func (s *StepCreateTags) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	config := state.Get("accessConfig").(*AccessConfig)
-	ui := state.Get("ui").(packersdk.Ui)
-	omis := state.Get("omis").(map[string]string)
-
 	if !s.Tags.IsSet() && !s.SnapshotTags.IsSet() {
 		return multistep.ActionContinue
 	}
+
+	ui := state.Get("ui").(packersdk.Ui)
+	config := state.Get("accessConfig").(*AccessConfig)
+	omis := state.Get("omis").(map[string]string)
 
 	// Adds tags to OMIs and snapshots
 	for _, ami := range omis {

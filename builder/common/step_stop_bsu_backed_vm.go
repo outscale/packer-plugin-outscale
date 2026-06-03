@@ -44,7 +44,7 @@ func (s *StepStopBSUBackedVm) Run(
 
 		// Work around this by retrying a few times, up to about 5 minutes.
 		err := retry.Run(10, 60, 6, func(i uint) (bool, error) {
-			ui.Message(fmt.Sprintf("Stopping vm, attempt %d", i+1))
+			ui.Say(fmt.Sprintf("Stopping vm, attempt %d", i+1))
 
 			_, err = oscconn.StopVms(ctx, oscgo.StopVmsRequest{
 				VmIds: []string{vm.VmId},

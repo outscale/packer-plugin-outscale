@@ -43,7 +43,7 @@ func (s *StepSnapshot) Run(ctx context.Context, state multistep.StateBag) multis
 
 	// Set the snapshot ID so we can delete it later
 	s.snapshotId = createSnapResp.Snapshot.SnapshotId
-	ui.Message("Snapshot ID: " + s.snapshotId)
+	ui.Say("Snapshot ID: " + s.snapshotId)
 
 	// Wait for the snapshot to be ready
 	err = osccommon.WaitUntilOscSnapshotDone(ctx, oscconn, s.snapshotId)

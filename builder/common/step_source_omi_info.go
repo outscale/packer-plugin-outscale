@@ -112,7 +112,7 @@ func (s *StepSourceOMIInfo) Run(
 		image = (*imageResp.Images)[0]
 	}
 
-	ui.Message("Found Image ID: " + image.ImageId)
+	ui.Say("Found Image ID: " + image.ImageId)
 
 	state.Put("source_image", image)
 	return multistep.ActionContinue

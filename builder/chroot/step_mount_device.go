@@ -69,36 +69,14 @@ func (s *StepMountDevice) Run(ctx context.Context, state multistep.StateBag) mul
 		return multistep.ActionHalt
 	}
 
-	// Check the symbolic link for the device to get the real device name
-	cmd := ShellCommand(ctx, fmt.Sprintf("lsblk -no pkname $(readlink -f %s)", device))
-
-	realDeviceName, err := cmd.Output()
-	if err != nil {
-		err := fmt.Errorf("error retrieving the symlink of the device %s", device)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
+	deviceMount := device
+	if s.MountPartition != "" && s.MountPartition != "0" {
+		deviceMount += s.MountPartition
 	}
-
-	log.Printf("[DEBUG] RealDeviceName: %s", realDeviceName)
-
-	realDeviceNameSplitted := strings.Split(string(realDeviceName), "\n")
-	log.Printf("[DEBUG] RealDeviceName Splitted %+v", realDeviceNameSplitted)
-	log.Printf("[DEBUG] RealDeviceName Splitted Length %d", len(realDeviceNameSplitted))
-	log.Printf("[DEBUG] RealDeviceName Splitted [0] %s", realDeviceNameSplitted[0])
-	log.Printf("[DEBUG] RealDeviceName Splitted [1] %s", realDeviceNameSplitted[1])
-
-	realDeviceNameStr := realDeviceNameSplitted[0]
-	if realDeviceNameStr == "" {
-		realDeviceNameStr = realDeviceNameSplitted[1]
-	}
-
-	deviceMount := "/dev/" + strings.ReplaceAll(realDeviceNameStr, "\n", "")
+	state.Put("deviceMount", deviceMount)
 
 	log.Printf("[DEBUG] s.MountPartition  = %s", s.MountPartition)
-	log.Printf("[DEBUG ] DeviceMount: %s", deviceMount)
-
-	state.Put("deviceMount", deviceMount)
+	log.Printf("[DEBUG] DeviceMount: %s", deviceMount)
 
 	ui.Say("Mounting the root device...")
 	stderr := new(bytes.Buffer)
@@ -118,7 +96,7 @@ func (s *StepMountDevice) Run(ctx context.Context, state multistep.StateBag) mul
 		return multistep.ActionHalt
 	}
 	log.Printf("[DEBUG] (step mount) mount command is %s", mountCommand)
-	cmd = ShellCommand(ctx, mountCommand)
+	cmd := ShellCommand(ctx, mountCommand)
 	cmd.Stderr = stderr
 	if err := cmd.Run(); err != nil {
 		err := fmt.Errorf(

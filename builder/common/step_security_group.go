@@ -75,7 +75,7 @@ func (s *StepSecurityGroup) Run(
 			securityGroupIds = append(securityGroupIds, sg.SecurityGroupId)
 		}
 
-		ui.Message("Found Security Group(s): " + strings.Join(securityGroupIds, ", "))
+		ui.Say("Found Security Group(s): " + strings.Join(securityGroupIds, ", "))
 		state.Put("securityGroupIds", securityGroupIds)
 
 		return multistep.ActionContinue

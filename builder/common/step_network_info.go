@@ -81,7 +81,7 @@ func (s *StepNetworkInfo) Run(ctx context.Context, state multistep.StateBag) mul
 		}
 
 		s.NetId = (*vpcResp.Nets)[0].NetId
-		ui.Message("Found NET ID: " + s.NetId)
+		ui.Say("Found NET ID: " + s.NetId)
 	}
 
 	// Subnet
@@ -134,7 +134,7 @@ func (s *StepNetworkInfo) Run(ctx context.Context, state multistep.StateBag) mul
 			subnet = (*subnetsResp.Subnets)[0]
 		}
 		s.SubnetId = subnet.SubnetId
-		ui.Message("Found Subnet ID: " + s.SubnetId)
+		ui.Say("Found Subnet ID: " + s.SubnetId)
 	}
 
 	// Try to find Subregion and NET Id from Subnet if they are not yet found/given

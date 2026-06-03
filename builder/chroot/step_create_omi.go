@@ -47,10 +47,6 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	for i, device := range mappings {
 		newDevice := device
 
-		// FIX: Temporary fix
-		gibSize := *newDevice.Bsu.VolumeSize / (1024 * 1024 * 1024)
-		newDevice.Bsu.VolumeSize = &gibSize
-
 		if *newDevice.DeviceName == rootDeviceName {
 			if newDevice.Bsu != nil {
 				newDevice.Bsu.SnapshotId = &snapshotId
@@ -59,7 +55,7 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 			}
 
 			if config.FromScratch || s.RootVolumeSize > int64(*newDevice.Bsu.VolumeSize) {
-				*newDevice.Bsu.VolumeSize = int(s.RootVolumeSize)
+				newDevice.Bsu.VolumeSize = new(int(s.RootVolumeSize))
 			}
 		}
 

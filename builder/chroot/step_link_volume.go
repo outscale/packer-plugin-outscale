@@ -29,13 +29,9 @@ func (s *StepLinkVolume) Run(ctx context.Context, state multistep.StateBag) mult
 	ui := state.Get("ui").(packersdk.Ui)
 	volumeId := state.Get("volume_id").(string)
 
-	// For the API call, it expects "sd" prefixed devices.
-	// linkVolume := strings.Replace(device, "/xvd", "/sd", 1)
-	linkVolume := device
-
-	ui.Say("Attaching the root volume to " + linkVolume)
+	ui.Say("Attaching the root volume to " + device)
 	opts := oscgo.LinkVolumeRequest{
-		DeviceName: linkVolume,
+		DeviceName: device,
 		VmId:       vm.VmId,
 		VolumeId:   volumeId,
 	}

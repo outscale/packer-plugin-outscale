@@ -7,7 +7,7 @@ This repository contains a **Packer template** for creating an **Outscale Machin
 ## **📌 Overview**
 This setup performs the following actions:
 1. **Launches an Outscale VM** using Packer.
-2. **Runs shell scripts** on the instance to install `oapi-cli` and `nginx`.
+2. **Runs shell scripts** on the instance to install `octl` and `nginx`.
 3. **Creates a new Outscale Machine Image (OMI)**.
 
 ---
@@ -15,10 +15,10 @@ This setup performs the following actions:
 ## **Project Structure**
 ```
 /bsu_shell_provisioner
-├── ubuntu-oapi.pkr.hcl              # Packer template using shell provisioners
+├── ubuntu-oapi.pkr.hcl             # Packer template using shell provisioners
 ├── variables.auto.pkvars.hcl       # Variables file for Packer
 │── scripts/
-│   ├── install_oapi-cli.sh         # Installs Outscale oapi-cli
+│   ├── install_octl.sh             # Installs Outscale octl
 │── README.md                       # Documentation
 ```
 
@@ -68,7 +68,7 @@ packer build .
 ```
 This process will:
 Launch an **Outscale VM**.  
-Run the **shell script** to install `oapi-cli`.  
+Run the **shell script** to install `octl`.  
 Install **nginx** via `apt-get`.  
 Save the **new OMI**.
 
@@ -78,7 +78,7 @@ You can also pin a specific image by uncommenting `osc_source_image_id` in the v
 ---
 
 ## **Provisioning Scripts**
-The **shell script (`scripts/install_oapi-cli.sh`)** ensures `oapi-cli` is installed:
+The **shell script (`scripts/install_octl.sh`)** ensures `octl` is installed:
 
 Additionally, **nginx is installed** using the shell provisioner:
 

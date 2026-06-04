@@ -72,9 +72,9 @@ source "outscale-bsu" "create-omi" {
 build {
   sources = ["source.outscale-bsu.create-omi"]
 
-  # Install oapi-cli using a shell script
+  # Install octl using a shell script
   provisioner "shell" {
-    script       = "./scripts/install_oapi-cli.sh"
+    script       = "./scripts/install_octl.sh"
     pause_before = "3s"
   }
 

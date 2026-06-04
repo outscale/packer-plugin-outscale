@@ -8,6 +8,7 @@ import (
 	multierror "github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
@@ -71,7 +72,7 @@ func (s *StepSnapshotVolumes) Run(
 
 	var errs *multierror.Error
 	for _, device := range s.LaunchDevices {
-		if err := s.snapshotVolume(ctx, *device.DeviceName, state); err != nil {
+		if err := s.snapshotVolume(ctx, ptr.From(device.DeviceName), state); err != nil {
 			errs = multierror.Append(errs, err)
 		}
 	}

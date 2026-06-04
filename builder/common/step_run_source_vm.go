@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/outscale/goutils/sdk/ptr"
 	"github.com/outscale/packer-plugin-outscale/builder/common/retry"
 )
 
@@ -201,21 +202,22 @@ func (s *StepRunSourceVm) Run(ctx context.Context, state multistep.StateBag) mul
 	resp, err := oscconn.ReadVms(ctx, request)
 	r := resp
 
-	if err != nil || len(*r.Vms) == 0 {
+	vms := ptr.From(r.Vms)
+	if err != nil || len(vms) == 0 {
 		err := errors.New("error finding source vm")
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	vm := (*r.Vms)[0]
+	vm := vms[0]
 
 	if s.Debug {
 		if vm.PublicDnsName != nil {
-			ui.Say("Public DNS: " + *vm.PublicDnsName)
+			ui.Say("Public DNS: " + ptr.From(vm.PublicDnsName))
 		}
 
 		if vm.PublicIp != nil {
-			ui.Say("Public IP: " + *vm.PublicIp)
+			ui.Say("Public IP: " + ptr.From(vm.PublicIp))
 		}
 	}
 

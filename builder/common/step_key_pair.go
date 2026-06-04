@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
@@ -69,7 +70,8 @@ func (s *StepKeyPair) Run(ctx context.Context, state multistep.StateBag) multist
 
 	// Set some data for use in future steps
 	s.Comm.SSHKeyPairName = s.Comm.SSHTemporaryKeyPairName
-	s.Comm.SSHPrivateKey = []byte(*resp.Keypair.PrivateKey)
+	privateKey := ptr.From(resp.Keypair.PrivateKey)
+	s.Comm.SSHPrivateKey = []byte(privateKey)
 
 	// If we're in debug mode, output the private key to the working
 	// directory.
@@ -82,7 +84,7 @@ func (s *StepKeyPair) Run(ctx context.Context, state multistep.StateBag) multist
 		}
 
 		// Write the key out
-		if _, err := f.Write([]byte(*resp.Keypair.PrivateKey)); err != nil {
+		if _, err := f.Write([]byte(privateKey)); err != nil {
 			state.Put("error", fmt.Errorf("error saving debug key: %w", err))
 			err = f.Close()
 			if err != nil {

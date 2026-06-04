@@ -2,6 +2,7 @@ package common
 
 import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
@@ -29,7 +30,7 @@ func ExtractBuildInfo(region string, state multistep.StateBag) *BuildInfoTemplat
 	return &BuildInfoTemplate{
 		BuildRegion:   region,
 		SourceOMI:     sourceOMI.ImageId,
-		SourceOMIName: *sourceOMI.ImageName,
+		SourceOMIName: ptr.From(sourceOMI.ImageName),
 		SourceOMITags: sourceOMITags,
 	}
 }

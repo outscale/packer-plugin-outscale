@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
@@ -69,10 +70,11 @@ func (s *StepNetworkInfo) Run(ctx context.Context, state multistep.StateBag) mul
 			return multistep.ActionHalt
 		}
 
-		if len(*vpcResp.Nets) != 1 {
+		nets := ptr.From(vpcResp.Nets)
+		if len(nets) != 1 {
 			err := fmt.Errorf(
 				"exactly one NET should match the filter, but %d NET's was found matching filters: %v",
-				len(*vpcResp.Nets),
+				len(nets),
 				params,
 			)
 			state.Put("error", err)
@@ -80,7 +82,7 @@ func (s *StepNetworkInfo) Run(ctx context.Context, state multistep.StateBag) mul
 			return multistep.ActionHalt
 		}
 
-		s.NetId = (*vpcResp.Nets)[0].NetId
+		s.NetId = nets[0].NetId
 		ui.Say("Found NET ID: " + s.NetId)
 	}
 
@@ -107,17 +109,18 @@ func (s *StepNetworkInfo) Run(ctx context.Context, state multistep.StateBag) mul
 			return multistep.ActionHalt
 		}
 
-		if len(*subnetsResp.Subnets) == 0 {
+		subnets := ptr.From(subnetsResp.Subnets)
+		if len(subnets) == 0 {
 			err := fmt.Errorf("no Subnets was found matching filters: %v", params)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
 
-		if len(*subnetsResp.Subnets) > 1 && !s.SubnetFilter.Random && !s.SubnetFilter.MostFree {
+		if len(subnets) > 1 && !s.SubnetFilter.Random && !s.SubnetFilter.MostFree {
 			err := fmt.Errorf(
 				"your filter matched %d Subnets. Please try a more specific search, or set random or most_free to true",
-				len(*subnetsResp.Subnets),
+				len(subnets),
 			)
 			state.Put("error", err)
 			ui.Error(err.Error())
@@ -127,11 +130,11 @@ func (s *StepNetworkInfo) Run(ctx context.Context, state multistep.StateBag) mul
 		var subnet oscgo.Subnet
 		switch {
 		case s.SubnetFilter.MostFree:
-			subnet = mostFreeOscSubnet(*subnetsResp.Subnets)
+			subnet = mostFreeOscSubnet(subnets)
 		case s.SubnetFilter.Random:
-			subnet = (*subnetsResp.Subnets)[rand.Intn(len(*subnetsResp.Subnets))] //nolint:gosec
+			subnet = subnets[rand.Intn(len(subnets))] //nolint:gosec
 		default:
-			subnet = (*subnetsResp.Subnets)[0]
+			subnet = subnets[0]
 		}
 		s.SubnetId = subnet.SubnetId
 		ui.Say("Found Subnet ID: " + s.SubnetId)
@@ -151,12 +154,13 @@ func (s *StepNetworkInfo) Run(ctx context.Context, state multistep.StateBag) mul
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
+		subnets := ptr.From(resp.Subnets)
 		if s.SubregionName == "" {
-			s.SubregionName = (*resp.Subnets)[0].SubregionName
+			s.SubregionName = subnets[0].SubregionName
 			log.Printf("[INFO] SubregionName found: '%s'", s.SubregionName)
 		}
 		if s.NetId == "" {
-			s.NetId = (*resp.Subnets)[0].NetId
+			s.NetId = subnets[0].NetId
 			log.Printf("[INFO] NetId found: '%s'", s.NetId)
 		}
 	}

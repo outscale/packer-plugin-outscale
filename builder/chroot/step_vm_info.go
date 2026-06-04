@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/outscale/goutils/sdk/metadata"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
@@ -48,7 +49,7 @@ func (s *StepVmInfo) Run(ctx context.Context, state multistep.StateBag) multiste
 		return multistep.ActionHalt
 	}
 
-	vmsResp := *resp.Vms
+	vmsResp := ptr.From(resp.Vms)
 	if len(vmsResp) == 0 {
 		err := errors.New("error getting vm data: no vm found")
 		state.Put("error", err)

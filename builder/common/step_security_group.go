@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/uuid"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
@@ -40,7 +41,8 @@ func (s *StepSecurityGroup) Run(
 		}
 		resp, err := conn.ReadSecurityGroups(ctx, req)
 
-		if err != nil || len(*resp.SecurityGroups) == 0 {
+		sgs := ptr.From(resp.SecurityGroups)
+		if err != nil || len(sgs) == 0 {
 			err := fmt.Errorf("couldn't find specified security group: %w", err)
 			log.Printf("[DEBUG] %s", err.Error())
 			state.Put("error", err)
@@ -62,7 +64,8 @@ func (s *StepSecurityGroup) Run(
 			Filters: &filterReq,
 		}
 		resp, err := conn.ReadSecurityGroups(ctx, req)
-		if err != nil || len(*resp.SecurityGroups) == 0 {
+		sgs := ptr.From(resp.SecurityGroups)
+		if err != nil || len(sgs) == 0 {
 			err := fmt.Errorf("couldn't find security groups for filter: %w", err)
 			log.Printf("[DEBUG] %s", err.Error())
 			state.Put("error", err)
@@ -71,7 +74,7 @@ func (s *StepSecurityGroup) Run(
 		}
 
 		securityGroupIds := []string{}
-		for _, sg := range *resp.SecurityGroups {
+		for _, sg := range sgs {
 			securityGroupIds = append(securityGroupIds, sg.SecurityGroupId)
 		}
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
@@ -59,7 +60,7 @@ func (s *StepDeregisterOMI) Run(
 	log.Printf("LOG_ resp.Images: %#+v\n", resp.Images)
 
 	// Deregister image(s) by name
-	for _, img := range *resp.Images {
+	for _, img := range ptr.From(resp.Images) {
 		// We are supposing that DeleteImage does the same action as DeregisterImage
 		_, err := conn.DeleteImage(ctx, oscgo.DeleteImageRequest{
 			ImageId: img.ImageId,
@@ -82,9 +83,10 @@ func (s *StepDeregisterOMI) Run(
 
 		// Delete snapshot(s) by image
 		if s.ForceDeleteSnapshot {
-			for _, b := range *img.BlockDeviceMappings {
-				if b.Bsu.SnapshotId != nil {
-					request := oscgo.DeleteSnapshotRequest{SnapshotId: *b.Bsu.SnapshotId}
+			for _, b := range ptr.From(img.BlockDeviceMappings) {
+				snapshotID := ptr.From(ptr.From(b.Bsu).SnapshotId)
+				if snapshotID != "" {
+					request := oscgo.DeleteSnapshotRequest{SnapshotId: snapshotID}
 					_, err := conn.DeleteSnapshot(ctx, request)
 					if err != nil {
 						err := fmt.Errorf("error deleting existing snapshot: %w", err)
@@ -94,7 +96,7 @@ func (s *StepDeregisterOMI) Run(
 						return multistep.ActionHalt
 					}
 
-					ui.Say("Deleted snapshot: " + *b.Bsu.SnapshotId)
+					ui.Say("Deleted snapshot: " + snapshotID)
 				}
 			}
 		}

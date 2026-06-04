@@ -10,6 +10,7 @@ import (
 
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	registryimage "github.com/hashicorp/packer-plugin-sdk/packer/registry/image"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
@@ -96,7 +97,7 @@ func (a *Artifact) Destroy() error {
 		if err != nil {
 			errors = append(errors, err)
 		}
-		if len(*imageResp.Images) == 0 {
+		if len(ptr.From(imageResp.Images)) == 0 {
 			err := fmt.Errorf("error retrieving details for OMI (%s), no images found", imageId)
 			errors = append(errors, err)
 		}

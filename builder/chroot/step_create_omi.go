@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
@@ -39,23 +40,24 @@ func (s *StepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 		rootDeviceName = config.RootDeviceName
 	} else {
 		image = state.Get("source_image").(oscgo.Image)
-		mappings = *image.BlockDeviceMappings
-		rootDeviceName = *image.RootDeviceName
+		mappings = ptr.From(image.BlockDeviceMappings)
+		rootDeviceName = ptr.From(image.RootDeviceName)
 	}
 
 	newMappings := make([]oscgo.BlockDeviceMappingImage, len(mappings))
 	for i, device := range mappings {
 		newDevice := device
 
-		if *newDevice.DeviceName == rootDeviceName {
+		if ptr.From(newDevice.DeviceName) == rootDeviceName {
 			if newDevice.Bsu != nil {
 				newDevice.Bsu.SnapshotId = &snapshotId
 			} else {
 				newDevice.Bsu = &oscgo.BsuToCreate{SnapshotId: &snapshotId}
 			}
 
-			if config.FromScratch || s.RootVolumeSize > int64(*newDevice.Bsu.VolumeSize) {
-				newDevice.Bsu.VolumeSize = new(int(s.RootVolumeSize))
+			if config.FromScratch || s.RootVolumeSize > int64(ptr.From(newDevice.Bsu.VolumeSize)) {
+				newVolumeSize := int(s.RootVolumeSize)
+				newDevice.Bsu.VolumeSize = &newVolumeSize
 			}
 		}
 

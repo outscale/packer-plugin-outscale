@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
@@ -56,15 +57,16 @@ func (s *StepCleanupVolumes) Cleanup(state multistep.StateBag) {
 
 	// If any of the returned volumes are in a "deleting" stage or otherwise not
 	// available, remove them from the list of volumes
-	for _, v := range *resp.Volumes {
+	volumes := ptr.From(resp.Volumes)
+	if len(volumes) == 0 {
+		ui.Say("No volumes to clean up, skipping")
+		return
+	}
+
+	for _, v := range volumes {
 		if v.State != "available" {
 			delete(volList, v.VolumeId)
 		}
-	}
-
-	if len(*resp.Volumes) == 0 {
-		ui.Say("No volumes to clean up, skipping")
-		return
 	}
 
 	// Filter out any devices created as part of the launch mappings, since

@@ -6,6 +6,7 @@ import (
 	"log"
 	"slices"
 
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	"github.com/outscale/packer-plugin-outscale/builder/common/retry"
 )
@@ -85,12 +86,13 @@ func waitUntilOscVmStateFunc(ctx context.Context, conn *OscClient, id string) fu
 		if err != nil {
 			return "", err
 		}
+		vms := ptr.From(resp.Vms)
 
-		if len(*resp.Vms) == 0 {
+		if len(vms) == 0 {
 			return "", ErrNotFound
 		}
 
-		return (*resp.Vms)[0].State, nil
+		return vms[0].State, nil
 	}
 }
 
@@ -105,13 +107,14 @@ func waitUntilOscVolumeLinkedStateFunc(ctx context.Context, conn *OscClient, id 
 		if err != nil {
 			return "", err
 		}
+		volumes := ptr.From(resp.Volumes)
 
-		if len(*resp.Volumes) == 0 {
+		if len(volumes) == 0 {
 			return "", ErrNotFound
 		}
 
 		// We want the volume to be 'in-use' and all linked volumes to be 'attached'
-		volume := (*resp.Volumes)[0]
+		volume := volumes[0]
 		for _, link := range volume.LinkedVolumes {
 			if link.State != oscgo.LinkedVolumeStateAttached {
 				return oscgo.VolumeStateCreating, nil
@@ -132,12 +135,13 @@ func waitUntilOscVolumeUnLinkedStateFunc(ctx context.Context, conn *OscClient, i
 		if err != nil {
 			return "", err
 		}
+		volumes := ptr.From(resp.Volumes)
 
-		if len(*resp.Volumes) == 0 {
+		if len(volumes) == 0 {
 			return "", ErrNotFound
 		}
 
-		return (*resp.Volumes)[0].State, nil
+		return volumes[0].State, nil
 	}
 }
 
@@ -150,12 +154,13 @@ func waitUntilOscSnapshotStateFunc(ctx context.Context, conn *OscClient, id stri
 		if err != nil {
 			return "", err
 		}
+		snapshots := ptr.From(resp.Snapshots)
 
-		if len(*resp.Snapshots) == 0 {
+		if len(snapshots) == 0 {
 			return "", ErrNotFound
 		}
 
-		return (*resp.Snapshots)[0].State, nil
+		return snapshots[0].State, nil
 	}
 }
 
@@ -169,12 +174,13 @@ func waitUntilOscImageStateFunc(ctx context.Context, conn *OscClient, id string)
 		if err != nil {
 			return "", err
 		}
+		images := ptr.From(resp.Images)
 
-		if len(*resp.Images) == 0 {
+		if len(images) == 0 {
 			return "", ErrNotFound
 		}
 
-		return (*resp.Images)[0].State, nil
+		return images[0].State, nil
 	}
 }
 
@@ -191,12 +197,13 @@ func waitUntilOscSnapshotDoneStateFunc(
 		if err != nil {
 			return "", err
 		}
+		snapshots := ptr.From(resp.Snapshots)
 
-		if len(*resp.Snapshots) == 0 {
+		if len(snapshots) == 0 {
 			return "", ErrNotFound
 		}
 
-		return (*resp.Snapshots)[0].State, nil
+		return snapshots[0].State, nil
 	}
 }
 
@@ -209,11 +216,12 @@ func volumeOscWaitFunc(ctx context.Context, conn *OscClient, id string) func() (
 		if err != nil {
 			return "", err
 		}
+		volumes := ptr.From(resp.Volumes)
 
-		if len(*resp.Volumes) == 0 {
+		if len(volumes) == 0 {
 			return "", ErrNotFound
 		}
 
-		return (*resp.Volumes)[0].State, nil
+		return volumes[0].State, nil
 	}
 }

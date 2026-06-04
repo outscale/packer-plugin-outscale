@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
@@ -126,9 +127,9 @@ func (s *StepGetPassword) waitForPassword(
 			return "", err
 		}
 
-		if resp.AdminPassword != nil && *resp.AdminPassword != "" {
+		if passwordData := ptr.From(resp.AdminPassword); passwordData != "" {
 			decryptedPassword, err := decryptPasswordDataWithPrivateKey(
-				*resp.AdminPassword, privateKey)
+				passwordData, privateKey)
 			if err != nil {
 				err := fmt.Errorf("error decrypting auto-generated vm password: %w", err)
 				return "", err

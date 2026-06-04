@@ -11,6 +11,7 @@ import (
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 	"github.com/zclconf/go-cty/cty"
@@ -94,10 +95,10 @@ func (d *Datasource) Execute() (cty.Value, error) {
 
 	output := DatasourceOutput{
 		ID:           image.ImageId,
-		Name:         *image.ImageName,
+		Name:         ptr.From(image.ImageName),
 		CreationDate: image.CreationDate.String(),
 		Owner:        image.AccountId,
-		OwnerName:    *image.AccountAlias,
+		OwnerName:    ptr.From(image.AccountAlias),
 		Tags:         imageTags,
 	}
 	return hcl2helper.HCL2ValueFromConfig(output, d.OutputSpec()), nil

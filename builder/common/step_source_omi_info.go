@@ -10,6 +10,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
@@ -89,14 +90,15 @@ func (s *StepSourceOMIInfo) Run(
 		return multistep.ActionHalt
 	}
 
-	if len(*imageResp.Images) == 0 {
+	images := ptr.From(imageResp.Images)
+	if len(images) == 0 {
 		err := fmt.Errorf("no OMI was found matching filters: %v", params.Filters.ImageNames)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 
-	if len(*imageResp.Images) > 1 && !s.OmiFilters.MostRecent {
+	if len(images) > 1 && !s.OmiFilters.MostRecent {
 		err := errors.New(
 			"your query returned more than one result. Please try a more specific search, or set most_recent to true",
 		)
@@ -107,9 +109,9 @@ func (s *StepSourceOMIInfo) Run(
 
 	var image oscgo.Image
 	if s.OmiFilters.MostRecent {
-		image = mostRecentOscOmi(*imageResp.Images)
+		image = mostRecentOscOmi(images)
 	} else {
-		image = (*imageResp.Images)[0]
+		image = images[0]
 	}
 
 	ui.Say("Found Image ID: " + image.ImageId)

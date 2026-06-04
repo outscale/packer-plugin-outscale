@@ -64,10 +64,11 @@ func (s *StepCreateVolume) Run(ctx context.Context, state multistep.StateBag) mu
 	} else {
 		// Determine the root device snapshot
 		image := state.Get("source_image").(oscgo.Image)
-		log.Printf("Searching for root device of the image (%s)", *image.RootDeviceName)
+		rootDeviceName := ptr.From(image.RootDeviceName)
+		log.Printf("Searching for root device of the image (%s)", rootDeviceName)
 		var rootDevice *oscgo.BlockDeviceMappingImage
-		for _, device := range *image.BlockDeviceMappings {
-			if *device.DeviceName == *image.RootDeviceName {
+		for _, device := range ptr.From(image.BlockDeviceMappings) {
+			if ptr.From(device.DeviceName) == rootDeviceName {
 				rootDevice = &device
 				break
 			}
@@ -156,20 +157,21 @@ func (s *StepCreateVolume) buildCreateVolumeInput(
 		createVolumeInput.Size = new(int(s.RootVolumeSize))
 	}
 
-	if s.RootVolumeType == "" || oscgo.VolumeType(s.RootVolumeType) == *rootDevice.Bsu.VolumeType {
+	if s.RootVolumeType == "" || oscgo.VolumeType(s.RootVolumeType) == ptr.From(rootDevice.Bsu.VolumeType) {
 		return createVolumeInput, nil
 	}
 
 	if s.RootVolumeType == "io1" {
 		return nil, fmt.Errorf(
 			"root volume type cannot be io1, because existing root volume type was %s",
-			*rootDevice.Bsu.VolumeType,
+			ptr.From(rootDevice.Bsu.VolumeType),
 		)
 	}
 
 	createVolumeInput.VolumeType = new(oscgo.VolumeType(s.RootVolumeType))
 	// non io1 cannot set iops
-	*createVolumeInput.Iops = 0
+	zeroIops := 0
+	createVolumeInput.Iops = &zeroIops
 
 	return createVolumeInput, nil
 }

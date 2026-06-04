@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	"github.com/outscale/packer-plugin-outscale/builder/common/retry"
 )
@@ -52,22 +53,24 @@ func (s *StepCreateTags) Run(ctx context.Context, state multistep.StateBag) mult
 			return multistep.ActionHalt
 		}
 
-		if len(*imageResp.Images) == 0 {
+		images := ptr.From(imageResp.Images)
+		if len(images) == 0 {
 			err = fmt.Errorf("error retrieving details for OMI (%s), no images found", ami)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
 
-		image := (*imageResp.Images)[0]
+		image := images[0]
 		snapshotIds := []string{}
 
 		// Add only those with a Snapshot ID, i.e. not Ephemeral
-		for _, device := range *image.BlockDeviceMappings {
-			if device.Bsu.SnapshotId != nil {
-				ui.Say("Tagging snapshot: " + *device.Bsu.SnapshotId)
-				resourceIds = append(resourceIds, *device.Bsu.SnapshotId)
-				snapshotIds = append(snapshotIds, *device.Bsu.SnapshotId)
+		for _, device := range ptr.From(image.BlockDeviceMappings) {
+			snapshotID := ptr.From(ptr.From(device.Bsu).SnapshotId)
+			if snapshotID != "" {
+				ui.Say("Tagging snapshot: " + snapshotID)
+				resourceIds = append(resourceIds, snapshotID)
+				snapshotIds = append(snapshotIds, snapshotID)
 			}
 		}
 

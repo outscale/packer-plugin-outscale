@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
@@ -83,12 +84,13 @@ func (s *StepRegisterOMI) Run(ctx context.Context, state multistep.StateBag) mul
 	s.image = &(*imagesResp.Images)[0]
 
 	snapshots := make(map[string][]string)
-	block := (*imagesResp.Images)[0].BlockDeviceMappings
-	for _, blockDeviceMapping := range *block {
-		if *blockDeviceMapping.Bsu.SnapshotId != "" {
+	block := ptr.From(s.image.BlockDeviceMappings)
+	for _, blockDeviceMapping := range block {
+		snapshotID := ptr.From(ptr.From(blockDeviceMapping.Bsu).SnapshotId)
+		if snapshotID != "" {
 			snapshots[s.RawRegion] = append(
 				snapshots[s.RawRegion],
-				*blockDeviceMapping.Bsu.SnapshotId,
+				snapshotID,
 			)
 		}
 	}
@@ -126,26 +128,28 @@ func (s *StepRegisterOMI) combineDevices(
 	devices := map[string]oscgo.BlockDeviceMappingImage{}
 
 	for _, device := range s.OMIDevices {
-		devices[*device.DeviceName] = device
+		devices[ptr.From(device.DeviceName)] = device
 	}
 
 	// Devices in launch_block_device_mappings override any with
 	// the same name in ami_block_device_mappings, except for the
 	// one designated as the root device in omi_root_device
 	for _, device := range s.LaunchDevices {
-		snapshotID, ok := snapshotIDs[*device.DeviceName]
+		deviceName := ptr.From(device.DeviceName)
+		snapshotID, ok := snapshotIDs[deviceName]
 		if ok && snapshotID != "" {
 			device.Bsu.SnapshotId = &snapshotID
 		}
-		if *device.DeviceName == s.RootDevice.SourceDeviceName {
+		if deviceName == s.RootDevice.SourceDeviceName {
 			device.DeviceName = &s.RootDevice.DeviceName
 
 			device.Bsu.VolumeType = new(oscgo.VolumeType(s.RootDevice.VolumeType))
-			if *device.Bsu.VolumeType != "io1" {
+			if ptr.From(device.Bsu.VolumeType) != "io1" {
 				device.Bsu.Iops = nil
 			}
+			deviceName = ptr.From(device.DeviceName)
 		}
-		devices[*device.DeviceName] = copyToDeviceMappingImage(device)
+		devices[deviceName] = copyToDeviceMappingImage(device)
 	}
 
 	blockDevices := make([]oscgo.BlockDeviceMappingImage, 0, len(devices))

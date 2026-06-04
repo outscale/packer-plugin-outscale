@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
@@ -50,15 +51,16 @@ func (d *OmiFilterOptions) GetFilteredImage(
 	if err != nil {
 		return nil, fmt.Errorf("error querying OMI: %w", err)
 	}
+	images := ptr.From(imageResp.Images)
 
-	if len(*imageResp.Images) == 0 {
+	if len(images) == 0 {
 		return nil, fmt.Errorf(
 			"no OMI was found matching filters: %v",
-			*params.Filters.ImageNames,
+			ptr.From(params.Filters.ImageNames),
 		)
 	}
 
-	if len(*imageResp.Images) > 1 && !d.MostRecent {
+	if len(images) > 1 && !d.MostRecent {
 		return nil, errors.New(
 			"your query returned more than one result. Please try a more specific search, or set most_recent to true",
 		)
@@ -66,9 +68,9 @@ func (d *OmiFilterOptions) GetFilteredImage(
 
 	var image oscgo.Image
 	if d.MostRecent {
-		image = mostRecentOscOmi(*imageResp.Images)
+		image = mostRecentOscOmi(images)
 	} else {
-		image = (*imageResp.Images)[0]
+		image = images[0]
 	}
 	return &image, nil
 }

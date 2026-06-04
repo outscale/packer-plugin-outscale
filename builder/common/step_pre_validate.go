@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 )
 
@@ -32,7 +33,8 @@ func (s *StepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 	ui.Say("Prevalidating OMI Name: " + s.DestOmiName)
 
 	accountResp, err := conn.ReadAccounts(ctx, oscgo.ReadAccountsRequest{})
-	if err != nil || len(*accountResp.Accounts) == 0 {
+	accounts := ptr.From(accountResp.Accounts)
+	if err != nil || len(accounts) == 0 {
 		err := fmt.Errorf("error querying outscale account: %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
@@ -42,7 +44,7 @@ func (s *StepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 	resp, err := conn.ReadImages(ctx, oscgo.ReadImagesRequest{
 		Filters: &oscgo.FiltersImage{
 			ImageNames: &[]string{s.DestOmiName},
-			AccountIds: &[]string{*(*accountResp.Accounts)[0].AccountId},
+			AccountIds: &[]string{ptr.From(accounts[0].AccountId)},
 		},
 	})
 	if err != nil {
@@ -52,8 +54,8 @@ func (s *StepPreValidate) Run(ctx context.Context, state multistep.StateBag) mul
 		return multistep.ActionHalt
 	}
 
-	for _, omi := range *resp.Images {
-		if *omi.ImageName == s.DestOmiName {
+	for _, omi := range ptr.From(resp.Images) {
+		if ptr.From(omi.ImageName) == s.DestOmiName {
 			images = append(images, omi)
 		}
 	}

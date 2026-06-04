@@ -8,6 +8,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/outscale/goutils/sdk/ptr"
 	oscgo "github.com/outscale/osc-sdk-go/v3/pkg/osc"
 	osccommon "github.com/outscale/packer-plugin-outscale/builder/common"
 )
@@ -88,8 +89,8 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 			log.Printf("Unable to determine reason waiting for OMI failed: %s", err)
 			err = errors.New("unknown error waiting for OMI")
 		} else {
-			stateReason := (*imagesResp.Images)[0].StateComment
-			err = fmt.Errorf("error waiting for OMI. Reason: %s", *stateReason.StateMessage)
+			stateReason := ptr.From(ptr.From(imagesResp.Images)[0].StateComment)
+			err = fmt.Errorf("error waiting for OMI. Reason: %s", ptr.From(stateReason.StateMessage))
 		}
 
 		state.Put("error", err)
@@ -107,13 +108,14 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	if len(*imagesResp.Images) == 0 {
+	images := ptr.From(imagesResp.Images)
+	if len(images) == 0 {
 		err := fmt.Errorf("error while reading the image': %w", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	s.image = &(*imagesResp.Images)[0]
+	s.image = &images[0]
 	if s.image == nil {
 		err := fmt.Errorf("error while reading an empty image id': %w", err)
 		state.Put("error", err)
@@ -122,12 +124,13 @@ func (s *stepCreateOMI) Run(ctx context.Context, state multistep.StateBag) multi
 	}
 
 	snapshots := make(map[string][]string)
-	blockMapping := (*imagesResp.Images)[0].BlockDeviceMappings
-	for _, blockDeviceMapping := range *blockMapping {
-		if blockDeviceMapping.Bsu.SnapshotId != nil {
+	blockMapping := *images[0].BlockDeviceMappings
+	for _, blockDeviceMapping := range blockMapping {
+		snapshotID := ptr.From(ptr.From(blockDeviceMapping.Bsu).SnapshotId)
+		if snapshotID != "" {
 			snapshots[s.RawRegion] = append(
 				snapshots[s.RawRegion],
-				*blockDeviceMapping.Bsu.SnapshotId,
+				snapshotID,
 			)
 		}
 	}

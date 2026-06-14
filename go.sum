@@ -364,6 +364,8 @@ github.com/oapi-codegen/runtime v1.3.1 h1:RgDY6J4OGQLbRXhG/Xpt3vSVqYpHQS7hN4m85+
 github.com/oapi-codegen/runtime v1.3.1/go.mod h1:kOdeacKy7t40Rclb1je37ZLFboFxh+YLy0zaPCMibPY=
 github.com/outscale/goutils/sdk v0.0.3 h1:LnMuNUhQW8YgKDFH9vHTtstND3igHDbHDHPsaFsKFZ0=
 github.com/outscale/goutils/sdk v0.0.3/go.mod h1:2Ae3lIQmdOC+n/VnOABrzS+kpjq/Hm0PJQhABpiFW8M=
+github.com/outscale/goutils/sdk v0.0.4 h1:hm+LZyeHUBYj066MjVVYYEPnlZRQSv4v74TZgfIQkRM=
+github.com/outscale/goutils/sdk v0.0.4/go.mod h1:LiXmAIA3CAXCdanEARKQ3Q/Lb8n8dKeGSbPRxIe43kc=
 github.com/outscale/osc-sdk-go/v3 v3.0.0-rc.2 h1:uj8s4jaqqzq2hFqQVAB6PTVwuPm43e5Ti/ZFQqvCAB0=
 github.com/outscale/osc-sdk-go/v3 v3.0.0-rc.2/go.mod h1:Yi0j2XAZ0/8g0ObVFofMSL5+IuNIDp/AiEI6gXc7txc=
 github.com/packer-community/winrmcp v0.0.0-20221126162354-6e900dd2c68f h1:sWm3fnjG6kxvDuGiQf46Io5xCTj3QJfNJIeICJ4g1kw=

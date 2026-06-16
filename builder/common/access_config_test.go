@@ -28,10 +28,10 @@ func TestAccessconfigConfigPriority(t *testing.T) {
 		t.Fatalf("NewProfile: %v", err)
 	}
 	if p.AccessKey != "config-ak" {
-		t.Fatalf("expected config access key, got %q", p.AccessKey)
+		t.Fatalf("expected config access key")
 	}
 	if p.SecretKey != "config-sk" {
-		t.Fatalf("expected config secret key, got %q", p.SecretKey)
+		t.Fatalf("expected config secret key")
 	}
 	if p.Region != "config-region" {
 		t.Fatalf("expected config region, got %q", p.Region)
@@ -72,10 +72,10 @@ func TestAccessconfigProfilePriority(t *testing.T) {
 		t.Fatalf("NewProfile: %v", err)
 	}
 	if p.AccessKey != "file-ak" {
-		t.Fatalf("expected file access key, got %q", p.AccessKey)
+		t.Fatalf("expected file access key")
 	}
 	if p.SecretKey != "file-sk" {
-		t.Fatalf("expected file secret key, got %q", p.SecretKey)
+		t.Fatalf("expected file secret key")
 	}
 	if p.Region != "env-region" {
 		t.Fatalf("expected env region, got %q", p.Region)
@@ -97,10 +97,10 @@ func TestAccessconfigEnvPriority(t *testing.T) {
 		t.Fatalf("NewProfile: %v", err)
 	}
 	if p.AccessKey != "env-ak" {
-		t.Fatalf("expected env access key, got %q", p.AccessKey)
+		t.Fatalf("expected env access key")
 	}
 	if p.SecretKey != "env-sk" {
-		t.Fatalf("expected env secret key, got %q", p.SecretKey)
+		t.Fatalf("expected env secret key")
 	}
 	if p.Region != "env-region" {
 		t.Fatalf("expected env region, got %q", p.Region)
@@ -113,10 +113,22 @@ func TestAccessconfigDeprecatedEnv(t *testing.T) {
 	t.Setenv("OSC_SECRET_KEY", "")
 	t.Setenv("OSC_REGION", "")
 	t.Setenv("OSC_PROFILE", "")
-	os.Unsetenv("OSC_ACCESS_KEY")
-	os.Unsetenv("OSC_SECRET_KEY")
-	os.Unsetenv("OSC_REGION")
-	os.Unsetenv("OSC_PROFILE")
+	err := os.Unsetenv("OSC_ACCESS_KEY")
+	if err != nil {
+		t.Fatalf("Unsetenv: %v", err)
+	}
+	err = os.Unsetenv("OSC_SECRET_KEY")
+	if err != nil {
+		t.Fatalf("Unsetenv: %v", err)
+	}
+	err = os.Unsetenv("OSC_REGION")
+	if err != nil {
+		t.Fatalf("Unsetenv: %v", err)
+	}
+	err = os.Unsetenv("OSC_PROFILE")
+	if err != nil {
+		t.Fatalf("Unsetenv: %v", err)
+	}
 
 	t.Setenv("OUTSCALE_ACCESSKEYID", "deprecated-ak")
 	t.Setenv("OUTSCALE_SECRETKEYID", "deprecated-sk")
@@ -129,10 +141,10 @@ func TestAccessconfigDeprecatedEnv(t *testing.T) {
 		t.Fatalf("NewProfile: %v", err)
 	}
 	if p.AccessKey != "deprecated-ak" {
-		t.Fatalf("expected deprecated access key, got %q", p.AccessKey)
+		t.Fatalf("expected deprecated access key")
 	}
 	if p.SecretKey != "deprecated-sk" {
-		t.Fatalf("expected deprecated secret key, got %q", p.SecretKey)
+		t.Fatalf("expected deprecated secret key")
 	}
 	if p.Region != "deprecated-region" {
 		t.Fatalf("expected deprecated region, got %q", p.Region)

@@ -80,17 +80,28 @@ These look like:
 
 #### Environment variables
 
-You can provide your credentials via the `OUTSCALE_ACCESSKEYID` and
-`OUTSCALE_SECRETKEYID`, environment variables, representing your Outscale Access
-Key and Outscale Secret Key, respectively. The `OUTSCALE_REGION` and
-`OUTSCALE_OAPI_URL` environment variables are also used, if applicable:
+You can provide your credentials via the following environment variables:
+
+- `OSC_ACCESS_KEY`
+- `OSC_SECRET_KEY`
+- `OSC_REGION`
+- `OSC_ENDPOINT_API`
 
 Usage:
 
-    $ export OUTSCALE_ACCESSKEYID="XXX_ACCESS_KEY_XXX"
-    $ export OUTSCALE_SECRETKEYID="XXX_SECRET_KEY_XXX"
-    $ export OUTSCALE_REGION="eu-west-2"
+    $ export OSC_ACCESS_KEY="XXX_ACCESS_KEY_XXX"
+    $ export OSC_SECRET_KEY="XXX_SECRET_KEY_XXX"
+    $ export OSC_REGION="eu-west-2"
     $ packer build template.pkr.hcl
+
+Legacy `OUTSCALE_*` variables are still supported for compatibility, but they are deprecated and will be removed in the next major version.
+
+Deprecated variables:
+
+- `OUTSCALE_ACCESSKEYID` -> `OSC_ACCESS_KEY`
+- `OUTSCALE_SECRETKEYID` -> `OSC_SECRET_KEY`
+- `OUTSCALE_REGION` -> `OSC_REGION`
+- `OUTSCALE_OAPI_URL` -> `OSC_ENDPOINT_API`
 
 #### x509 Certificate Authentication
 
@@ -102,9 +113,14 @@ You can set this certificates either by environment variables or by the static c
 ##### Environment variables
 
 ```bash
-export OUTSCALE_X509CERT="the/path/to/your/x509cert"
-export OUTSCALE_X509KEY="the/path/to/your/x509key"
+export OSC_X509_CLIENT_CERT="the/path/to/your/x509cert"
+export OSC_X509_CLIENT_KEY="the/path/to/your/x509key"
 ```
+
+Legacy x509 environment variables are also deprecated:
+
+- `OUTSCALE_X509CERT` -> `OSC_X509_CLIENT_CERT`
+- `OUTSCALE_X509KEY` -> `OSC_X509_CLIENT_KEY`
 
 ##### Static Credentials
 

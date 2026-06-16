@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/outscale/osc-sdk-go/v3/pkg/options"
@@ -34,37 +35,74 @@ func (c *AccessConfig) GetRegion() string {
 	return c.RawRegion
 }
 
-func (c *AccessConfig) NewOSCClient() (*OscClient, error) {
-	profile, err := profile.NewFrom("", "")
-	if err != nil {
-		return nil, fmt.Errorf("new client: %w", err)
+func fromDeprecatedEnv() profile.Option {
+	return func(p *profile.Profile) error {
+		logDeprecation := func(deprecatedVar, replacementVar string) {
+			log.Printf("%s environment variable is deprecated and support will be dropped in the next major version, use the %s environment variable instead", deprecatedVar, replacementVar)
+		}
+
+		if ak, ok := os.LookupEnv("OUTSCALE_ACCESSKEYID"); ok {
+			p.AccessKey = ak
+			logDeprecation("OUTSCALE_ACCESSKEYID", "OSC_ACCESS_KEY")
+		}
+		if sk, ok := os.LookupEnv("OUTSCALE_SECRETKEYID"); ok {
+			p.SecretKey = sk
+			logDeprecation("OUTSCALE_SECRETKEYID", "OSC_SECRET_KEY")
+		}
+		if cert, ok := os.LookupEnv("OUTSCALE_X509CERT"); ok {
+			p.X509ClientCert = cert
+			logDeprecation("OUTSCALE_X509CERT", "OSC_X509_CLIENT_CERT")
+		}
+		if key, ok := os.LookupEnv("OUTSCALE_X509KEY"); ok {
+			p.X509ClientKey = key
+			logDeprecation("OUTSCALE_X509KEY", "OSC_X509_CLIENT_KEY")
+		}
+		if region, ok := os.LookupEnv("OUTSCALE_REGION"); ok {
+			p.Region = region
+			logDeprecation("OUTSCALE_REGION", "OSC_REGION")
+		}
+		if endpoint, ok := os.LookupEnv("OUTSCALE_OAPI_URL"); ok {
+			p.Endpoints.API = endpoint
+			logDeprecation("OUTSCALE_OAPI_URL", "OSC_ENDPOINT_API")
+		}
+
+		return nil
 	}
+}
 
-	profile.Protocol = "https"
-	profile.TlsSkipVerify = c.InsecureSkipTLSVerify
-
-	if c.RawRegion != "" {
+func fromConfig(c *AccessConfig) profile.Option {
+	return func(profile *profile.Profile) error {
+		profile.Protocol = "https"
+		profile.TlsSkipVerify = c.InsecureSkipTLSVerify
 		profile.Region = c.RawRegion
-	}
-	if c.AccessKey != "" {
 		profile.AccessKey = c.AccessKey
-	}
-	if c.SecretKey != "" {
 		profile.SecretKey = c.SecretKey
-	}
-	if c.X509certPath != "" {
 		profile.X509ClientCert = c.X509certPath
-	}
-	if c.X509keyPath != "" {
 		profile.X509ClientKey = c.X509keyPath
-	}
-	if c.CustomEndpointOAPI != "" {
 		profile.Endpoints.API = c.CustomEndpointOAPI
+
+		return nil
+	}
+}
+
+func (c *AccessConfig) NewProfile() (*profile.Profile, error) {
+	opts := []profile.Option{fromConfig(c), profile.MergeWith(profile.FromEnv()), profile.MergeWith(fromDeprecatedEnv())}
+	if c.ProfileName != "" {
+		opts = []profile.Option{fromConfig(c), profile.MergeWith(profile.FromFile(c.ProfileName, "")), profile.MergeWith(profile.FromEnv()), profile.MergeWith(fromDeprecatedEnv())}
+	}
+
+	return profile.New(opts...)
+}
+
+func (c *AccessConfig) NewOSCClient() (*OscClient, error) {
+	profile, err := c.NewProfile()
+	if err != nil {
+		return nil, fmt.Errorf("new profile: %w", err)
 	}
 
 	client, err := oscgo.NewClient(profile, options.WithLogging(newLogger()))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("new client: %w", err)
 	}
 
 	return &OscClient{

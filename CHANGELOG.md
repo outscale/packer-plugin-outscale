@@ -38,6 +38,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### 🌱 Others
 - (nothing yet)
 
+## [1.6.0] - 2026-06-16
+
+### 🛠️ Changed / Refactoring
+* 🚧 chore: migrate to sdk v3 by @jobs62 in https://github.com/outscale/packer-plugin-outscale/pull/220
+* 🔧 chore: increase default ssh timeout by @ryohkhn in https://github.com/outscale/packer-plugin-outscale/pull/222
+* 🔒 ci: fix plumber lint by @ryohkhn in https://github.com/outscale/packer-plugin-outscale/pull/240
+* 🚨 fix: golangci-lint errors & use goutils workflow by @ryohkhn in https://github.com/outscale/packer-plugin-outscale/pull/241
+* 🚸 ux: wrap sdk logger by @ryohkhn in https://github.com/outscale/packer-plugin-outscale/pull/246
+* ♻️ refactor(sdvk3): safe deref by @ryohkhn in https://github.com/outscale/packer-plugin-outscale/pull/253
+* ♻️ refactor: configuration loading order by @ryohkhn in https://github.com/outscale/packer-plugin-outscale/pull/260
+
+### 📝 Documentation
+* 📝 docs: Update the README by @outscale-rce in https://github.com/outscale/packer-plugin-outscale/pull/215
+* 📝 docs(examples): replace oapi-cli by octl by @ryohkhn in https://github.com/outscale/packer-plugin-outscale/pull/252
+
+### 🐛 Fixed
+* 🐛 fix: add missing template by @ryohkhn in https://github.com/outscale/packer-plugin-outscale/pull/249
+* 🐛 fix: chroot builder by @ryohkhn in https://github.com/outscale/packer-plugin-outscale/pull/250
+
+### 📦 Dependency updates
+* chore: Configure Renovate - autoclosed by @Open-Source-Bot in https://github.com/outscale/packer-plugin-outscale/pull/221
+* ⬆️ deps(gomod): update module github.com/hashicorp/packer-plugin-sdk to v0.6.8 by @Open-Source-Bot in https://github.com/outscale/packer-plugin-outscale/pull/227
+* ⬆️ deps(gomod): update module github.com/zclconf/go-cty to v1.18.1 by @Open-Source-Bot in https://github.com/outscale/packer-plugin-outscale/pull/231
+* ⬆️ deps(gomod): update module golang.org/x/sys to v0.45.0 by @Open-Source-Bot in https://github.com/outscale/packer-plugin-outscale/pull/232
+
 ## [1.6.0-beta.1] - 2026-02-11
 
 ### ✨ Added

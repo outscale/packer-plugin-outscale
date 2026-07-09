@@ -137,6 +137,7 @@ func (b *Builder) Run(
 
 	// Build the steps
 	steps := []multistep.Step{
+		&osccommon.StepCheckAuth{},
 		&osccommon.StepSourceOMIInfo{
 			SourceOmi:  b.config.SourceOmi,
 			OmiFilters: b.config.SourceOmiFilter,

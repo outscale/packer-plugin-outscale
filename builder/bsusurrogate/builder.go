@@ -133,6 +133,7 @@ func (b *Builder) Run(
 	launchOSCDevices := b.config.BuildOSCLaunchDevices()
 
 	steps := []multistep.Step{
+		&osccommon.StepCheckAuth{},
 		&osccommon.StepPreValidate{
 			DestOmiName:     b.config.OMIName,
 			ForceDeregister: b.config.OMIForceDeregister,

@@ -20,7 +20,7 @@ func TestAccDatasource_OutscaleOmi(t *testing.T) {
 const testBuilderAccBasicDataSource = `
 data "outscale-omi" "test" {
 	filters = {
-		image-name          = "RockyLinux-8-*"
+		image-name          = "RockyLinux-10-*"
 		root-device-type    = "ebs"
 		virtualization-type = "hvm"
 	}

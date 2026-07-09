@@ -102,6 +102,7 @@ func (b *Builder) Run(
 	state.Put("ui", ui)
 
 	steps := []multistep.Step{
+		&osccommon.StepCheckAuth{},
 		&osccommon.StepPreValidate{
 			DestOmiName:     b.config.OMIName,
 			ForceDeregister: b.config.OMIForceDeregister,

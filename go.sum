@@ -366,6 +366,8 @@ github.com/outscale/goutils/sdk v0.0.5 h1:UVu7uC38VOSCPqeCORsw1rKWaoHrsv+TTp6TGU
 github.com/outscale/goutils/sdk v0.0.5/go.mod h1:LiXmAIA3CAXCdanEARKQ3Q/Lb8n8dKeGSbPRxIe43kc=
 github.com/outscale/osc-sdk-go/v3 v3.0.0-rc.2 h1:uj8s4jaqqzq2hFqQVAB6PTVwuPm43e5Ti/ZFQqvCAB0=
 github.com/outscale/osc-sdk-go/v3 v3.0.0-rc.2/go.mod h1:Yi0j2XAZ0/8g0ObVFofMSL5+IuNIDp/AiEI6gXc7txc=
+github.com/outscale/osc-sdk-go/v3 v3.0.0-rc.3 h1:dE2Swgp2M3gSdv5Yx28JFHF1LBhGzVOb6NbVjyshFAs=
+github.com/outscale/osc-sdk-go/v3 v3.0.0-rc.3/go.mod h1:Yi0j2XAZ0/8g0ObVFofMSL5+IuNIDp/AiEI6gXc7txc=
 github.com/packer-community/winrmcp v0.0.0-20221126162354-6e900dd2c68f h1:sWm3fnjG6kxvDuGiQf46Io5xCTj3QJfNJIeICJ4g1kw=
 github.com/packer-community/winrmcp v0.0.0-20221126162354-6e900dd2c68f/go.mod h1:f6Izs6JvFTdnRbziASagjZ2vmf55NSIkC/weStxCHqk=
 github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=

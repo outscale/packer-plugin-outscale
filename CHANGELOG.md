@@ -38,6 +38,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### 🌱 Others
 - (nothing yet)
 
+## [1.6.1] - 2026-07-15
+
+## 📦 Dependency updates
+* ⬆️ deps(gomod): update module github.com/hashicorp/packer-plugin-sdk to v0.6.10 by @Open-Source-Bot in https://github.com/outscale/packer-plugin-outscale/pull/245
+* ⬆️ deps(gomod): update module golang.org/x/sys to v0.47.0 by @Open-Source-Bot in https://github.com/outscale/packer-plugin-outscale/pull/258
+
+### 🌱 Others
+* 🚸 ux: check credentials as first step by @ryohkhn in https://github.com/outscale/packer-plugin-outscale/pull/268
+
 ## [1.6.0] - 2026-06-16
 
 ### 🛠️ Changed / Refactoring

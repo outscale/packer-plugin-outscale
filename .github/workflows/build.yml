@@ -23,7 +23,7 @@ jobs:
         with:
           go-version-file: "./go.mod"
       - name: 🔎 golangci-lint
-        uses: outscale/goutils/.github/actions/lint@main
+        uses: outscale/goutils/.github/actions/lint@819ed2dbafefa5265319bc9f124b65ddc94cf492 # main
       - name: 🔎 Run make build
         run: make build
         shell: bash

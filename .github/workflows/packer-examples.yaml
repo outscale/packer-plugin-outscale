@@ -57,7 +57,7 @@ jobs:
               run: python3 -m pip install --upgrade --user ansible
 
             - name: Setup `packer`
-              uses: hashicorp/setup-packer@c3d53c525d422944e50ee27b840746d6522b08de # v3.2.0
+              uses: hashicorp/setup-packer@ce93c3c08a6c2ff2275bf4b54ff0d9a75f6c9789 # v3.4.0
               with:
                   version: "latest"
 

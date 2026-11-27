@@ -1,7 +1,7 @@
 name: Packer examples tests
 
 concurrency:
-    group: test-us-east-2
+    group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: false
 
 on:
@@ -9,6 +9,9 @@ on:
         branches:
             - main
         paths:
+            - "**.go"
+            - "go.mod"
+            - "go.sum"
             - "examples/**.pkr.hcl"
             - "examples/**.sh"
             - "examples/**.yml"
@@ -21,29 +24,29 @@ on:
 
 permissions:
     contents: read
+    id-token: write
 
 jobs:
-    Packer_examples_tests:
-        environment: test-us-east-2
-        runs-on: ubuntu-latest
+    examples_tests:
+        runs-on:
+            group: iac
+            labels: [authenticated, oapi]
         steps:
+            - name: 🔒🧹 Setup Vault & Frieza
+              uses: outscale/.github/vault-frieza-clean@cc76c3e03f3c7a83a09914b1ed65b7fea5605fb8 # v1.5.1
+              with:
+                  vault_role: ${{ github.repository_owner }}-${{ github.event.repository.name }}
+                  providers: outscale_oapi
+                  bypass_deletion_protection: true
+                  exclude_resource_types: access_key
+
             - name: Checkout
               uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-            - name: 🧹 Frieza
-              uses: outscale/frieza-github-actions/frieza-clean@1d8b83bc64d2230a0c3bc9f018ba6c0c67df98e8 # v0.15.0+hotfix.0
-              with:
-                  access_key: ${{ secrets.OSC_ACCESS_KEY }}
-                  secret_key: ${{ secrets.OSC_SECRET_KEY }}
-                  region: ${{ secrets.OSC_REGION }}
 
             - name: Setup Go
               uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
               with:
                   go-version-file: "go.mod"
-
-            - name: Build packer-plugin-outscale
-              run: make build
 
             - name: Set up Python
               uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
@@ -54,16 +57,12 @@ jobs:
                   python -m pip install --upgrade pip
 
             - name: Install Ansible
-              run: python3 -m pip install --upgrade --user ansible
+              run: python3 -m pip install --upgrade ansible
 
-            - name: Setup `packer`
+            - name: Setup Packer
               uses: hashicorp/setup-packer@ce93c3c08a6c2ff2275bf4b54ff0d9a75f6c9789 # v3.4.0
               with:
-                  version: "latest"
+                  version: "1.16.3"
 
             - name: Run Packer examples
               run: ./scripts/run-examples.sh
-              env:
-                  OSC_ACCESS_KEY: ${{secrets.OSC_ACCESS_KEY}}
-                  OSC_SECRET_KEY: ${{secrets.OSC_SECRET_KEY}}
-                  OSC_REGION: ${{secrets.OSC_REGION}}

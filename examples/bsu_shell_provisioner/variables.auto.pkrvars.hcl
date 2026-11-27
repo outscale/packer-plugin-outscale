@@ -14,7 +14,8 @@ vm_type = "tinav6.c4r8p2"
 
 # The Outscale region where the VM will be deployed
 # Example: "eu-west-2" is a specific Outscale region in Europe.
-region = "us-east-2"
+# Uncomment to override the region
+# region = "us-east-2"
 
 # The name pattern of the base Outscale Machine Image (OMI) used for the build.
 # The most recent Outscale-owned image matching this pattern will be selected.

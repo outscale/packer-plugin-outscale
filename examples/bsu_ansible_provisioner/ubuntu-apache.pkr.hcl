@@ -15,6 +15,7 @@ packer {
 variable "region" {
   description = "Outscale region to deploy the instance"
   type        = string
+  default     = env("OSC_REGION")
 }
 
 variable "new_omi_name" {

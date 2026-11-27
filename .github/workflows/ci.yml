@@ -1,7 +1,7 @@
 name: Execute CI
 
 concurrency:
-    group: test-us-east-2
+    group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: false
 
 on:
@@ -21,14 +21,16 @@ on:
 
 permissions:
     contents: read
+    id-token: write
 
 jobs:
     check-code:
         runs-on: ubuntu-latest
-        environment: test-us-east-2
         steps:
-            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-            - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+            - name: ⬇️ Checkout
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            - name: ⬇️ Setup Go
+              uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
               with:
                   go-version-file: "go.mod"
             - name: Fmt
@@ -40,6 +42,8 @@ jobs:
                   echo "You can use the command: \`go fmt ./...\` to reformat code."; \
                   exit 1; \
                   fi
+            - name: 🔎 Lint
+              uses: outscale/goutils/.github/actions/lint@1bb3410dfa22c53e69de29f57671e668c4627690 # v1.0.4
             - name: Generation
               run: |
                   make generate
@@ -51,58 +55,31 @@ jobs:
                   fi
 
     test:
-        strategy:
-            max-parallel: 1
-            matrix:
-                os: [ubuntu-24.04, windows-latest, macos-latest]
-        runs-on: ${{ matrix.os }}
-        environment: test-us-east-2
+        needs: check-code
+        runs-on:
+            group: iac
+            labels: [authenticated, oapi]
         steps:
-            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-            - name: 🧹 Frieza
-              uses: outscale/frieza-github-actions/frieza-clean@1d8b83bc64d2230a0c3bc9f018ba6c0c67df98e8 # v0.15.0+hotfix.0
+            - name: 🔒🧹 Setup Vault & Frieza
+              uses: outscale/.github/vault-frieza-clean@cc76c3e03f3c7a83a09914b1ed65b7fea5605fb8 # v1.5.1
               with:
-                  access_key: ${{ secrets.OSC_ACCESS_KEY }}
-                  secret_key: ${{ secrets.OSC_SECRET_KEY }}
-                  region: ${{ secrets.OSC_REGION }}
-            - name: Install Go
-              uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-              with:
-                  go-version-file: "go.mod"
-            - name: Checkout code
+                  vault_role: ${{ github.repository_owner }}-${{ github.event.repository.name }}
+                  providers: outscale_oapi
+                  bypass_deletion_protection: true
+                  exclude_resource_types: access_key
+            - name: ⬇️ Checkout
               uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-            - name: Test
-              env:
-                  OSC_ACCESS_KEY: ${{secrets.OSC_ACCESS_KEY}}
-                  OSC_SECRET_KEY: ${{secrets.OSC_SECRET_KEY}}
-                  OSC_REGION: ${{secrets.OSC_REGION}}
-              run: make test
-
-    acceptance:
-        needs: test
-        strategy:
-            max-parallel: 1
-            matrix:
-                os: [ubuntu-24.04, macos-latest]
-        runs-on: ${{ matrix.os }}
-        environment: test-us-east-2
-        steps:
-            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-            - name: 🧹 Frieza
-              uses: outscale/frieza-github-actions/frieza-clean@1d8b83bc64d2230a0c3bc9f018ba6c0c67df98e8 # v0.15.0+hotfix.0
-              with:
-                  access_key: ${{ secrets.OSC_ACCESS_KEY }}
-                  secret_key: ${{ secrets.OSC_SECRET_KEY }}
-                  region: ${{ secrets.OSC_REGION }}
-            - name: Install Go
+            - name: ⬇️ Setup Go
               uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
               with:
                   go-version-file: "go.mod"
+            - name: Run tests
+              run: make test
+            - name: Setup Packer
+              uses: hashicorp/setup-packer@ce93c3c08a6c2ff2275bf4b54ff0d9a75f6c9789 # v3.4.0
+              with:
+                  version: "1.16.3"
             - name: Run acceptance tests
-              env:
-                  OSC_ACCESS_KEY: ${{ secrets.OSC_ACCESS_KEY }}
-                  OSC_SECRET_KEY: ${{ secrets.OSC_SECRET_KEY }}
-                  OSC_REGION: ${{ secrets.OSC_REGION }}
               run: make testacc
 
     build:
@@ -111,9 +88,9 @@ jobs:
                 goos: ["linux", "darwin", "windows"]
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-            - name: Set up Go
+            - name: ⬇️ Checkout
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            - name: ⬇️ Setup Go
               uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
               with:
                   go-version-file: "go.mod"

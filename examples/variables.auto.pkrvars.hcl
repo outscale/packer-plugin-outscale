@@ -10,4 +10,5 @@ ssh_username = "outscale"
 
 # The Outscale region where the VM will be deployed
 # Example: "eu-west-2" is a specific Outscale region in Europe.
-region = "us-east-2"
+# Uncomment to override the region
+# region = "us-east-2"

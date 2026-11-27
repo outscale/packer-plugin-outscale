@@ -26,7 +26,8 @@ variable "ssh_username" {
 }
 
 variable "region" {
-  type = string
+  type    = string
+  default = env("OSC_REGION")
 }
 source "outscale-bsu" "bsu" {
   region  = var.region
